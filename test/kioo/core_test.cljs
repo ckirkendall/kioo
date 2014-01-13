@@ -14,4 +14,19 @@
   (testing "content replace"
     (let [comp (component "simple-div.html"
                           {[:div] (content "success")})]
-      (is (= "<div>success</div>" (render-dom comp))))))
+      (is (= "<div>success</div>" (render-dom comp)))))
+  (testing "append test"
+    (let [comp (component "simple-div.html"
+                          {[:div] (append "success")})]
+      ;;note that ract wraps text nodes in span tags
+      ;;this is expected to be corrected soon in react but
+      ;;for now this is correct
+      (is (= "<div><span>test</span><span>success</span></div>"
+             (render-dom comp)))))
+  (testing "prepend test"
+    (let [comp (component "simple-div.html"
+                          {[:div] (prepend "success")})]
+      (is (= "<div><span>success</span><span>test</span></div>"
+             (render-dom comp))))))
+
+

@@ -31,7 +31,7 @@
   (fn [node]
     (assoc node :content (concat (:content node) body))))
 
-(defn preppend [& body]
+(defn prepend [& body]
   (fn [node]
     (assoc node :content (concat body (:content node)))))
 
