@@ -1,4 +1,5 @@
-(ns kioo.core)
+(ns kioo.core
+  (:require [kioo.util :refer [convert-attrs]]))
 
 
 (defn flatten-nodes [nodes]
@@ -42,6 +43,9 @@
   (fn [node]
     (flatten-nodes (concat body [(make-react-dom node)]))))
 
+(defn substitute [& body]
+  (fn [node] body))
+
 
 (defn set-attr [& body]
   (let [els (partition 2 body)]
@@ -62,7 +66,7 @@
 
 
 (defn set-style [& body]
-  (let [els (partition body 2)
+  (let [els (partition 2 body)
         mp (reduce (fn [m [k v]] (assoc m k v)) {} els)]
     (fn [node]
       (update-in node [:attrs :style] #(merge %1 mp)))))
@@ -98,3 +102,13 @@
                         values)]
       (assoc-in node [:attrs :className] new-class))))
 
+(defn wrap [tag attrs]
+  (fn [node]
+    (make-react-dom {:tag tag
+                     :sym (aget js/React.DOM (name tag)) 
+                     :attrs (convert-attrs attrs)
+                     :content [(make-react-dom node)]})))
+
+(defn unwrap []
+  (fn [node]
+    (:content node)))

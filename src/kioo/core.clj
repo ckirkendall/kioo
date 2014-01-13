@@ -1,6 +1,7 @@
 (ns kioo.core
   (:refer-clojure :exclude [compile])
-  (:require [net.cgrand.enlive-html :refer [at html-resource select
+  (:require [kioo.util :refer [convert-attrs]]
+            [net.cgrand.enlive-html :refer [at html-resource select
                                             any-node]]))
 
 (declare compile)
@@ -35,18 +36,6 @@
     (compile (map-trans start trans-lst))))
 
 
-(defn compile-attrs [attrs]
-  (let [style  (when (:style attrs)
-                 (let [vals (re-seq #"\s*([^:;]*)[:][\s]*([^;]+)"
-                                    (:style attrs))]
-                   (reduce (fn [m [_ k v]]
-                             (assoc m k (.trim v)))
-                           {} vals)))
-        class-name (:class attrs)]
-    (-> attrs
-        (dissoc :class)
-        (merge {:style style :className class-name}))))
-
 
 (defn get-react-sym [tag]
   (symbol "js" (str "React.DOM." (name tag))))
@@ -58,11 +47,11 @@
       `(kioo.core/make-react-dom
         (~(:trans node) ~(-> node
                              (dissoc :trans)
-                             (assoc :attrs (compile-attrs (:attrs node))
+                             (assoc :attrs (convert-attrs (:attrs node))
                                     :content children
                                     :sym (get-react-sym (:tag node))))))
       `(apply ~(get-react-sym (:tag node))
-        (cljs.core/clj->js ~(compile-attrs (:attrs node)))
+        (cljs.core/clj->js ~(convert-attrs (:attrs node)))
         (kioo.core/flatten-nodes ~children)))))
 
 

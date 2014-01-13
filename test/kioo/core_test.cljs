@@ -2,8 +2,8 @@
   (:require [cemerick.cljs.test :as t]
             [kioo.core :refer [content set-attr append prepend
                                remove-attr before after do->
-                               set-style remove-style
-                               add-class remove-class]]
+                               set-style remove-style add-class
+                               remove-class wrap unwrap]]
             [kioo.test :refer [render-dom]]
             [goog.dom :as gdom])
   (:require-macros [kioo.core :refer [component]]
@@ -60,6 +60,33 @@
     (let [comp (component "class-span.html" [:span]
                           {[:#s] (remove-class "cl")})]
       (is (= "<span class=\" cls\" id=\"s\">testing</span>"
+             (render-dom comp)))))
+  (testing "set-style test"
+    (let [comp (component "style-span.html" [:span]
+                          {[:#s] (set-style :display "none")})]
+      (is (= "<span style=\"color:red;display:none;\" id=\"s\">testing</span>"
+             (render-dom comp)))))
+  (testing "remove-style test"
+    (let [comp (component "style-span.html" [:span]
+                          {[:#s] (remove-style :color)})]
+      (is (= "<span id=\"s\">testing</span>"
+             (render-dom comp)))))
+  (testing "do-> test"
+    (let [comp (component "style-span.html" [:span]
+                          {[:#s] (do->
+                                  (remove-attr :id)
+                                  (remove-style :color))})]
+      (is (= "<span>testing</span>"
+             (render-dom comp)))))
+  (testing "wrap test"
+    (let [comp (component "wrap-test.html" [:span]
+                          {[:#s] (wrap :div {:id "test"})})]
+      (is (= "<div id=\"test\"><span id=\"s\">testing</span></div>"
+             (render-dom comp)))))
+  (testing "unwrap test"
+    (let [comp (component "wrap-test.html" [:div]
+                          {[:div] (unwrap)})]
+      (is (= "<span id=\"s\">testing</span>"
              (render-dom comp))))))
 
  
