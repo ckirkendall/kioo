@@ -35,12 +35,18 @@
     (compile (map-trans start trans-lst))))
 
 
-(defn compile-style [attrs]
-  (if (:style attrs)
-    (let [vals (re-seq #"\s*([^:;]*)[:][\s]*([^;]+)" (:style attrs))]
-      (assoc attrs :style
-             (reduce (fn [m [_ k v]] (assoc m k (.trim v))) {} vals)))
-    attrs))
+(defn compile-attrs [attrs]
+  (let [style  (when (:style attrs)
+                 (let [vals (re-seq #"\s*([^:;]*)[:][\s]*([^;]+)"
+                                    (:style attrs))]
+                   (reduce (fn [m [_ k v]]
+                             (assoc m k (.trim v)))
+                           {} vals)))
+        class-name (:class attrs)]
+    (-> attrs
+        (dissoc :class)
+        (merge {:style style :className class-name}))))
+
 
 (defn get-react-sym [tag]
   (symbol "js" (str "React.DOM." (name tag))))
@@ -50,12 +56,13 @@
   (let [children (compile (:content node))]
     (if (:trans node)
       `(kioo.core/make-react-dom
-        (~(:trans node) ~(assoc (dissoc node :trans)
-                           :attrs (compile-style (:attrs node))
-                           :content children
-                           :sym (get-react-sym (:tag node)))))
+        (~(:trans node) ~(-> node
+                             (dissoc :trans)
+                             (assoc :attrs (compile-attrs (:attrs node))
+                                    :content children
+                                    :sym (get-react-sym (:tag node))))))
       `(apply ~(get-react-sym (:tag node))
-        (cljs.core/clj->js ~(compile-style (:attrs node)))
+        (cljs.core/clj->js ~(compile-attrs (:attrs node)))
         (kioo.core/flatten-nodes ~children)))))
 
 

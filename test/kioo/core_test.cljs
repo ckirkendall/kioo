@@ -1,7 +1,9 @@
 (ns kioo.core-test
   (:require [cemerick.cljs.test :as t]
             [kioo.core :refer [content set-attr append prepend
-                               remove-attr]]
+                               remove-attr before after do->
+                               set-style remove-style
+                               add-class remove-class]]
             [kioo.test :refer [render-dom]]
             [goog.dom :as gdom])
   (:require-macros [kioo.core :refer [component]]
@@ -38,5 +40,26 @@
     (let [comp (component "simple-div.html"
                           {[:div] (remove-attr :id)})]
       (is (= "<div>test</div>"
+             (render-dom comp)))))
+  (testing "before test"
+    (let [comp (component "simple-div.html"
+                          {[:div] (before "success")})]
+      (is (= "<span>success</span><div id=\"tmp\">test</div>"
+             (render-dom comp)))))
+  (testing "after test"
+    (let [comp (component "simple-div.html"
+                          {[:div] (after "success")})]
+      (is (= "<div id=\"tmp\">test</div><span>success</span>"
+             (render-dom comp)))))
+  (testing "add-class test"
+    (let [comp (component "class-span.html" [:span]
+                          {[:#s] (add-class "suc")})]
+      (is (= "<span class=\"cl cls suc\" id=\"s\">testing</span>"
+             (render-dom comp)))))
+  (testing "remove-class test"
+    (let [comp (component "class-span.html" [:span]
+                          {[:#s] (remove-class "cl")})]
+      (is (= "<span class=\" cls\" id=\"s\">testing</span>"
              (render-dom comp))))))
 
+ 

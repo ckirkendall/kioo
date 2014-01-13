@@ -36,11 +36,11 @@
 
 (defn after [& body]
   (fn [node]
-    (cons node body)))
+    (cons (make-react-dom node) body)))
 
 (defn before [& body]
   (fn [node]
-    (concat body [(make-react-dom node)])))
+    (flatten-nodes (concat body [(make-react-dom node)]))))
 
 
 (defn set-attr [& body]
@@ -71,4 +71,30 @@
 (defn remove-style [& body]
   (apply set-style  (interleave body (repeat nil))))
 
+
+(defn- get-class-regex [cls]
+  (js/RegExp. (str "(\\s|^)" cls "(\\s|$)")))
+
+(defn- has-class? [cur-cls cls]
+  (.match cur-cls (get-class-regex cls)))
+
+
+(defn add-class [& values]
+  (fn [node]
+    (let [new-class (reduce #(if (has-class? %1 %2)
+                               %1
+                               (str %1 " " %2))
+                        (get-in node [:attrs :className])
+                        values)]
+      (assoc-in node [:attrs :className] new-class))))
+
+
+(defn remove-class [& values]
+  (fn [node]
+    (let [new-class (reduce #(if (has-class? %1 %2)
+                               (.replace %1 (get-class-regex %2) " ")
+                               %1)
+                        (get-in node [:attrs :className])
+                        values)]
+      (assoc-in node [:attrs :className] new-class))))
 
