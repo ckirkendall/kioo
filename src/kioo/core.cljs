@@ -11,7 +11,7 @@
 (defn make-react-dom [node & body]
   (let [rnode (if (map? node)
                 (apply (:sym node)
-                 (clj->js (:attr node))
+                 (clj->js (:attrs node))
                  (flatten-nodes (:content node)))
                 node)]
     (if (empty? body)
@@ -46,15 +46,15 @@
 (defn set-attr [& body]
   (let [els (partition 2 body)]
     (fn [node]
-      (assoc node :attr (reduce (fn [n [k v]]
+      (assoc node :attrs (reduce (fn [n [k v]]
                                   (assoc n k v))
-                                (:att node) els)))))
+                                (:attrs node) els)))))
 
 (defn remove-attr [& body]
   (fn [node]
-    (assoc node :attr (reduce (fn [n k]
+    (assoc node :attrs (reduce (fn [n k]
                                 (dissoc n k))
-                              (:att node) body))))
+                              (:attrs node) body))))
 
 (defn do-> [& body]
   (fn [node]
@@ -65,7 +65,7 @@
   (let [els (partition body 2)
         mp (reduce (fn [m [k v]] (assoc m k v)) {} els)]
     (fn [node]
-      (update-in node [:attr :style] #(merge %1 mp)))))
+      (update-in node [:attrs :style] #(merge %1 mp)))))
 
 
 (defn remove-style [& body]

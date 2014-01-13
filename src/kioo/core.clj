@@ -55,7 +55,7 @@
                            :content children
                            :sym (get-react-sym (:tag node)))))
       `(apply ~(get-react-sym (:tag node))
-        (cljs.core/clj->js ~(compile-style (:attr node)))
+        (cljs.core/clj->js ~(compile-style (:attrs node)))
         (kioo.core/flatten-nodes ~children)))))
 
 
