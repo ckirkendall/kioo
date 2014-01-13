@@ -5,6 +5,7 @@
   (aget (goog.dom/getElementsByTagNameAndClass "body") 0))
 
 (defn render-dom [children]
+  (.log js/console (pr-str  children))
   (let [container (goog.dom/createDom "div")
         id (gensym)]
     (goog.dom/append (body) container)

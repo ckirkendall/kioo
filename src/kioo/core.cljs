@@ -9,13 +9,14 @@
           (reverse nodes)))
 
 (defn make-react-dom [node & body]
+  (.log js/console (pr-str node))
   (let [rnode (if (map? node)
-                ((:sym node)
+                (apply (:sym node)
                  (clj->js (:attr node))
-                 (into-array (flatten-nodes (:content node))))
+                 (flatten-nodes (:content node)))
                 node)]
     (if (empty? body)
-      (list rnode)
+      rnode
       (cons rnode (make-react-dom body)))))
 
 (defn content [& body]

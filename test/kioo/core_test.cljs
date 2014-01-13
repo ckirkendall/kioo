@@ -10,4 +10,8 @@
 (deftest render-test
   (testing "basic render test"
     (let [comp (component "simple-div.html" {}) ]
-      (is (= "<div>test</div>" (render-dom comp))))))
+      (is (= "<div>test</div>" (render-dom comp)))))
+  (testing "content replace"
+    (let [comp (component "simple-div.html"
+                          {[:div] (content "success")})]
+      (is (= "<div>success</div>" (render-dom comp))))))
