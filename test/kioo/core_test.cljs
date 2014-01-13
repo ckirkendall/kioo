@@ -11,4 +11,3 @@
   (testing "basic render test"
     (let [comp (component "simple-div.html" {}) ]
       (is (= "<div>test</div>" (render-dom comp))))))
-

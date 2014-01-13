@@ -54,19 +54,15 @@
                            :attrs (compile-style (:attrs node))
                            :content children
                            :sym ~(get-react-sym (:tag node)))))
-      `(~(get-react-sym (:tag node))
+      `(apply ~(get-react-sym (:tag node))
         (cljs.core/clj->js ~(compile-style (:attr node)))
-        ~(if (string? children)
-          children
-          `(cljs.core/into-array (kioo.core/flatten-nodes ~children)))))))
+        (kioo.core/flatten-nodes ~children)))))
 
 
 (defn compile [node]
   (let [nodes (if (map? node) [node] node)
         react-nodes (vec (map #(if (map? %) (compile-node %) %)
                               nodes))]
-    (if (= (count react-nodes) 1)
-      (first react-nodes)
-      `(cljs.core/into-array ~react-nodes))))
+    `(cljs.core/into-array ~react-nodes)))
 
 
