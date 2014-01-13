@@ -27,6 +27,10 @@
     (let [comp (component "simple-div.html"
                           {[:div] (prepend "success")})]
       (is (= "<div><span>success</span><span>test</span></div>"
+             (render-dom comp)))))
+  (testing "set-attr test"
+    (let [comp (component "simple-div.html"
+                          {[:div] (set-attr :id "success")})]
+      (is (= "<div id=\"success\">test</div>"
              (render-dom comp))))))
-
 

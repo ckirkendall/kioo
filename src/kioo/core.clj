@@ -63,7 +63,6 @@
   (let [nodes (if (map? node) [node] node)
         react-nodes (vec (map #(if (map? %) (compile-node %) %)
                               nodes))]
-    (println "//" react-nodes)
     `(cljs.core/into-array (kioo.core/flatten-nodes ~react-nodes))))
 
 

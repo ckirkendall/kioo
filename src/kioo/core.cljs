@@ -9,7 +9,6 @@
           (reverse nodes)))
 
 (defn make-react-dom [node & body]
-  (.log js/console (pr-str node))
   (let [rnode (if (map? node)
                 (apply (:sym node)
                  (clj->js (:attr node))
@@ -45,7 +44,7 @@
 
 
 (defn set-attr [& body]
-  (let [els (partition body 2)]
+  (let [els (partition 2 body)]
     (fn [node]
       (assoc node :attr (reduce (fn [n [k v]]
                                   (assoc n k v))
