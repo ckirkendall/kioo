@@ -16,7 +16,7 @@ All artifacts are published to [clojars](https://clojars.org/kioo). Latest versi
 
 ## Concepts
 
-`component` is a unit of your page such as header, footer, page element. A kioo component is logically the same as a Facebook's React.js component.  What makes them diffrent is they take raw html from the class path and compile it into React.js nodes.  This allows you to define the structure of your page as standard html.  React.js provides something similar with JSX but it still mixes the content and the logic.  Kioo takes a diffrent aproach by allowing you to bring in static content and transform it with selectors in a manner similar to Enlive/Enfocus templates.
+`component` is a unit of your page such as header, footer, page element. A kioo component is logically the same as a Facebook's React.js component.  What makes kioo components diffrent from Ract's is they take raw html from the class path and compile it into React.js nodes.  This allows you to define the structure of your page as standard html.  React.js provides something similar with JSX but it still mixes the content and the logic.  Kioo takes a diffrent aproach by allowing you to bring in static content and transform it with selectors in a manner similar to Enlive/Enfocus templates.
 
 The biggest diffrence you will see between Enlive and Kioo is that Kioo only supports unordered transforms.  This means that you pass a map of transforms to the component and you can not guarantee what order they will be processed in.  This is due to the fact that all selection is being done at the time of compile and all transforms are done at runtime, so selections cannot take the structure of the content at runtime into consideration.
 
@@ -61,11 +61,10 @@ Let's take a look at and example.  Here we work with David Nolans
      [:ul] (content (map my-nav-item nav-elms))}))
 
 (defn my-page [data]
-  (om/component
-   (kioo/component "main.html"
-      {[:header] (substitute (my-header (:heading data)
-                                        (:navigation data)))
-       [:.content] (content (:content data))})))
+  (kioo/component "main.html"
+    {[:header] (substitute (my-header (:heading data)
+                                      (:navigation data)))
+     [:.content] (content (:content data))}))
 
 (def app-state (atom {:content    "Hello World"
                       :navigation [["home" #(js/alert %)]
@@ -73,6 +72,15 @@ Let's take a look at and example.  Here we work with David Nolans
 
 (om/root app-state my-page (.-body js/document))
 ```
+
+To view the example:
+```bash
+$ git clone https://github.com/ckirkendall/kioo.git
+$ cd kioo/example
+$ lein cljx
+$ lein cljsbuild once
+```
+Once the javascript compiles you can open index.html in a browser.
 
 ### Selector Syntax
 
@@ -98,7 +106,7 @@ Enlive                                       CSS
 
 A transformation is a function that returns either a react node or collection of react nodes.
 
-Kioo support most of the enlive transform functions:
+Kioo transforms mirror most of the base enlive transformations:
 
 ```clojure
 ;; Replaces the content of the element. Values can be nodes or collection of nodes.
