@@ -23,6 +23,10 @@
           node
           trans-lst))
 
+(defn get-react-sym [tag]
+  (symbol "js" (str "React.DOM." (name tag))))
+
+
 (defmacro component [path & body]
   (let [[sel trans-lst] (if (map? (first body))
                           [[:body :> any-node] (first body)]
@@ -33,12 +37,10 @@
                 root
                 (select root sel))]
     ;(println "//" start)
-    (compile (map-trans start trans-lst))))
-
-
-
-(defn get-react-sym [tag]
-  (symbol "js" (str "React.DOM." (name tag))))
+    `(let [ch# ~(compile (map-trans start trans-lst))]
+       (if (= 1 (count ch#))
+         (first ch#)
+         (apply ~(get-react-sym :span) nil ch#)))))
 
 
 (defn compile-node [node]
@@ -52,13 +54,13 @@
                                     :sym (get-react-sym (:tag node))))))
       `(apply ~(get-react-sym (:tag node))
         (cljs.core/clj->js ~(convert-attrs (:attrs node)))
-        (kioo.core/flatten-nodes ~children)))))
+        ~children))))
 
 
 (defn compile [node]
   (let [nodes (if (map? node) [node] node)
         react-nodes (vec (map #(if (map? %) (compile-node %) %)
                               nodes))]
-    `(cljs.core/into-array (kioo.core/flatten-nodes ~react-nodes))))
+    `(kioo.core/flatten-nodes ~react-nodes)))
 
 
