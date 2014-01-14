@@ -3,7 +3,7 @@
 Kioo brings Enlive/Enfocus style templates to React.  This allows for much better separation between the view and logic layers of the application.  
 
 ### Why does kioo mean? 
-Kioo is swahili for mirror. Facebook's React library is built around the idea that the view is a reflection of your application state.
+Kioo is Swahili for mirror. Facebook's React library is built around the idea that the view is a reflection of your application state.
 
 
 ## Artifact
