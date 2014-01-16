@@ -83,6 +83,16 @@
   (.match cur-cls (get-class-regex cls)))
 
 
+(defn set-class [& values]
+  (fn [node]
+    (let [new-class (reduce #(if (has-class? %1 %2)
+                               %1
+                               (str %1 " " %2))
+                            ""
+                            values)]
+      (assoc-in node [:attrs :className] new-class))))
+
+
 (defn add-class [& values]
   (fn [node]
     (let [new-class (reduce #(if (has-class? %1 %2)

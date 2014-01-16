@@ -3,7 +3,7 @@
             [kioo.core :refer [content set-attr append prepend
                                remove-attr before after do->
                                set-style remove-style add-class
-                               remove-class wrap unwrap]]
+                               remove-class wrap unwrap set-class]]
             [kioo.test :refer [render-dom]]
             [goog.dom :as gdom])
   (:require-macros [kioo.core :refer [component]]
@@ -44,12 +44,12 @@
   (testing "before test"
     (let [comp (component "simple-div.html"
                           {[:div] (before "success")})]
-      (is (= "<span>success</span><div id=\"tmp\">test</div>"
+      (is (= "<span><span>success</span><div id=\"tmp\">test</div></span>"
              (render-dom comp)))))
   (testing "after test"
     (let [comp (component "simple-div.html"
                           {[:div] (after "success")})]
-      (is (= "<div id=\"tmp\">test</div><span>success</span>"
+      (is (= "<span><div id=\"tmp\">test</div><span>success</span></span>"
              (render-dom comp)))))
   (testing "add-class test"
     (let [comp (component "class-span.html" [:span]
@@ -60,6 +60,11 @@
     (let [comp (component "class-span.html" [:span]
                           {[:#s] (remove-class "cl")})]
       (is (= "<span class=\" cls\" id=\"s\">testing</span>"
+             (render-dom comp)))))
+  (testing "set-class test"
+    (let [comp (component "class-span.html" [:span]
+                          {[:#s] (set-class "cl")})]
+      (is (= "<span class=\" cl\" id=\"s\">testing</span>"
              (render-dom comp)))))
   (testing "set-style test"
     (let [comp (component "style-span.html" [:span]
