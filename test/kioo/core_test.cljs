@@ -19,6 +19,16 @@
     (let [comp (component "simple-div.html"
                           {[:div] (content "success")})]
       (is (= "<div id=\"tmp\">success</div>" (render-dom comp)))))
+  (testing "attr= content replace"
+    (let [comp (component "simple-attr-div.html"
+                          {[(attr= :data-id "tmp")]
+                           (content "success")})]
+      (is (= "<div data-id=\"tmp\">success</div>" (render-dom comp)))))
+  (testing "attr? content replace"
+    (let [comp (component "simple-attr-div.html"
+                          {[(attr? :data-id)]
+                           (content "success")})]
+      (is (= "<div data-id=\"tmp\">success</div>" (render-dom comp)))))
   (testing "append test"
     (let [comp (component "simple-div.html"
                           {[:div] (append "success")})]
@@ -101,9 +111,7 @@
       (is (= "<div id=\"tmp\"><h1 class=\"t\"><span>t1</span></h1></div>"
              (render-dom comp)))))
   (testing "unwrap test"
-    (let [comp (component "simple-div.html" 
+    (let [comp (component "simple-div.html"
                           {[:div] (html-content "<h1>t1</h1><em><span>t2</span></em>")})]
       (is (= "<div id=\"tmp\"><h1>t1</h1><em><span>t2</span></em></div>"
              (render-dom comp))))))
-
- 
