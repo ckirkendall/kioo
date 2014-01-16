@@ -135,15 +135,24 @@ unwrap
 ;; Removes attribute(s) from selected node
 (remove-attr :attr1 :attr2)
 
-;; Adds class(es) to the selected node
+;; Sets class attr of the selected node
+(set-class "foo bar")
+
+;; Adds class(es) on the selected node
 (add-class "foo" "bar")
 
 ;; Removes class(es) from the selected node
 (remove-class "foo" "bar")
 
+;; Set styles on to the selected node
+(set-style :display "none" :backgroud-color "#cfcfcf")
+
+;; Removes styles from the selected node
+(remove-style :display :background-color)
+
+
 ;; Chains (composes) several transformations. Applies functions from left to right.
 (do-> transformation1 transformation2)
-
 
 ;; Appends the values to the content of the selected element.
 (append "xyz" a-node "abc")
@@ -160,6 +169,7 @@ unwrap
 ;; Replaces the current selection (node or fragment).
 (substitute "xyz" a-node "abc")
 
+
 ```
 Not supported yet
 
@@ -167,7 +177,7 @@ Not supported yet
 
 ;; Clones the selected node, applying transformations to it.
 (clone-for [item items] transformation)
-;; or
+(;; or
 (clone-for [item items]
   selector1 transformation1
   selector2 transformation2)
