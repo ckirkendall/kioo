@@ -121,9 +121,8 @@
                      :attrs (convert-attrs attrs)
                      :content [(make-react-dom node)]})))
 
-(defn unwrap []
-  (fn [node]
-    (:content node)))
+(defn unwrap [node]
+  (:content node))
 
 
 (defn html [content] (sab/html content))
