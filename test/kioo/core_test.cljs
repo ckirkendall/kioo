@@ -91,7 +91,7 @@
              (render-dom comp)))))
   (testing "unwrap test"
     (let [comp (component "wrap-test.html" [:div]
-                          {[:div] (unwrap)})]
+                          {[:div] unwrap})]
       (is (= "<span id=\"s\">testing</span>"
              (render-dom comp)))))
   (testing "html test"
