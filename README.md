@@ -127,7 +127,7 @@ Kioo transforms mirror most of the base enlive transformations:
 (wrap :div {:class "foo"})
 
 ;; Opposite to wrap, returns the content of the selected node
-unwrap
+(unwrap)
 
 ;; Sets given key value pairs as attributes for selected node
 (set-attr :attr1 "val1" :attr2 "val2")
@@ -149,7 +149,6 @@ unwrap
 
 ;; Removes styles from the selected node
 (remove-style :display :background-color)
-
 
 ;; Chains (composes) several transformations. Applies functions from left to right.
 (do-> transformation1 transformation2)
