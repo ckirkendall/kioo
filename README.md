@@ -82,6 +82,11 @@ $ lein cljsbuild once
 ```
 Once the javascript compiles you can open index.html in a browser.
 
+For a more fleshed-out example, please see the Kioo implementation of
+[TodoMVC](http://todomvc.com)
+[exists here](http://github.com/ckirkendall/todomvc/blob/gh-pages/labs/architecture-examples/kioo/src/todomvc/app.cljs).
+
+
 ### Selector Syntax
 
 Kioo uses elive based selectors. See [syntax.html](http://enlive.cgrand.net/syntax.html)
