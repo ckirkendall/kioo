@@ -1,5 +1,7 @@
 (ns kioo.core
-  (:require [kioo.util :refer [convert-attrs]]))
+  (:require [kioo.util :refer [convert-attrs]]
+            [hickory.core :as hic :refer [parse-fragment as-hiccup]]
+            [sablono.core :as sab :include-macros true]))
 
 
 (defn flatten-nodes [nodes]
@@ -122,3 +124,12 @@
 (defn unwrap []
   (fn [node]
     (:content node)))
+
+
+(defn html [content] (sab/html content))
+
+(defn html-content [content]
+  (fn [node]
+    (let [children  (map #(-> % (as-hiccup) (sab/html))
+                         (parse-fragment str))]
+      (assoc node :content children))))

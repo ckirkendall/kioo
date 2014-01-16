@@ -3,7 +3,8 @@
             [kioo.core :refer [content set-attr append prepend
                                remove-attr before after do->
                                set-style remove-style add-class
-                               remove-class wrap unwrap set-class]]
+                               remove-class wrap unwrap set-class
+                               html html-content]]
             [kioo.test :refer [render-dom]]
             [goog.dom :as gdom])
   (:require-macros [kioo.core :refer [component]]
@@ -92,6 +93,17 @@
     (let [comp (component "wrap-test.html" [:div]
                           {[:div] (unwrap)})]
       (is (= "<span id=\"s\">testing</span>"
+             (render-dom comp)))))
+  (testing "html test"
+    (let [comp (component "simple-div.html"
+                          {[:div] (content (html [:h1 {:class "t"}
+                                                  [:span "t1"]]))})]
+      (is (= "<div id=\"tmp\"><h1 class=\"t\"><span>t1</span></h1></div>"
+             (render-dom comp)))))
+  (testing "unwrap test"
+    (let [comp (component "simple-div.html" 
+                          {[:div] (html-content "<h1>t1</h1><em><span>t2</span></em>")})]
+      (is (= "<div id=\"tmp\"><h1>t1</h1><em><span>t2</span></em></div>"
              (render-dom comp))))))
 
  

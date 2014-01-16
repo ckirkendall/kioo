@@ -117,6 +117,10 @@ Kioo transforms mirror most of the base enlive transformations:
 ;; Replaces the content of the element. Values can be nodes or collection of nodes.
 (content "xyz" a-node "abc")
 
+
+;; Replaces the content of the element with the html provided.
+(html-content "<h1>this is html text</h1>")
+
 ;; Wraps selected node into the given tag
 (wrap :div)
 ;; or
@@ -160,8 +164,6 @@ unwrap
 Not supported yet
 
 ```clojure
-;;you should use sabano for this
-(html-content "<h1>test</h1>")
 
 ;; Clones the selected node, applying transformations to it.
 (clone-for [item items] transformation)

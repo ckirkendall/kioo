@@ -9,7 +9,9 @@
   :dependencies [[enlive "1.1.5"]
                  [com.facebook/react "0.8.0.1"]
                  [org.clojure/clojure "1.5.1"]
-                 [org.clojure/clojurescript "0.0-2138"]]
+                 [org.clojure/clojurescript "0.0-2138"]
+                 [sablono "0.2.1"]
+                 [hickory "0.5.2"]]
   :cljsbuild {:builds []}
   :profiles {:dev {:plugins [[com.keminglabs/cljx "0.3.2"] ;; Must be before Austin: https://github.com/cemerick/austin/issues/37
                              [com.cemerick/austin "0.1.3"]
