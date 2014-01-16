@@ -15,11 +15,21 @@
                                (~trans))))
       (assoc node :trans trans))))
 
+(defn eval-selector [sel]
+  (reduce
+   #(conj %1
+          (if (list? %2)
+            (eval (apply
+                   list
+                   (symbol "net.cgrand.enlive-html" (name (first %2)))
+                   (rest %2)))
+            %2))
+   [] sel))
 
 (defn map-trans [node trans-lst]
   ;(println "//" trans-lst)
   (reduce (fn [node [sel trans]]
-            (at node sel (attach-transform trans)))
+            (at node (eval-selector sel) (attach-transform trans)))
           node
           trans-lst))
 
@@ -35,7 +45,7 @@
         ;_ (println "//" root)
         start (if (= :root sel)
                 root
-                (select root sel))]
+                (select root (eval-selector sel)))]
     ;(println "//" start)
     `(let [ch# ~(compile (map-trans start trans-lst))]
        (if (= 1 (count ch#))
@@ -62,5 +72,3 @@
         react-nodes (vec (map #(if (map? %) (compile-node %) %)
                               nodes))]
     `(kioo.core/flatten-nodes ~react-nodes)))
-
-
