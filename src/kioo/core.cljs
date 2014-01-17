@@ -130,5 +130,5 @@
 (defn html-content [content]
   (fn [node]
     (let [children  (map #(-> % (as-hiccup) (sab/html))
-                         (parse-fragment str))]
+                         (parse-fragment content))]
       (assoc node :content children))))

@@ -13,17 +13,20 @@
                            (cljs.core/-> node
                                (~(:trans node))
                                (~trans))))
-      (assoc node :trans trans))))
+      (assoc node :trans trans)))) 
+
+
+(defn resolve-enlive-var [sym]
+  (ns-resolve 'net.cgrand.enlive-html sym))
 
 (defn eval-selector [sel]
   (reduce
    #(conj %1
-          (if (list? %2)
-            (eval (apply
-                   list
-                   (symbol "net.cgrand.enlive-html" (name (first %2)))
-                   (rest %2)))
-            %2))
+          (cond
+           (list? %2) (apply (resolve-enlive-var (first %2)) (rest %2))
+           (vector? %2) (eval-selector %2)
+           (symbol? %2) (resolve-enlive-var %2)
+            :else %2))
    [] sel))
 
 (defn map-trans [node trans-lst]

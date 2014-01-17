@@ -16,9 +16,12 @@
     (let [comp (component "simple-div.html" {}) ]
       (is (= "<div id=\"tmp\">test</div>" (render-dom comp)))))
   (testing "content replace"
-    (let [comp (component "simple-div.html"
+    (let [comp (component "simple-div.html" 
                           {[:div] (content "success")})]
       (is (= "<div id=\"tmp\">success</div>" (render-dom comp)))))
+  (testing "first-of-type naked symbol"
+    (let [comp (component "list.html" [:ul [:li first-of-type]] {})]
+      (is (= "<li>1</li>" (render-dom comp)))))
   (testing "attr= content replace"
     (let [comp (component "simple-attr-div.html"
                           {[(attr= :data-id "tmp")]
@@ -110,7 +113,7 @@
                                                   [:span "t1"]]))})]
       (is (= "<div id=\"tmp\"><h1 class=\"t\"><span>t1</span></h1></div>"
              (render-dom comp)))))
-  (testing "unwrap test"
+  (testing "html-content test"
     (let [comp (component "simple-div.html"
                           {[:div] (html-content "<h1>t1</h1><em><span>t2</span></em>")})]
       (is (= "<div id=\"tmp\"><h1>t1</h1><em><span>t2</span></em></div>"
