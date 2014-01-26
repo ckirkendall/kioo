@@ -11,7 +11,7 @@
           '()
           (reverse nodes)))
 
-(defn make-react-dom [node & body]
+(defn make-dom [node & body]
   (let [rnode (if (map? node)
                 (apply (:sym node)
                  (clj->js (:attrs node))
@@ -19,11 +19,8 @@
                 node)]
     (if (empty? body)
       rnode
-      (cons rnode (make-react-dom body)))))
+      (cons rnode (make-dom body)))))
 
-(defn content [& body]
-  (fn [node]
-    (assoc node :content body)))
 
 (defn content [& body]
   (fn [node]
@@ -39,11 +36,11 @@
 
 (defn after [& body]
   (fn [node]
-    (cons (make-react-dom node) body)))
+    (cons (make-dom node) body)))
 
 (defn before [& body]
   (fn [node]
-    (flatten-nodes (concat body [(make-react-dom node)]))))
+    (flatten-nodes (concat body [(make-dom node)]))))
 
 (defn substitute [& body]
   (fn [node] body))
@@ -116,10 +113,10 @@
 
 (defn wrap [tag attrs]
   (fn [node]
-    (make-react-dom {:tag tag
+    (make-dom {:tag tag
                      :sym (aget js/React.DOM (name tag)) 
                      :attrs (convert-attrs attrs)
-                     :content [(make-react-dom node)]})))
+                     :content [(make-dom node)]})))
 
 (defn unwrap [node]
   (:content node))
