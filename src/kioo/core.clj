@@ -4,8 +4,49 @@
             [net.cgrand.enlive-html :refer [at html-resource select
                                             any-node]]))
 
-(declare compile)
+(declare compile component*)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; BASE REACT EMIT FUNCTIONS
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn get-react-sym [tag]
+  (symbol "js" (str "React.DOM." (name tag))))
+
+
+(defn emit-trans [node children]
+  `(kioo.core/make-react-dom
+    (~(:trans node) ~(-> node
+                         (dissoc :trans)
+                         (assoc :attrs (convert-attrs (:attrs node))
+                                :content children
+                                :sym (get-react-sym (:tag node)))))))
+
+(defn emit-node [node children]
+  `(apply ~(get-react-sym (:tag node))
+        (cljs.core/clj->js ~(convert-attrs (:attrs node)))
+        ~children))
+
+
+(defn wrap-fragment [tag child-sym]
+  `(apply ~(get-react-sym tag) nil ~child-sym))
+
+
+(def react-emit-opts {:emit-trans emit-trans
+                      :emit-node emit-node
+                      :wrap-fragment wrap-fragment})
+
+
+(defmacro component
+  "React base component definition"
+  [path & body]
+  (component* path body react-emit-opts))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Using Enlive to do selection and
+;; attache base transforms
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn attach-transform [trans]
   (fn [node]
     (if (:trans node)
@@ -35,40 +76,44 @@
           node
           trans-lst))
 
-(defn get-react-sym [tag]
-  (symbol "js" (str "React.DOM." (name tag))))
 
 
-(defmacro component [path & body]
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Main Structure of Compiler
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn component*
+  "this is the generic component that takes emitter
+   options that define how the component is mapped
+   to the underlying library (react, om, reagent)"
+  [path body emit-opts]
   (let [[sel trans-lst] (if (map? (first body))
                           [[:body :> any-node] (first body)]
                           body)
         root (html-resource path)
         start (if (= :root sel)
                 root
-                (select root (eval-selector sel)))]
-    `(let [ch# ~(compile (map-trans start trans-lst))]
-       (if (= 1 (count ch#))
-         (first ch#)
-         (apply ~(get-react-sym :span) nil ch#)))))
+                (select root (eval-selector sel)))
+        child-sym (gensym "ch")]
+    `(let [~child-sym ~(compile (map-trans start trans-lst) emit-opts)]
+       (if (= 1 (count ~child-sym))
+         (first ~child-sym)
+         ~((:wrap-fragment emit-opts) :span child-sym)))))
 
 
-(defn compile-node [node]
-  (let [children (compile (:content node))]
-    (if (:trans node)
-      `(kioo.core/make-react-dom
-        (~(:trans node) ~(-> node
-                             (dissoc :trans)
-                             (assoc :attrs (convert-attrs (:attrs node))
-                                    :content children
-                                    :sym (get-react-sym (:tag node))))))
-      `(apply ~(get-react-sym (:tag node))
-        (cljs.core/clj->js ~(convert-attrs (:attrs node)))
-        ~children))))
+(defn compile-node
+  "Emits the compiled sturcure for a single node & its children"
+  [node emit-opts]
+  (let [children (compile (:content node) emit-opts)
+        emit (if (:trans node)
+               (:emit-trans emit-opts)
+               (:emit-node emit-opts))]
+    (emit node children)))
 
 
-(defn compile [node]
+(defn compile
+  "Emits the compiled structure for a list of nodes"
+  [node emit-opts]
   (let [nodes (if (map? node) [node] node)
-        react-nodes (vec (map #(if (map? %) (compile-node %) %)
+        cnodes (vec (map #(if (map? %) (compile-node % emit-opts) %)
                               nodes))]
-    `(kioo.core/flatten-nodes ~react-nodes)))
+    `(kioo.core/flatten-nodes ~cnodes)))
