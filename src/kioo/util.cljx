@@ -1,4 +1,5 @@
 (ns kioo.util
+  (:refer-clojure :exclude [replace])
   (:require [clojure.string :refer [replace]]))
 
 (defn convert-attrs [attrs]

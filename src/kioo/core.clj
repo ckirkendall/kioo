@@ -30,7 +30,6 @@
    [] sel))
 
 (defn map-trans [node trans-lst]
-  ;(println "//" trans-lst)
   (reduce (fn [node [sel trans]]
             (at node (eval-selector sel) (attach-transform trans)))
           node
@@ -45,11 +44,9 @@
                           [[:body :> any-node] (first body)]
                           body)
         root (html-resource path)
-        ;_ (println "//" root)
         start (if (= :root sel)
                 root
                 (select root (eval-selector sel)))]
-    ;(println "//" start)
     `(let [ch# ~(compile (map-trans start trans-lst))]
        (if (= 1 (count ch#))
          (first ch#)
