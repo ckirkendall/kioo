@@ -12,7 +12,8 @@
                  [org.clojure/clojurescript "0.0-2138"]
                  [sablono "0.2.1"]
                  [hickory "0.5.2"]
-                 [om "0.3.0"]]
+                 [om "0.3.0"]
+                 [reagent "0.2.1"]]
   :cljsbuild {:builds []}
   :profiles {:dev {:plugins [[com.keminglabs/cljx "0.3.2"] ;; Must be before Austin: https://github.com/cemerick/austin/issues/37
                              [com.cemerick/austin "0.1.3"]
