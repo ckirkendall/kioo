@@ -1,15 +1,23 @@
 (ns kioo.reagent
-  (:require [kioo.core :as core :refer [flatten-nodes]]))
+  (:require [kioo.core :as core :refer [flatten-nodes]]
+            [reagent.impl.template :refer [as-component]]))
 
 (defn make-dom [node & body]
   (let [rnode (if (map? node)
-                (reduce #(conj %1 %2)
-                        [(:tag node) (:attrs node)]
-                        (flatten-nodes (:content node)))
-                node)]
+                (let [c (:content node)]
+                  (cond
+                   (vector? c) [(:tag node)
+                                (:attrs node)
+                                (as-component c)]
+                   (seq? c) (reduce #(conj %1 (as-component %2))
+                                    [(:tag node) (:attrs node)]
+                                    c)
+                   :else [(:tag node) (:attrs node) c])) 
+                node)
+        rnode (as-component rnode)]
     (if (empty? body)
       rnode
-      (vec (cons rnode (make-dom body))))))
+      (cons rnode (make-dom body)))))
 
 
 (def content core/content)
@@ -20,11 +28,11 @@
 ;;so they are call out specifically
 (defn after [& body]
   (fn [node]
-    (vec (cons (make-dom node) body))))
+    (cons (make-dom node) body)))
 
 (defn before [& body]
   (fn [node]
-    (vec (flatten-nodes (concat body [(make-dom node)])))))
+    (concat body [(make-dom node)])))
 
 (def substitute core/substitute)
 (def set-attr core/set-attr)

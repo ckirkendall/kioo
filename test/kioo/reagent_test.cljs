@@ -8,7 +8,7 @@
             [reagent.core :as reagent :refer [atom]]
             [kioo.util :as util]
             [goog.dom :as gdom])
-  (:require-macros [kioo.om :refer [component]]
+  (:require-macros [kioo.reagent :refer [component]]
                    [cemerick.cljs.test :refer [are is deftest testing]]))
 
 ;; all text get surrounded by spans in om
@@ -28,7 +28,6 @@
 (defn clean-up [] (gdom/removeChildren (.-body js/document)))
 
 (defn render-dom [comp]
-  #_(println (pr-str comp))
   (let [res (-> comp
                 (initial-render)
                 (inner-html))]
@@ -37,8 +36,10 @@
 
 (deftest render-test
   (testing "basic render test"
-    (let [comp #(component "simple-div.html" {}) ]
-      (is (= "<div id=\"tmp\"><span>test</span></div>"
+    (let [comp #(let [x (component "simple-div.html" {})]
+                  (println x)
+                  x) ]
+      (is (= "<div id=\"tmp\">test</div>"
              (render-dom comp)))))
   (testing "content replace"
     (let [atm (atom "one")
@@ -48,107 +49,115 @@
           html-str1 (inner-html container)
           _ (reset! atm "two")
           html-str2 (inner-html container)]
-      (is (= "<div id=\"tmp\"><span>one</span></div>" html-str1))
-      (is (= "<div id=\"tmp\"><span>two</span></div>" html-str2))
+      (is (= "<div id=\"tmp\">one</div>" html-str1))
+      (is (= "<div id=\"tmp\">two</div>" html-str2))
       (clean-up)))
-  #_(testing "first-of-type naked symbol"
-    (let [comp (component "list.html" [:ul [:li first-of-type]] {})]
-      (is (= "<li><span>1</span></li>" (render-dom comp)))))
-  #_(testing "attr= content replace"
-    (let [comp (component "simple-attr-div.html"
-                          {[(attr= :data-id "tmp")]
-                           (content "success")})]
-      (is (= "<div data-id=\"tmp\"><span>success</span></div>"
-             (render-dom comp)))))
-  #_(testing "attr? content replace"
-    (let [comp (component "simple-attr-div.html"
-                          {[(attr? :data-id)]
-                           (content "success")})]
-      (is (= "<div data-id=\"tmp\"><span>success</span></div>"
-             (render-dom comp)))))
-  #_(testing "append test"
-    (let [comp (component "simple-div.html"
-                          {[:div] (append "success")})]
+  (testing "sub component test"
+    (let [atm (atom "one")
+          comp2 #(component "simple-div.html"  
+                            {[:div] (do-> (remove-attr :id)
+                                          (content @atm))} )
+          comp #(component "simple-div.html"  
+                           {[:div] (content [comp2])})
+          container (initial-render comp)
+          html-str1 (inner-html container)
+          _ (reset! atm "two")
+          html-str2 (inner-html container)]
+      (is (= "<div id=\"tmp\"><div>one</div></div>"
+             html-str1))
+      (is (= "<div id=\"tmp\"><div>two</div></div>"
+             html-str2))
+      (clean-up)))
+  (testing "append test"
+    (let [atm (atom "one")
+          comp #(component "simple-div.html"  
+                           {[:div] (append @atm)})
+          container (initial-render comp)
+          html-str1 (inner-html container)
+          _ (reset! atm "two")
+          html-str2 (inner-html container)]
       ;;note that ract wraps text nodes in span tags
       ;;this is expected to be corrected soon in react but
       ;;for now this is correct
-      (is (= "<div id=\"tmp\"><span>test</span><span>success</span></div>"
-             (render-dom comp)))))
-  #_(testing "prepend test"
-    (let [comp (component "simple-div.html"
+      (is (= "<div id=\"tmp\"><span>test</span><span>one</span></div>"
+             html-str1))
+      (is (= "<div id=\"tmp\"><span>test</span><span>two</span></div>"
+             html-str2))))
+  (testing "prepend test"
+    (let [comp #(component "simple-div.html"
                           {[:div] (prepend "success")})]
       (is (= "<div id=\"tmp\"><span>success</span><span>test</span></div>"
              (render-dom comp)))))
-  #_(testing "set-attr test"
-    (let [comp (component "simple-div.html"
+  (testing "set-attr test"
+    (let [comp #(component "simple-div.html"
                           {[:div] (set-attr :id "success")})]
-      (is (= "<div id=\"success\"><span>test</span></div>"
+      (is (= "<div id=\"success\">test</div>"
              (render-dom comp)))))
-  #_(testing "remove-attr test"
-    (let [comp (component "simple-div.html"
+  (testing "remove-attr test"
+    (let [comp #(component "simple-div.html"
                           {[:div] (remove-attr :id)})]
-      (is (= "<div><span>test</span></div>"
+      (is (= "<div>test</div>"
              (render-dom comp)))))
   #_(testing "before test"
-    (let [comp (component "simple-div.html"
+    (let [comp #(component "simple-div.html"
                           {[:div] (before "success")})]
       (is (= "<span><span>success</span><div id=\"tmp\"><span>test</span></div></span>"
              (render-dom comp)))))
   #_(testing "after test"
-    (let [comp (component "simple-div.html"
+    (let [comp #(component "simple-div.html"
                           {[:div] (after "success")})]
       (is (= "<span><div id=\"tmp\"><span>test</span></div><span>success</span></span>"
              (render-dom comp)))))
-  #_(testing "add-class test"
-    (let [comp (component "class-span.html" [:span]
+  (testing "add-class test"
+    (let [comp #(component "class-span.html" [:span]
                           {[:#s] (add-class "suc")})]
-      (is (= "<span class=\"cl cls suc\" id=\"s\"><span>testing</span></span>"
+      (is (= "<span class=\"cl cls suc\" id=\"s\">testing</span>"
              (render-dom comp)))))
-  #_(testing "remove-class test"
-    (let [comp (component "class-span.html" [:span]
+  (testing "remove-class test"
+    (let [comp #(component "class-span.html" [:span]
                           {[:#s] (remove-class "cl")})]
-      (is (= "<span class=\" cls\" id=\"s\"><span>testing</span></span>"
+      (is (= "<span class=\" cls\" id=\"s\">testing</span>"
              (render-dom comp)))))
-  #_(testing "set-class test"
-    (let [comp (component "class-span.html" [:span]
+  (testing "set-class test"
+    (let [comp #(component "class-span.html" [:span]
                           {[:#s] (set-class "cl")})]
-      (is (= "<span class=\" cl\" id=\"s\"><span>testing</span></span>"
+      (is (= "<span class=\" cl\" id=\"s\">testing</span>"
              (render-dom comp)))))
-  #_(testing "set-style test"
-    (let [comp (component "style-span.html" [:span]
+  (testing "set-style test"
+    (let [comp #(component "style-span.html" [:span]
                           {[:#s] (set-style :display "none")})]
-      (is (= "<span style=\"color:red;display:none;\" id=\"s\"><span>testing</span></span>"
+      (is (= "<span style=\"color:red;display:none;\" id=\"s\">testing</span>"
              (render-dom comp)))))
-  #_(testing "remove-style test"
-    (let [comp (component "style-span.html" [:span]
+  (testing "remove-style test"
+    (let [comp #(component "style-span.html" [:span]
                           {[:#s] (remove-style :color)})]
-      (is (= "<span id=\"s\"><span>testing</span></span>"
+      (is (= "<span id=\"s\">testing</span>"
              (render-dom comp)))))
-  #_(testing "do-> test"
-    (let [comp (component "style-span.html" [:span]
+  (testing "do-> test"
+    (let [comp #(component "style-span.html" [:span]
                           {[:#s] (do->
                                   (remove-attr :id)
                                   (remove-style :color))})]
-      (is (= "<span><span>testing</span></span>"
+      (is (= "<span>testing</span>"
              (render-dom comp)))))
   #_(testing "wrap test"
-    (let [comp (component "wrap-test.html" [:span]
+    (let [comp #(component "wrap-test.html" [:span]
                           {[:#s] (wrap :div {:id "test"})})]
       (is (= "<div id=\"test\"><span id=\"s\"><span>testing</span></span></div>"
              (render-dom comp)))))
   #_(testing "unwrap test"
-    (let [comp (component "wrap-test.html" [:div]
+    (let [comp #(component "wrap-test.html" [:div]
                           {[:div] unwrap})]
       (is (= "<span id=\"s\"><span>testing</span></span>"
              (render-dom comp)))))
-  #_(testing "html test"
-    (let [comp (component "simple-div.html"
+  (testing "html test"
+    (let [comp #(component "simple-div.html"
                           {[:div] (content (html [:h1 {:class "t"}
                                                   [:span "t1"]]))})]
       (is (= "<div id=\"tmp\"><h1 class=\"t\"><span>t1</span></h1></div>"
              (render-dom comp)))))
-  #_(testing "html-content test"
-    (let [comp (component "simple-div.html"
+  (testing "html-content test"
+    (let [comp #(component "simple-div.html"
                           {[:div] (html-content "<h1>t1</h1><em><span>t2</span></em>")})]
       (is (= "<div id=\"tmp\"><h1>t1</h1><em><span>t2</span></em></div>"
              (render-dom comp))))))

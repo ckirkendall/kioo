@@ -1,5 +1,6 @@
 (ns kioo.reagent
-  (:require [kioo.core :refer [component*]]
+  (:require [kioo.core :refer [component* get-react-sym
+                               emit-node wrap-fragment]]
             [kioo.util :refer [convert-attrs]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -12,14 +13,6 @@
                          (assoc :attrs (convert-attrs (:attrs node))
                                 :content children)))))
 
-(defn emit-node [node children]
-  `(do [~(:tag node)
-        ~(:attrs node)
-        ~@children]))
-
-
-(defn wrap-fragment [tag child-sym]
-  `(do [~tag  nil ~child-sym]))
 
 
 (def reagent-emit-opts {:emit-trans emit-trans
