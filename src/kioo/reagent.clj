@@ -10,8 +10,7 @@
     (~(:trans node) ~(-> node
                          (dissoc :trans)
                          (assoc :attrs (convert-attrs (:attrs node))
-                                :content children
-                                :sym (get-om-sym (:tag node)))))))
+                                :content children)))))
 
 (defn emit-node [node children]
   `(do [~(:tag node)
