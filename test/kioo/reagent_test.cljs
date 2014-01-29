@@ -98,15 +98,15 @@
                           {[:div] (remove-attr :id)})]
       (is (= "<div>test</div>"
              (render-dom comp)))))
-  #_(testing "before test"
+  (testing "before test"
     (let [comp #(component "simple-div.html"
                           {[:div] (before "success")})]
-      (is (= "<span><span>success</span><div id=\"tmp\"><span>test</span></div></span>"
+      (is (= "<span><span>success</span><div id=\"tmp\">test</div></span>"
              (render-dom comp)))))
-  #_(testing "after test"
+  (testing "after test"
     (let [comp #(component "simple-div.html"
                           {[:div] (after "success")})]
-      (is (= "<span><div id=\"tmp\"><span>test</span></div><span>success</span></span>"
+      (is (= "<span><div id=\"tmp\">test</div><span>success</span></span>"
              (render-dom comp)))))
   (testing "add-class test"
     (let [comp #(component "class-span.html" [:span]
@@ -145,10 +145,10 @@
                           {[:#s] (wrap :div {:id "test"})})]
       (is (= "<div id=\"test\"><span id=\"s\"><span>testing</span></span></div>"
              (render-dom comp)))))
-  #_(testing "unwrap test"
+  (testing "unwrap test"
     (let [comp #(component "wrap-test.html" [:div]
                           {[:div] unwrap})]
-      (is (= "<span id=\"s\"><span>testing</span></span>"
+      (is (= "<span id=\"s\">testing</span>"
              (render-dom comp)))))
   (testing "html test"
     (let [comp #(component "simple-div.html"

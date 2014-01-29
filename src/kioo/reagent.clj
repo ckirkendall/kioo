@@ -7,11 +7,15 @@
 ;; This support for reagent
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn emit-trans [node children]
-  `(kioo.reagent/make-dom
-    (~(:trans node) ~(-> node
-                         (dissoc :trans)
-                         (assoc :attrs (convert-attrs (:attrs node))
-                                :content children)))))
+  `(let [res# (~(:trans node)
+               ~(-> node
+                    (dissoc :trans)
+                    (assoc :attrs (convert-attrs (:attrs node))
+                           :content children)))]
+     (println "RES#" res#)
+     (if (seq? res#)
+       (apply kioo.reagent/make-dom res#)
+       (kioo.reagent/make-dom res#))))
 
 
 

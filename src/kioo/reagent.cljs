@@ -17,7 +17,10 @@
         rnode (as-component rnode)]
     (if (empty? body)
       rnode
-      (cons rnode (make-dom body)))))
+      (let [res (apply make-dom body)]
+        (if (seq? res)
+          (cons rnode res)
+          (cons rnode (list res)))))))
 
 
 (def content core/content)
@@ -28,11 +31,12 @@
 ;;so they are call out specifically
 (defn after [& body]
   (fn [node]
-    (cons (make-dom node) body)))
+    (conj body node)))
 
 (defn before [& body]
   (fn [node]
-    (concat body [(make-dom node)])))
+    (println "NODE:" node " BODY:" body)
+    (reduce #(conj %1 %2) (list node) body)))
 
 (def substitute core/substitute)
 (def set-attr core/set-attr)
