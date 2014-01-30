@@ -24,7 +24,7 @@
 
 
 (def content core/content)
-(def append core/append)
+(def append core/append) 
 (def prepend core/prepend)
 
 ;;after and before need to to make-dom
@@ -35,7 +35,6 @@
 
 (defn before [& body]
   (fn [node]
-    (println "NODE:" node " BODY:" body)
     (reduce #(conj %1 %2) (list node) body)))
 
 (def substitute core/substitute)
@@ -47,7 +46,13 @@
 (def set-class core/set-class)
 (def add-class core/add-class)
 (def remove-class core/remove-class)
-(def wrap core/wrap)
+
+(defn wrap [tag attrs]
+  (fn [node]
+    {:tag tag
+     :attrs attrs
+     :content (make-dom node)}))
+
 (def unwrap core/unwrap)
 (def html core/html)
 (def html-content core/html-content)

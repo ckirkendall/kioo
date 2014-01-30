@@ -12,7 +12,6 @@
                     (dissoc :trans)
                     (assoc :attrs (convert-attrs (:attrs node))
                            :content children)))]
-     (println "RES#" res#)
      (if (seq? res#)
        (apply kioo.reagent/make-dom res#)
        (kioo.reagent/make-dom res#))))

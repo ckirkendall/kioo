@@ -113,10 +113,10 @@
 
 (defn wrap [tag attrs]
   (fn [node]
-    (make-dom {:tag tag
-                     :sym (aget js/React.DOM (name tag)) 
-                     :attrs (convert-attrs attrs)
-                     :content [(make-dom node)]})))
+    {:tag tag
+     :sym (aget js/React.DOM (name tag)) 
+     :attrs (convert-attrs attrs)
+     :content [(make-dom node)]}))
 
 (defn unwrap [node]
   (:content node))

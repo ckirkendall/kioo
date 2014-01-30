@@ -36,9 +36,7 @@
 
 (deftest render-test
   (testing "basic render test"
-    (let [comp #(let [x (component "simple-div.html" {})]
-                  (println x)
-                  x) ]
+    (let [comp #(component "simple-div.html" {})]
       (is (= "<div id=\"tmp\">test</div>"
              (render-dom comp)))))
   (testing "content replace"
@@ -140,10 +138,10 @@
                                   (remove-style :color))})]
       (is (= "<span>testing</span>"
              (render-dom comp)))))
-  #_(testing "wrap test"
+  (testing "wrap test"
     (let [comp #(component "wrap-test.html" [:span]
                           {[:#s] (wrap :div {:id "test"})})]
-      (is (= "<div id=\"test\"><span id=\"s\"><span>testing</span></span></div>"
+      (is (= "<div id=\"test\"><span id=\"s\">testing</span></div>"
              (render-dom comp)))))
   (testing "unwrap test"
     (let [comp #(component "wrap-test.html" [:div]

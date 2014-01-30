@@ -24,8 +24,8 @@
 
 (defn emit-node [node children]
   `(apply ~(get-react-sym (:tag node))
-        (cljs.core/clj->js ~(convert-attrs (:attrs node)))
-        (flatten-nodes ~children)))
+          (cljs.core/clj->js ~(convert-attrs (:attrs node)))
+          (flatten-nodes ~children)))
 
 
 (defn wrap-fragment [tag child-sym]
