@@ -80,7 +80,6 @@ To view the example:
 ```bash
 $ git clone https://github.com/ckirkendall/kioo.git
 $ cd kioo/example/om
-$ lein cljx
 $ lein cljsbuild once
 ```
 Once the javascript compiles you can open index.html in a browser.
@@ -147,7 +146,6 @@ To view the example:
 ```bash
 $ git clone https://github.com/ckirkendall/kioo.git
 $ cd kioo/example/reagent
-$ lein cljx
 $ lein cljsbuild once
 ```
 Once the javascript compiles you can open index.html in a browser.
