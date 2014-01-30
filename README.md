@@ -24,9 +24,9 @@ The biggest diffrence you will see between Enlive and Kioo is that Kioo only sup
 
 ## Quickstart tutorial
 
-### components
+### Working With Om
 
-Let's take a look at and example.  Here we work with David Nolans 
+Let's take a look at and example.  Here we work with David Nolan's 
 [om](https://github.com/swannodette/om).  
  
 ```html
@@ -46,10 +46,10 @@ Let's take a look at and example.  Here we work with David Nolans
 
 ```clj
 (ns kioo-example.core
-  (:require [kioo.core :refer [content set-attr do-> substitute]]
+  (:require [kioo.om :refer [content set-attr do-> substitute]]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true])
-  (:require-macros [kioo.core :as kioo]))
+  (:require-macros [kioo.om :as kioo]))
 
 (defn my-nav-item [[caption func]]
   (kioo/component "main.html" [:.nav-item]
@@ -68,7 +68,8 @@ Let's take a look at and example.  Here we work with David Nolans
                                       (:navigation data)))
      [:.content] (content (:content data))}))
 
-(def app-state (atom {:content    "Hello World"
+(def app-state (atom {:heading    "main"
+                      :content    "Hello World"
                       :navigation [["home" #(js/alert %)]
                                    ["next" #(js/alert %)]]}))
 
@@ -78,7 +79,7 @@ Let's take a look at and example.  Here we work with David Nolans
 To view the example:
 ```bash
 $ git clone https://github.com/ckirkendall/kioo.git
-$ cd kioo/example
+$ cd kioo/example/om
 $ lein cljx
 $ lein cljsbuild once
 ```
@@ -87,6 +88,69 @@ Once the javascript compiles you can open index.html in a browser.
 For a more fleshed-out example, please see the Kioo implementation of
 [TodoMVC](http://todomvc.com)
 [exists here](http://github.com/ckirkendall/todomvc/blob/gh-pages/labs/architecture-examples/kioo/src/todomvc/app.cljs).
+
+### Working With Reagent
+
+Here we work with Dan Holmsand's
+[Reagent](https://github.com/holmsand/reagent).  
+ 
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <body>
+    <header>
+      <h1>Header placeholder</h1>
+      <ul id="navigation">
+        <li class="nav-item"><a href="#">Placeholder</a></li>
+      </ul>
+    </header>
+    <div class="content">place holder</div>
+  </body>
+</html>
+```
+
+```clj
+(ns kioo-example.core
+  (:require [kioo.reagent :refer [content set-attr do-> substitute]]
+            [reagent.core :as reagent :refer [atom]])
+  (:require-macros [kioo.reagent :as kioo]))
+
+(declare data nav)
+
+(defn my-nav-item [[caption func]]
+  (kioo/component "main.html" [:.nav-item]
+    {[:a] (do-> (content caption)
+                (set-attr :on-click func))}))
+
+
+(defn my-header []
+  (kioo/component "main.html" [:header]
+    {[:h1] (content (:header @data))
+     [:ul] (content (map my-nav-item (:navigation @nav)))}))
+
+(defn my-page []
+  (kioo/component "main.html"
+     {[:header] (substitute [my-header])
+      [:.content] (content (:content @data))}))
+
+(def data (atom {:header "main"
+                 :content "Hello World"}))
+(def nav (atom {:navigation [["home" #(swap! data
+                                             assoc :content "home")]
+                             ["next" #(swap! data
+                                             assoc :content "next")]]}))
+
+(reagent/render-component [my-page] (.-body js/document))
+```
+
+To view the example:
+```bash
+$ git clone https://github.com/ckirkendall/kioo.git
+$ cd kioo/example/reagent
+$ lein cljx
+$ lein cljsbuild once
+```
+Once the javascript compiles you can open index.html in a browser.
 
 
 ### Selector Syntax

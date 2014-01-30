@@ -1,8 +1,8 @@
 (ns kioo-example.core
-  (:require [kioo.core :refer [content set-attr do-> substitute]]
+  (:require [kioo.om :refer [content set-attr do-> substitute]]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true])
-  (:require-macros [kioo.core :as kioo]))
+  (:require-macros [kioo.om :as kioo]))
 
 (defn my-nav-item [[caption func]]
   (kioo/component "main.html" [:.nav-item]
@@ -22,7 +22,8 @@
                                         (:navigation data)))
        [:.content] (content (:content data))})))
 
-(def app-state (atom {:content    "Hello World"
+(def app-state (atom {:heading "main"
+                      :content    "Hello World"
                       :navigation [["home" #(js/alert %)]
                                    ["next" #(js/alert %)]]}))
 
