@@ -103,11 +103,12 @@
 (defn compile-node
   "Emits the compiled sturcure for a single node & its children"
   [node emit-opts]
-  (let [children (compile (:content node) emit-opts)
-        emit (if (:trans node)
-               (:emit-trans emit-opts)
-               (:emit-node emit-opts))]
-    (emit node children)))
+  (when (:tag node)
+    (let [children (compile (:content node) emit-opts)
+          emit (if (:trans node)
+                 (:emit-trans emit-opts)
+                 (:emit-node emit-opts))]
+      (emit node children))))
 
 
 (defn compile
