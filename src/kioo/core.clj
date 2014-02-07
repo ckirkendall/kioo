@@ -94,6 +94,8 @@
                 root
                 (select root (eval-selector sel)))
         child-sym (gensym "ch")]
+    (assert (or (empty? trans-lst) (map? trans-lst))
+            "Transforms must be a map - Kioo only supports order independent transforms")
     `(let [~child-sym ~(compile (map-trans start trans-lst) emit-opts)]
        (if (= 1 (count ~child-sym))
          (first ~child-sym)
@@ -118,3 +120,28 @@
         cnodes (vec (map #(if (map? %) (compile-node % emit-opts) %)
                               nodes))]
     `(kioo.core/flatten-nodes ~cnodes)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Enlive style template & snippet
+;;
+;; these were created to provide the ability
+;; to share templates from between server
+;; and client using cljx
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn snippet* [path body args emit-opts]
+  `(fn [~@args]
+     ~(component* path body emit-opts)))
+
+(defmacro snippet [path sel args trans]
+  (snippet* path (list sel trans) args react-emit-opts))
+
+(defmacro template [path args trans]
+  (snippet* path trans args react-emit-opts))
+
+(defmacro defsnippet [sym path sel args trans]
+  `(def sym ~(snippet* path (list sel trans) args react-emit-opts)))
+
+(defmacro deftemplate [sym path args trans]
+  `(def sym ~(snippet* path args react-emit-opts)))
+
