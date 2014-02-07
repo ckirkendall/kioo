@@ -1,6 +1,7 @@
 (ns kioo.reagent
   (:require [kioo.core :refer [component* get-react-sym
-                               emit-node wrap-fragment]]
+                               emit-node wrap-fragment
+                               snippet*]]
             [kioo.util :refer [convert-attrs]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -26,3 +27,16 @@
   "reagent base component definition"
   [path & body]
   (component* path body reagent-emit-opts))
+
+
+(defmacro snippet [path sel args trans]
+  (snippet* path (list sel trans) args reagent-emit-opts))
+
+(defmacro template [path args trans]
+  (snippet* path trans args reagent-emit-opts))
+
+(defmacro defsnippet [sym path sel args trans]
+  `(def sym ~(snippet* path (list sel trans) args reagent-emit-opts)))
+
+(defmacro deftemplate [sym path args trans]
+  `(def sym ~(snippet* path args reagent-emit-opts)))
