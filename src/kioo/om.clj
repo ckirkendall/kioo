@@ -1,5 +1,5 @@
 (ns kioo.om
-  (:require [kioo.core :refer [component*]]
+  (:require [kioo.core :refer [component* snippet*]]
             [kioo.util :refer [convert-attrs]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -38,3 +38,16 @@
   "React base component definition"
   [path & body]
   (component* path body om-emit-opts))
+
+
+(defmacro snippet [path sel args trans]
+  (snippet* path (list sel trans) args om-emit-opts))
+
+(defmacro template [path args trans]
+  (snippet* path trans args om-emit-opts))
+
+(defmacro defsnippet [sym path sel args trans]
+  `(def sym ~(snippet* path (list sel trans) args om-emit-opts)))
+
+(defmacro deftemplate [sym path args trans]
+  `(def sym ~(snippet* path args om-emit-opts)))
