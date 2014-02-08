@@ -7,7 +7,8 @@
                                html html-content]]
             [kioo.test :refer [render-dom]]
             [goog.dom :as gdom])
-  (:require-macros [kioo.core :refer [component]]
+  (:require-macros [kioo.core :refer [component  snippet template
+                                    defsnippet deftemplate]]
                    [cemerick.cljs.test :refer [are is deftest testing]]))
 
 
@@ -118,3 +119,44 @@
                           {[:div] (html-content "<h1>t1</h1><em><span>t2</span></em>")})]
       (is (= "<div id=\"tmp\"><h1>t1</h1><em><span>t2</span></em></div>"
              (render-dom comp))))))
+
+
+
+(defsnippet snip1 "wrap-test.html" [:span] [] {})
+(deftemplate tmp1 "simple-div.html" [] {})
+(defsnippet snip2 "wrap-test.html" [:span] [val]
+  {[:span] (content val)})
+(deftemplate tmp2 "simple-div.html" [val]
+  {[:div] (content val)})
+
+(deftest snippet-template-test
+  (testing "basic setup for snippet"
+    (let [comp (snippet "wrap-test.html" [:span] [] {})]
+      (is (= "<span id=\"s\">testing</span>"
+             (render-dom (comp))))))
+  (testing "basic setup for template"
+    (let [comp (template "simple-div.html" [] {})]
+      (is (= "<div id=\"tmp\">test</div>"
+             (render-dom (comp))))))
+  (testing "simple transorm for snippet"
+    (let [comp (snippet "wrap-test.html" [:span] [val]
+                        {[:span] (content val)})]
+      (is (= "<span id=\"s\">test</span>"
+             (render-dom (comp "test"))))))
+  (testing "simple transform for template"
+    (let [comp (template "simple-div.html" [val]
+                         {[:div] (content val)})]
+      (is (= "<div id=\"tmp\">success</div>"
+             (render-dom (comp "success"))))))
+  (testing "basic setup for defsnippet"
+    (is (= "<span id=\"s\">testing</span>"
+           (render-dom (snip1)))))
+  (testing "basic setup for deftemplate"
+    (is (= "<div id=\"tmp\">test</div>"
+           (render-dom (tmp1)))))
+  (testing "simple transfrom for defsnippet"
+    (is (= "<span id=\"s\">test</span>"
+           (render-dom (snip2 "test")))))
+  (testing "simple transform for deftemplate"
+    (is (= "<div id=\"tmp\">success</div>"
+           (render-dom (tmp2 "success"))))))
