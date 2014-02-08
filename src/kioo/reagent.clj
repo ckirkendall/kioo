@@ -33,10 +33,10 @@
   (snippet* path (list sel trans) args reagent-emit-opts))
 
 (defmacro template [path args trans]
-  (snippet* path trans args reagent-emit-opts))
+  (snippet* path (list trans) args reagent-emit-opts))
 
 (defmacro defsnippet [sym path sel args trans]
-  `(def sym ~(snippet* path (list sel trans) args reagent-emit-opts)))
+  `(def ~sym ~(snippet* path (list sel trans) args reagent-emit-opts)))
 
 (defmacro deftemplate [sym path args trans]
-  `(def sym ~(snippet* path args reagent-emit-opts)))
+  `(def ~sym ~(snippet* path (list trans) args reagent-emit-opts)))
