@@ -130,18 +130,18 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn snippet* [path body args emit-opts]
-  `(fn [~@args]
+  `(fn ~args
      ~(component* path body emit-opts)))
 
 (defmacro snippet [path sel args trans]
   (snippet* path (list sel trans) args react-emit-opts))
 
 (defmacro template [path args trans]
-  (snippet* path trans args react-emit-opts))
+  (snippet* path (list trans) args react-emit-opts))
 
 (defmacro defsnippet [sym path sel args trans]
-  `(def sym ~(snippet* path (list sel trans) args react-emit-opts)))
+  `(def ~sym ~(snippet* path (list sel trans) args react-emit-opts)))
 
 (defmacro deftemplate [sym path args trans]
-  `(def sym ~(snippet* path args react-emit-opts)))
+  `(def ~sym ~(snippet* path (list trans) args react-emit-opts)))
 
