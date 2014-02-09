@@ -40,14 +40,14 @@
   (component* path body om-emit-opts))
 
 
-(defmacro snippet [path sel args trans]
-  (snippet* path (list sel trans) args om-emit-opts))
+(defmacro snippet [path sel args & trans]
+  (snippet* path (cons sel trans) args om-emit-opts))
 
-(defmacro template [path args trans]
-  (snippet* path (list trans) args om-emit-opts))
+(defmacro template [path args & trans]
+  (snippet* path  trans args om-emit-opts))
 
-(defmacro defsnippet [sym path sel args trans]
-  `(def ~sym ~(snippet* path (list sel trans) args om-emit-opts)))
+(defmacro defsnippet [sym path sel args & trans]
+  `(def ~sym ~(snippet* path (cons sel trans) args om-emit-opts)))
 
-(defmacro deftemplate [sym path args trans]
-  `(def ~sym ~(snippet* path (list trans) args om-emit-opts)))
+(defmacro deftemplate [sym path args & trans]
+  `(def ~sym ~(snippet* path trans args om-emit-opts)))
