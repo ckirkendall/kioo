@@ -89,6 +89,7 @@
   (let [[sel trans-lst] (if (map? (first body))
                           [[:body :> any-node] (first body)]
                           body)
+        sel (if sel sel [:body :> any-node])
         root (html-resource path)
         start (if (= :root sel)
                 root
@@ -133,15 +134,15 @@
   `(fn ~args
      ~(component* path body emit-opts)))
 
-(defmacro snippet [path sel args trans]
-  (snippet* path (list sel trans) args react-emit-opts))
+(defmacro snippet [path sel args & trans]
+  (snippet* path (cons sel trans) args react-emit-opts))
 
-(defmacro template [path args trans]
-  (snippet* path (list trans) args react-emit-opts))
+(defmacro template [path args & trans]
+  (snippet* path trans args react-emit-opts))
 
-(defmacro defsnippet [sym path sel args trans]
-  `(def ~sym ~(snippet* path (list sel trans) args react-emit-opts)))
+(defmacro defsnippet [sym path sel args & trans]
+  `(def ~sym ~(snippet* path (cons sel trans) args react-emit-opts)))
 
-(defmacro deftemplate [sym path args trans]
-  `(def ~sym ~(snippet* path (list trans) args react-emit-opts)))
+(defmacro deftemplate [sym path args & trans]
+  `(def ~sym ~(snippet* path trans args react-emit-opts)))
 

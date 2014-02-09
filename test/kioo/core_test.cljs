@@ -131,11 +131,11 @@
 
 (deftest snippet-template-test
   (testing "basic setup for snippet"
-    (let [comp (snippet "wrap-test.html" [:span] [] {})]
+    (let [comp (snippet "wrap-test.html" [:span] [])]
       (is (= "<span id=\"s\">testing</span>"
              (render-dom (comp))))))
   (testing "basic setup for template"
-    (let [comp (template "simple-div.html" [] {})]
+    (let [comp (template "simple-div.html" [])]
       (is (= "<div id=\"tmp\">test</div>"
              (render-dom (comp))))))
   (testing "simple transorm for snippet"
