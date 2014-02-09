@@ -89,7 +89,7 @@
   (let [[sel trans-lst] (if (map? (first body))
                           [[:body :> any-node] (first body)]
                           body)
-        sel (if sel sel [:body :> any-node])
+        sel (or sel [:body :> any-node])
         root (html-resource path)
         start (if (= :root sel)
                 root
