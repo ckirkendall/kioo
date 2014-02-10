@@ -13,7 +13,7 @@ Kioo is Swahili for mirror. Facebook's React library is built around the idea th
 All artifacts are published to [clojars](https://clojars.org/kioo). Latest version is `0.1.0`:
 
 ```
-[kioo "0.1.0"]
+[kioo "0.2.0"]
 ```
 
 ## Concepts
@@ -249,6 +249,8 @@ Not supported yet
 ;; them and combines them with the elements matched by dest-selector.
 (move)
 ```
+
+
 
 ## Thanks
 
