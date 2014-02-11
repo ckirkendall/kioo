@@ -4,6 +4,25 @@
             [sablono.core :as sab :include-macros true]))
 
 
+(defn value-component[renderer]
+  (let [react-component
+        (.createClass js/React
+           #js {:shouldComponentUpdate
+                (fn [next-props _]
+                  (this-as this
+                           (not= (aget (.-props this) "value")
+                                 (aget next-props "value"))))
+                :render
+                (fn []
+                  (this-as this
+                           (binding [*component* this]
+                             (apply renderer
+                                    (aget (.-props this) "value")
+                                    (aget (.-props this) "statics")))))})]
+    (fn [value & static-args]
+      (react-component #js {:value value :statics static-args}))))
+
+
 (defn flatten-nodes [nodes]
   (reduce #(if (seq? %2)
              (concat %2 %1)
@@ -129,3 +148,5 @@
     (let [children  (map #(-> % (as-hiccup) (sab/html))
                          (parse-fragment content))]
       (assoc node :content children))))
+
+

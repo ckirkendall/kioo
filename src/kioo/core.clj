@@ -130,19 +130,28 @@
 ;; and client using cljx
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn snippet* [path body args emit-opts]
-  `(fn ~args
-     ~(component* path body emit-opts)))
+
+(defn snippet*
+  ([path body args emit-opts]
+     (snippet* path body args emit-opts false))
+  ([path body args emit-opts check-val?]
+     (if check-val?
+       `(kioo.core/value-component
+         (fn ~args
+           ~(component* path body emit-opts)))
+       `(fn ~args
+          ~(component* path body emit-opts)))))
 
 (defmacro snippet [path sel args & trans]
-  (snippet* path (cons sel trans) args react-emit-opts))
+  (snippet* path (cons sel trans) args react-emit-opts true))
 
 (defmacro template [path args & trans]
-  (snippet* path trans args react-emit-opts))
+  (snippet* path trans args react-emit-opts true))
 
 (defmacro defsnippet [sym path sel args & trans]
-  `(def ~sym ~(snippet* path (cons sel trans) args react-emit-opts)))
+  `(def ~sym
+     ~(snippet* path (cons sel trans) args react-emit-opts true)))
 
 (defmacro deftemplate [sym path args & trans]
-  `(def ~sym ~(snippet* path trans args react-emit-opts)))
+  `(def ~sym ~(snippet* path trans args react-emit-opts true)))
 
