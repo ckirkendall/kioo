@@ -26,7 +26,7 @@ The biggest diffrence you will see between Enlive and Kioo is that Kioo only sup
 
 ### Working With Om
 
-Let's take a look at and example.  Here we work with David Nolan's 
+Let's take a look at and example.  Here we work with David Nolen's 
 [om](https://github.com/swannodette/om).  
  
 ```html
