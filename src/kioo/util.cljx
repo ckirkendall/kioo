@@ -2,6 +2,30 @@
   (:refer-clojure :exclude [replace])
   (:require [clojure.string :refer [replace]]))
 
+#+cljs
+(def ^:dynamic *component* nil)
+
+#+cljs
+(def wrap-component
+  "Wrapper component used to mix-in lifecycle methods
+   This was pulled from quiescent"
+  (.createClass js/React
+     #js {:render
+          (fn [] (this-as this (aget (.-props this) "wrappee")))
+          :componentDidUpdate
+          (fn [prev-props prev-state node]
+            (this-as this
+              (when-let [f (aget (.-props this) "onUpdate")]
+                (binding [*component* this]
+                  (f node)))))
+          :componentDidMount
+          (fn [node]
+            (this-as this
+              (when-let [f (aget (.-props this) "onMount")]
+                       (f node))))}))
+
+
+
 (defn convert-attrs [attrs]
   (let [style  (when (:style attrs)
                  (let [vals (re-seq #"\s*([^:;]*)[:][\s]*([^;]+)"
