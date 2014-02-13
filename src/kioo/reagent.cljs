@@ -2,7 +2,7 @@
   (:require [kioo.core :as core :refer [flatten-nodes]]
             [reagent.impl.template :refer [as-component]]))
 
-(defn make-dom [node & body]
+(defn make-dom [node]
   (let [rnode (if (map? node)
                 (let [c (:content node)]
                   (cond
@@ -13,14 +13,8 @@
                                     [(:tag node) (:attrs node)]
                                     c)
                    :else [(:tag node) (:attrs node) c])) 
-                node)
-        rnode (as-component rnode)]
-    (if (empty? body)
-      rnode
-      (let [res (apply make-dom body)]
-        (if (seq? res)
-          (cons rnode res)
-          (cons rnode (list res)))))))
+                node)]
+    (as-component rnode)))
 
 
 (def content core/content)
