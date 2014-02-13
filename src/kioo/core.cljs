@@ -1,5 +1,5 @@
 (ns kioo.core
-  (:require [kioo.util :refer [convert-attrs]]
+  (:require [kioo.util :refer [convert-attrs wrap-component *component*]]
             [hickory.core :as hic :refer [parse-fragment as-hiccup]]
             [sablono.core :as sab :include-macros true]))
 
@@ -30,15 +30,32 @@
           '()
           (reverse nodes)))
 
-(defn make-dom [node & body]
-  (let [rnode (if (map? node)
-                (apply (:sym node)
-                 (clj->js (:attrs node))
-                 (flatten-nodes (:content node)))
-                node)]
-    (if (empty? body)
-      rnode
-      (cons rnode (make-dom body)))))
+(defn make-dom [node]
+  (if (map? node)
+      (apply (:sym node)
+             (clj->js (:attrs node))
+             (flatten-nodes (:content node)))
+      node))
+
+(defn to-list [vals]
+  (if (seq? vals)
+    vals
+    (list vals)))
+
+(defn handle-wrapper [dom-fn]
+  (fn hw [node & body]
+    (let [rnode (cond
+                 (seq? node) (apply hw node)
+                 (and (map? node) (not (empty? (:revents node))))  
+                 (let [revents (:revents node)]
+                   (wrap-component (clj->js (assoc revents
+                                              :wrappe (dom-fn node)))))
+                 :else (dom-fn node))]
+      (if (empty? body)
+        rnode
+        (cons rnode (to-list (apply hw body)))))))
+
+
 
 
 (defn content [& body]

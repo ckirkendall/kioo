@@ -15,7 +15,7 @@
 
 
 (defn emit-trans [node children]
-  `(kioo.core/make-dom
+  `((kioo.core/handle-wrapper kioo.core/make-dom)
     (~(:trans node) ~(-> node
                          (dissoc :trans)
                          (assoc :attrs (convert-attrs (:attrs node))
