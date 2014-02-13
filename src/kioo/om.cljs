@@ -3,14 +3,11 @@
             [kioo.core :as core :refer [flatten-nodes]]))
 
 (defn make-dom [node & body]
-  (let [rnode (if (map? node)
-                (apply (:sym node)
-                 (clj->js (:attrs node))
-                 (flatten-nodes (:content node)))
-                node)]
-    (if (empty? body)
-      rnode
-      (cons rnode (make-dom body)))))
+  (if (map? node)
+      (apply (:sym node)
+             (clj->js (:attrs node))
+             (flatten-nodes (:content node)))
+      node))
 
 
 (def content core/content)
