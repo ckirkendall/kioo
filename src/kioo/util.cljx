@@ -1,29 +1,43 @@
 (ns kioo.util
   (:refer-clojure :exclude [replace])
-  (:require [clojure.string :refer [replace]]))
+  (:require [clojure.string :refer [split replace capitalize]]))
 
 #+cljs
 (def ^:dynamic *component* nil)
 
 #+cljs
-(def wrap-component
+(def WrapComponent
   "Wrapper component used to mix-in lifecycle methods
    This was pulled from quiescent"
   (.createClass js/React
      #js {:render
-          (fn [] (this-as this (aget (.-props this) "wrappee")))
+          (fn []
+            (this-as this (aget (.-props this) "wrappee")))
           :componentDidUpdate
           (fn [prev-props prev-state node]
             (this-as this
-              (when-let [f (aget (.-props this) "onUpdate")]
+              (when-let [f (or (aget (.-props this) "onUpdate")
+                               (aget (.-props this) "onRender"))]
                 (binding [*component* this]
                   (f node)))))
           :componentDidMount
           (fn [node]
             (this-as this
-              (when-let [f (aget (.-props this) "onMount")]
-                       (f node))))}))
+              (when-let [f (or (aget (.-props this) "onMount")
+                               (aget (.-props this) "onRender"))]
+                (f node))))}))
 
+
+(def dont-camel-case #{"aria" "data"})
+
+(defn camel-case [dashed]
+  (if (string? dashed)
+    dashed
+    (let [name-str (name dashed)
+          [start & parts] (split name-str #"-")]
+      (if (dont-camel-case start)
+        name-str
+        (apply str start (map capitalize parts))))))
 
 
 (defn convert-attrs [attrs]

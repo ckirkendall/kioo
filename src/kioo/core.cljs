@@ -1,5 +1,6 @@
 (ns kioo.core
-  (:require [kioo.util :refer [convert-attrs wrap-component *component*]]
+  (:require [kioo.util :refer [convert-attrs WrapComponent *component*
+                               camel-case]]
             [hickory.core :as hic :refer [parse-fragment as-hiccup]]
             [sablono.core :as sab :include-macros true]))
 
@@ -46,16 +47,14 @@
   (fn hw [node & body]
     (let [rnode (cond
                  (seq? node) (apply hw node)
-                 (and (map? node) (not (empty? (:revents node))))  
-                 (let [revents (:revents node)]
-                   (wrap-component (clj->js (assoc revents
-                                              :wrappe (dom-fn node)))))
+                 (and (map? node) (not (empty? (:events node))))  
+                 (let [revents (:events node)]
+                   (WrapComponent (clj->js (assoc revents
+                                             :wrappee (dom-fn node)))))
                  :else (dom-fn node))]
       (if (empty? body)
         rnode
         (cons rnode (to-list (apply hw body)))))))
-
-
 
 
 (defn content [& body]
@@ -166,4 +165,16 @@
                          (parse-fragment content))]
       (assoc node :content children))))
 
+(def react-events #{"onRender" "onUpdate" "onMount"})
 
+(defn listen [& events+fns]
+  (let [pairs (map (fn [[k v]] [(camel-case k) v])
+                   (partition 2 events+fns))
+        [rev sev] (reduce (fn [[r s] [k v]]
+                            (if (react-events k)
+                              [(assoc r k v) s]
+                              [r (assoc s k v)])) [] pairs)]
+    (fn [node]
+      (assoc node
+        :attrs (merge (:attrs node) sev)
+        :events (merge (:events node) rev)))))
