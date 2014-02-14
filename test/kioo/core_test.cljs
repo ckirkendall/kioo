@@ -16,8 +16,12 @@
   (testing "basic render test"
     (let [comp (component "simple-div.html" {}) ]
       (is (= "<div id=\"tmp\">test</div>" (render-dom comp)))))
+  (testing "basic formatted render test"
+    (let [comp (component "formatted-div.html" {}) ]
+      (is (= "<div id=\"tmp\"><span>This is some the text</span><ul><li class=\"some-class\" id=\"some-id\">Item 1</li><li>Item 2</li></ul></div>"
+             (render-dom comp)))))
   (testing "content replace"
-    (let [comp (component "simple-div.html" 
+    (let [comp (component "simple-div.html"
                           {[:div] (content "success")})]
       (is (= "<div id=\"tmp\">success</div>" (render-dom comp)))))
   (testing "first-of-type naked symbol"

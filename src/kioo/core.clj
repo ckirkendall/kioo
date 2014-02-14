@@ -1,8 +1,12 @@
 (ns kioo.core
   (:refer-clojure :exclude [compile])
   (:require [kioo.util :refer [convert-attrs]]
-            [net.cgrand.enlive-html :refer [at html-resource select
-                                            any-node]]))
+            [net.cgrand.enlive-html :refer [at select
+                                            *options*
+                                            get-resource
+                                            any-node]])
+  (:import java.io.DataInputStream)
+  (:import java.io.ByteArrayInputStream))
 
 (declare compile component*)
 
@@ -54,7 +58,7 @@
                            (cljs.core/-> node
                                (~(:trans node))
                                (~trans))))
-      (assoc node :trans trans)))) 
+      (assoc node :trans trans))))
 
 
 (defn resolve-enlive-var [sym]
@@ -90,7 +94,16 @@
                           [[:body :> any-node] (first body)]
                           body)
         sel (or sel [:body :> any-node])
-        root (html-resource path)
+        pre-stream (-> (clojure.lang.RT/baseLoader)
+                   (.getResourceAsStream path)
+                   (DataInputStream.))
+        html (loop [html ""]
+               (if (> (.available pre-stream) 0)
+                 (recur (str html (clojure.string/trim
+                                   (.readLine pre-stream))) )
+                 html))
+        post-stream (ByteArrayInputStream. (.getBytes html))
+        root (get-resource post-stream (:parser *options*))
         start (if (= :root sel)
                 root
                 (select root (eval-selector sel)))
@@ -154,4 +167,3 @@
 
 (defmacro deftemplate [sym path args & trans]
   `(def ~sym ~(snippet* path trans args react-emit-opts true)))
-
