@@ -4,7 +4,7 @@
                                remove-attr before after do->
                                set-style remove-style add-class
                                remove-class wrap unwrap set-class
-                               html html-content]]
+                               html html-content listen]]
             [reagent.core :as reagent :refer [atom]]
             [kioo.util :as util]
             [goog.dom :as gdom])
@@ -159,7 +159,15 @@
     (let [comp #(component "simple-div.html"
                           {[:div] (html-content "<h1>t1</h1><em><span>t2</span></em>")})]
       (is (= "<div id=\"tmp\"><h1>t1</h1><em><span>t2</span></em></div>"
-             (render-dom comp))))))
+             (render-dom comp)))))
+  (testing "listen on render"
+    (let [atm (atom "fail")
+          comp (fn []
+                 (component "simple-div.html"
+                            {[:div] (listen :on-render
+                                            #(reset! atm "success"))}))]
+      (render-dom comp)
+      (is (= "success" @atm)))))
 
 
 (defsnippet snip1 "wrap-test.html" [:span] [] {})
