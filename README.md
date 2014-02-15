@@ -46,7 +46,7 @@ Let's take a look at and example.  Here we work with David Nolen's
 
 ```clj
 (ns kioo-example.core
-  (:require [kioo.om :refer [content set-attr do-> substitute]]
+  (:require [kioo.om :refer [content set-attr do-> substitute listen]]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true])
   (:require-macros [kioo.om :as kioo]))
@@ -54,7 +54,7 @@ Let's take a look at and example.  Here we work with David Nolen's
 (defn my-nav-item [[caption func]]
   (kioo/component "main.html" [:.nav-item]
     {[:a] (do-> (content caption)
-                (set-attr :onClick func))}))
+                (listen :on-click func))}))
 
 
 (defn my-header [heading nav-elms]
@@ -119,7 +119,7 @@ Here we work with Dan Holmsand's
 (defn my-nav-item [[caption func]]
   (kioo/component "main.html" [:.nav-item]
     {[:a] (do-> (content caption)
-                (set-attr :on-click func))}))
+                (listen :on-click func))}))
 
 
 (defn my-header []
