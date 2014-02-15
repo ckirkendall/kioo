@@ -110,7 +110,8 @@ Here we work with Dan Holmsand's
 
 ```clj
 (ns kioo-example.core
-  (:require [kioo.reagent :refer [content set-attr do-> substitute]]
+  (:require [kioo.reagent :refer [content set-attr do-> substitute 
+                                  listen]]
             [reagent.core :as reagent :refer [atom]])
   (:require-macros [kioo.reagent :as kioo]))
 
