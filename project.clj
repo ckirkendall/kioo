@@ -18,7 +18,7 @@
   :profiles {:dev {:plugins [[com.keminglabs/cljx "0.3.2"] ;; Must be before Austin: https://github.com/cemerick/austin/issues/37
                              [com.cemerick/austin "0.1.3"]
                              [com.cemerick/clojurescript.test "0.2.1"]
-                             [lein-cljsbuild "1.0.1"]]
+                             [lein-cljsbuild "1.0.2"]]
                    :hooks [cljx.hooks leiningen.cljsbuild]
                    :cljx {:builds [{:source-paths ["src"]
                                     :output-path "target/classes"
