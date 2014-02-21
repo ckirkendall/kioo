@@ -18,27 +18,27 @@
 (deftest render-test
   (testing "basic render test"
     (let [comp (component "simple-div.html" {}) ]
-      (is (= "<div id=\"tmp\"><span>test</span></div>"
+      (is (= "<div id=\"tmp\">test</div>"
              (render-dom comp)))))
   (testing "content replace"
     (let [comp (component "simple-div.html" 
                           {[:div] (content "success")})]
-      (is (= "<div id=\"tmp\"><span>success</span></div>"
+      (is (= "<div id=\"tmp\">success</div>"
              (render-dom comp)))))
   (testing "first-of-type naked symbol"
     (let [comp (component "list.html" [:ul [:li first-of-type]] {})]
-      (is (= "<li><span>1</span></li>" (render-dom comp)))))
+      (is (= "<li>1</li>" (render-dom comp)))))
   (testing "attr= content replace"
     (let [comp (component "simple-attr-div.html"
                           {[(attr= :data-id "tmp")]
                            (content "success")})]
-      (is (= "<div data-id=\"tmp\"><span>success</span></div>"
+      (is (= "<div data-id=\"tmp\">success</div>"
              (render-dom comp)))))
   (testing "attr? content replace"
     (let [comp (component "simple-attr-div.html"
                           {[(attr? :data-id)]
                            (content "success")})]
-      (is (= "<div data-id=\"tmp\"><span>success</span></div>"
+      (is (= "<div data-id=\"tmp\">success</div>"
              (render-dom comp)))))
   (testing "append test"
     (let [comp (component "simple-div.html"
@@ -56,64 +56,64 @@
   (testing "set-attr test"
     (let [comp (component "simple-div.html"
                           {[:div] (set-attr :id "success")})]
-      (is (= "<div id=\"success\"><span>test</span></div>"
+      (is (= "<div id=\"success\">test</div>"
              (render-dom comp)))))
   (testing "remove-attr test"
     (let [comp (component "simple-div.html"
                           {[:div] (remove-attr :id)})]
-      (is (= "<div><span>test</span></div>"
+      (is (= "<div>test</div>"
              (render-dom comp)))))
   (testing "before test"
     (let [comp (component "simple-div.html"
                           {[:div] (before "success")})]
-      (is (= "<span><span>success</span><div id=\"tmp\"><span>test</span></div></span>"
+      (is (= "<span><span>success</span><div id=\"tmp\">test</div></span>"
              (render-dom comp)))))
   (testing "after test"
     (let [comp (component "simple-div.html"
                           {[:div] (after "success")})]
-      (is (= "<span><div id=\"tmp\"><span>test</span></div><span>success</span></span>"
+      (is (= "<span><div id=\"tmp\">test</div><span>success</span></span>"
              (render-dom comp)))))
   (testing "add-class test"
     (let [comp (component "class-span.html" [:span]
                           {[:#s] (add-class "suc")})]
-      (is (= "<span class=\"cl cls suc\" id=\"s\"><span>testing</span></span>"
+      (is (= "<span class=\"cl cls suc\" id=\"s\">testing</span>"
              (render-dom comp)))))
   (testing "remove-class test"
     (let [comp (component "class-span.html" [:span]
                           {[:#s] (remove-class "cl")})]
-      (is (= "<span class=\" cls\" id=\"s\"><span>testing</span></span>"
+      (is (= "<span class=\" cls\" id=\"s\">testing</span>"
              (render-dom comp)))))
   (testing "set-class test"
     (let [comp (component "class-span.html" [:span]
                           {[:#s] (set-class "cl")})]
-      (is (= "<span class=\" cl\" id=\"s\"><span>testing</span></span>"
+      (is (= "<span class=\" cl\" id=\"s\">testing</span>"
              (render-dom comp)))))
   (testing "set-style test"
     (let [comp (component "style-span.html" [:span]
                           {[:#s] (set-style :display "none")})]
-      (is (= "<span style=\"color:red;display:none;\" id=\"s\"><span>testing</span></span>"
+      (is (= "<span style=\"color:red;display:none;\" id=\"s\">testing</span>"
              (render-dom comp)))))
   (testing "remove-style test"
     (let [comp (component "style-span.html" [:span]
                           {[:#s] (remove-style :color)})]
-      (is (= "<span id=\"s\"><span>testing</span></span>"
+      (is (= "<span id=\"s\">testing</span>"
              (render-dom comp)))))
   (testing "do-> test"
     (let [comp (component "style-span.html" [:span]
                           {[:#s] (do->
                                   (remove-attr :id)
                                   (remove-style :color))})]
-      (is (= "<span><span>testing</span></span>"
+      (is (= "<span>testing</span>"
              (render-dom comp)))))
   (testing "wrap test"
     (let [comp (component "wrap-test.html" [:span]
                           {[:#s] (wrap :div {:id "test"})})]
-      (is (= "<div id=\"test\"><span id=\"s\"><span>testing</span></span></div>"
+      (is (= "<div id=\"test\"><span id=\"s\">testing</span></div>"
              (render-dom comp)))))
   (testing "unwrap test"
     (let [comp (component "wrap-test.html" [:div]
                           {[:div] unwrap})]
-      (is (= "<span id=\"s\"><span>testing</span></span>"
+      (is (= "<span id=\"s\">testing</span>"
              (render-dom comp)))))
   (testing "html test"
     (let [comp (component "simple-div.html"
@@ -147,31 +147,31 @@
 (deftest snippet_template_test
   (testing "basic setup for snippet"
     (let [comp (snippet "wrap-test.html" [:span] [] {})]
-      (is (= "<span id=\"s\"><span>testing</span></span>"
+      (is (= "<span id=\"s\">testing</span>"
              (render-dom (comp))))))
   (testing "basic setup for template"
     (let [comp (template "simple-div.html" [] {})]
-      (is (= "<div id=\"tmp\"><span>test</span></div>"
+      (is (= "<div id=\"tmp\">test</div>"
              (render-dom (comp))))))
   (testing "simple tranform for snippet"
     (let [comp (snippet "wrap-test.html" [:span] [val]
                         {[:span] (content val)})]
-      (is (= "<span id=\"s\"><span>test</span></span>"
+      (is (= "<span id=\"s\">test</span>"
              (render-dom (comp "test"))))))
   (testing "simple transform for template"
     (let [comp (template "simple-div.html" [val]
                          {[:div] (content val)})]
-      (is (= "<div id=\"tmp\"><span>success</span></div>"
+      (is (= "<div id=\"tmp\">success</div>"
              (render-dom (comp "success"))))))
   (testing "basic setup for defsnippet"
-    (is (= "<span id=\"s\"><span>testing</span></span>"
+    (is (= "<span id=\"s\">testing</span>"
            (render-dom (snip1)))))
   (testing "basic setup for deftemplate"
-    (is (= "<div id=\"tmp\"><span>test</span></div>"
+    (is (= "<div id=\"tmp\">test</div>"
            (render-dom (tmp1)))))
   (testing "simple transform for defsnippet"
-    (is (= "<span id=\"s\"><span>test</span></span>"
+    (is (= "<span id=\"s\">test</span>"
            (render-dom (snip2 "test")))))
   (testing "simple transform for deftemplate"
-    (is (= "<div id=\"tmp\"><span>success</span></div>"
+    (is (= "<div id=\"tmp\">success</div>"
            (render-dom (tmp2 "success"))))))
