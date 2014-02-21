@@ -5,7 +5,7 @@
                                set-style remove-style add-class
                                remove-class wrap unwrap set-class
                                html html-content listen]]
-            [reagent.core :as reagent :refer [atom]]
+            [reagent.core :as reagent :refer [atom flush]]
             [kioo.util :as util]
             [goog.dom :as gdom])
   (:require-macros [kioo.reagent :refer [component snippet template
@@ -46,7 +46,7 @@
                            {[:div] (content @atm)})
           container (initial-render comp)
           html-str1 (inner-html container)
-          _ (reset! atm "two")
+          _ (do (reset! atm "two") (flush))
           html-str2 (inner-html container)]
       (is (= "<div id=\"tmp\">one</div>" html-str1))
       (is (= "<div id=\"tmp\">two</div>" html-str2))
@@ -60,7 +60,7 @@
                            {[:div] (content [comp2])})
           container (initial-render comp)
           html-str1 (inner-html container)
-          _ (reset! atm "two")
+          _ (do (reset! atm "two") (flush))
           html-str2 (inner-html container)]
       (is (= "<div id=\"tmp\"><div>one</div></div>"
              html-str1))
@@ -73,7 +73,7 @@
                            {[:div] (append @atm)})
           container (initial-render comp)
           html-str1 (inner-html container)
-          _ (reset! atm "two")
+          _ (do (reset! atm "two") (flush))
           html-str2 (inner-html container)]
       ;;note that ract wraps text nodes in span tags
       ;;this is expected to be corrected soon in react but
