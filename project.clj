@@ -1,4 +1,4 @@
-(defproject kioo "0.3.0"
+(defproject kioo "0.4.0-SNAPSHOT"
   :description "enlive/enfocus style templating for Facebook's React."
   :url "http://github.com/ckirkendall/kioo"
   :author "Creighton Kirkendall"
