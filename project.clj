@@ -7,18 +7,19 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[enlive "1.1.5"]
-                 [com.facebook/react "0.8.0.1"]
+                 [com.facebook/react "0.9.0"]
                  [org.clojure/clojure "1.5.1"]
-                 [org.clojure/clojurescript "0.0-2138"]
-                 [sablono "0.2.1"]
-                 [hickory "0.5.2"]
-                 [om "0.3.0"]
-                 [reagent "0.2.1"]]
+                 [org.clojure/clojurescript "0.0-2156"]
+                 [sablono "0.2.6"]
+                 [hickory "0.5.3"]
+                 [om "0.5.0"]
+                 [reagent "0.4.0"]]
   :cljsbuild {:builds []}
   :profiles {:dev {:plugins [[com.keminglabs/cljx "0.3.2"] ;; Must be before Austin: https://github.com/cemerick/austin/issues/37
                              [com.cemerick/austin "0.1.3"]
                              [com.cemerick/clojurescript.test "0.2.1"]
-                             [lein-cljsbuild "1.0.2"]]
+                             [lein-cljsbuild "1.0.2"]
+                             [lein-ancient "0.5.4"]]
                    :hooks [cljx.hooks leiningen.cljsbuild]
                    :cljx {:builds [{:source-paths ["src"]
                                     :output-path "target/classes"
