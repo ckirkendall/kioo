@@ -47,33 +47,36 @@ Let's take a look at and example.  Here we work with David Nolen's
 ```clj
 (ns kioo-example.core
   (:require [kioo.om :refer [content set-attr do-> substitute listen]]
+            [kioo.core :refer [handle-wrapper]]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true])
-  (:require-macros [kioo.om :as kioo]))
-
-(defn my-nav-item [[caption func]]
-  (kioo/component "main.html" [:.nav-item]
-    {[:a] (do-> (content caption)
-                (listen :on-click func))}))
+  (:require-macros [kioo.om :refer [defsnippet deftemplate]]))
 
 
-(defn my-header [heading nav-elms]
-  (kioo/component "main.html" [:header]
-    {[:h1] (content heading)
-     [:ul] (content (map my-nav-item nav-elms))}))
+(defsnippet my-nav-item "main.html" [:.nav-item]
+  [[caption func]]
+  {[:a] (do-> (content caption)
+              (listen :onClick #(func caption)))})
 
-(defn my-page [data]
-  (kioo/component "main.html"
-    {[:header] (substitute (my-header (:heading data)
-                                      (:navigation data)))
-     [:.content] (content (:content data))}))
+(defsnippet my-header "main.html" [:header]
+  [{:keys [heading navigation]}]
+  {[:h1] (content heading)
+   [:ul] (content (map my-nav-item navigation))})
 
-(def app-state (atom {:heading    "main"
+
+(deftemplate my-page "main.html"
+  [data]
+  {[:header] (substitute (my-header data))
+   [:.content] (content (:content data))})
+
+(defn init [data] (om/component (my-page data)))
+
+(def app-state (atom {:heading "main"
                       :content    "Hello World"
                       :navigation [["home" #(js/alert %)]
                                    ["next" #(js/alert %)]]}))
 
-(om/root app-state my-page (.-body js/document))
+(om/root app-state init (.-body js/document))
 ```
 
 To view the example:
