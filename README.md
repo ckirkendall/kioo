@@ -183,11 +183,11 @@ A transformation is a function that returns either a react node or collection of
 
 Kioo transforms mirror most of the base enlive transformations:
 
-###New Transforms
+_New Transforms_
 
 ```clojure
 ;; attached event listeners to the component
-(transform :on-click (fn [...] ...))
+(listen :on-click (fn [...] ...))
 
 ;;supported react events
 :on-mount
@@ -198,7 +198,7 @@ Kioo transforms mirror most of the base enlive transformations:
 
 ```
 
-###Enlive Based Transforms
+_Enlive Based Transforms_
 
 ```clojure
 ;; Replaces the content of the element. Values can be nodes or collection of nodes.
