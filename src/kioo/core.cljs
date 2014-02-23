@@ -178,3 +178,6 @@
       (assoc node
         :attrs (merge (:attrs node) sev)
         :events (merge (:events node) rev)))))
+
+(defn render [component node]
+  (.renderComponent js/React component node))
