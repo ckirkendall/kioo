@@ -52,6 +52,13 @@
         (dissoc :class)
         (merge {:style style :className class-name}))))
 
+
+(defn flatten-nodes [nodes]
+  (reduce #(if (seq? %2)
+             (concat %2 %1)
+             (conj %1 %2))
+          '()
+          (reverse nodes)))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;these functions were pulled from r0man / sablono hiccup style
 ;;template engine for react.
