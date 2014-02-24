@@ -1,6 +1,6 @@
 (ns kioo.core
   (:require [kioo.util :refer [convert-attrs WrapComponent *component*
-                               camel-case]]
+                               camel-case flatten-nodes]]
             [hickory.core :as hic :refer [parse-fragment as-hiccup]]
             [sablono.core :as sab :include-macros true]))
 
@@ -23,13 +23,6 @@
     (fn [value & static-args]
       (react-component #js {:value value :statics static-args}))))
 
-
-(defn flatten-nodes [nodes]
-  (reduce #(if (seq? %2)
-             (concat %2 %1)
-             (conj %1 %2))
-          '()
-          (reverse nodes)))
 
 (defn make-dom [node]
   (if (map? node)

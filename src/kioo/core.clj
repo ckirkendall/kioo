@@ -1,6 +1,6 @@
 (ns kioo.core
   (:refer-clojure :exclude [compile])
-  (:require [kioo.util :refer [convert-attrs]]
+  (:require [kioo.util :refer [convert-attrs flatten-nodes]]
             [net.cgrand.enlive-html :refer [at html-resource select
                                             any-node]]))
 
@@ -25,7 +25,7 @@
 (defn emit-node [node children]
   `(apply ~(get-react-sym (:tag node))
           (cljs.core/clj->js ~(convert-attrs (:attrs node)))
-          (flatten-nodes ~children)))
+          (kioo.util/flatten-nodes ~children)))
 
 
 (defn wrap-fragment [tag child-sym]
@@ -118,9 +118,14 @@
   "Emits the compiled structure for a list of nodes"
   [node emit-opts]
   (let [nodes (if (map? node) [node] node)
-        cnodes (vec (map #(if (map? %) (compile-node % emit-opts) %)
-                              nodes))]
-    `(kioo.core/flatten-nodes ~cnodes)))
+        cnodes (vec (map #(cond
+                           (map? %) (compile-node % emit-opts) 
+                           (string? %) (if (:emit-str emit-opts)
+                                         ((:emit-str emit-opts) %)
+                                         %)
+                           :else %)
+                         nodes))]
+    `(kioo.util/flatten-nodes ~cnodes)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Enlive style template & snippet

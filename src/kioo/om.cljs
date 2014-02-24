@@ -1,6 +1,7 @@
 (ns kioo.om
   (:require [om.dom :as dom]
-            [kioo.core :as core :refer [flatten-nodes]]))
+            [kioo.core :as core]
+            [kioo.util :as util :refer [flatten-nodes]]))
 
 (defn make-dom [node & body]
   (if (map? node)
@@ -36,3 +37,4 @@
 (def html core/html)
 (def html-content core/html-content)
 (def listen core/listen)
+
