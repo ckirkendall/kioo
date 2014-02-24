@@ -1,5 +1,6 @@
 (ns kioo.reagent
-  (:require [kioo.core :as core :refer [flatten-nodes]]
+  (:require [kioo.core :as core]
+            [kioo.util :as util :refer [flatten-nodes]]
             [reagent.impl.template :refer [as-component]]))
 
 (defn make-dom [node]
