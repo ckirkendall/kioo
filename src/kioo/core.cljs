@@ -2,7 +2,8 @@
   (:require [kioo.util :refer [convert-attrs WrapComponent *component*
                                camel-case flatten-nodes]]
             [hickory.core :as hic :refer [parse-fragment as-hiccup]]
-            [sablono.core :as sab :include-macros true]))
+            [sablono.core :as sab :include-macros true]
+            [kioo.common :as common]))
 
 
 (defn value-component[renderer]
@@ -50,17 +51,9 @@
         (cons rnode (to-list (apply hw body)))))))
 
 
-(defn content [& body]
-  (fn [node]
-    (assoc node :content body)))
-
-(defn append [& body]
-  (fn [node]
-    (assoc node :content (concat (:content node) body))))
-
-(defn prepend [& body]
-  (fn [node]
-    (assoc node :content (concat body (:content node)))))
+(def content common/content)
+(def append common/append)
+(def prepend common/prepend)
 
 (defn after [& body]
   (fn [node]
@@ -70,74 +63,15 @@
   (fn [node]
     (flatten-nodes (concat body [(make-dom node)]))))
 
-(defn substitute [& body]
-  (fn [node] body))
-
-
-(defn set-attr [& body]
-  (let [els (partition 2 body)]
-    (fn [node]
-      (assoc node :attrs (reduce (fn [n [k v]]
-                                  (assoc n k v))
-                                (:attrs node) els)))))
-
-(defn remove-attr [& body]
-  (fn [node]
-    (assoc node :attrs (reduce (fn [n k]
-                                (dissoc n k))
-                              (:attrs node) body))))
-
-(defn do-> [& body]
-  (fn [node]
-    (reduce #(%2 %1) node body)))
-
-
-(defn set-style [& body]
-  (let [els (partition 2 body)
-        mp (reduce (fn [m [k v]] (assoc m k v)) {} els)]
-    (fn [node]
-      (update-in node [:attrs :style] #(merge %1 mp)))))
-
-
-(defn remove-style [& body]
-  (apply set-style  (interleave body (repeat nil))))
-
-
-(defn- get-class-regex [cls]
-  (js/RegExp. (str "(\\s|^)" cls "(\\s|$)")))
-
-(defn- has-class? [cur-cls cls]
-  (.match cur-cls (get-class-regex cls)))
-
-
-(defn set-class [& values]
-  (fn [node]
-    (let [new-class (reduce #(if (has-class? %1 %2)
-                               %1
-                               (str %1 " " %2))
-                            ""
-                            values)]
-      (assoc-in node [:attrs :className] new-class))))
-
-
-(defn add-class [& values]
-  (fn [node]
-    (let [new-class (reduce #(if (has-class? %1 %2)
-                               %1
-                               (str %1 " " %2))
-                        (get-in node [:attrs :className])
-                        values)]
-      (assoc-in node [:attrs :className] new-class))))
-
-
-(defn remove-class [& values]
-  (fn [node]
-    (let [new-class (reduce #(if (has-class? %1 %2)
-                               (.replace %1 (get-class-regex %2) " ")
-                               %1)
-                        (get-in node [:attrs :className])
-                        values)]
-      (assoc-in node [:attrs :className] new-class))))
+(def substitute common/substitute)
+(def set-attr common/set-attr)
+(def remove-attr common/remove-attr)
+(def do-> common/do->)
+(def set-style common/set-style)
+(def remove-style common/remove-style)
+(def set-class common/set-class)
+(def add-class common/add-class)
+(def remove-class common/remove-class)
 
 (defn wrap [tag attrs]
   (fn [node]
@@ -146,9 +80,7 @@
      :attrs (convert-attrs attrs)
      :content [(make-dom node)]}))
 
-(defn unwrap [node]
-  (:content node))
-
+(def unwrap common/unwrap)
 
 (defn html [content] (sab/html content))
 
