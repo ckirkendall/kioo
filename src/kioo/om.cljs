@@ -1,7 +1,7 @@
 (ns kioo.om
   (:require [om.dom :as dom]
             [kioo.core :as core]
-            [kioo.util :as util :refer [flatten-nodes]]))
+            [kioo.util :as util :refer [flatten-nodes convert-attrs]]))
 
 (defn make-dom [node & body]
   (if (map? node)
@@ -32,7 +32,14 @@
 (def set-class core/set-class)
 (def add-class core/add-class)
 (def remove-class core/remove-class)
-(def wrap core/wrap)
+
+(defn wrap [tag attrs]
+  (fn [node]
+    {:tag tag
+     :sym (aget js/React.DOM (name tag)) 
+     :attrs (convert-attrs attrs)
+     :content [(make-dom node)]}))
+
 (def unwrap core/unwrap)
 (def html core/html)
 (def html-content core/html-content)
