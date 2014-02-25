@@ -1,6 +1,8 @@
 (ns kioo.server.core
   (:require [kioo.core :refer [component* snippet*]]
-            [kioo.util :refer [convert-attrs]]))
+            [kioo.util :refer [convert-attrs flatten-nodes]]
+            [net.cgrand.enlive-html :as enlive]
+            [kioo.common :as common]))
 
 (declare emit-node)
 
@@ -86,3 +88,41 @@
 
 (defmacro deftemplate [sym path args & trans]
   `(def ~sym ~(snippet* path trans args server-emit-opts)))
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; TRANSFORMS
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(def content common/content)
+(def append common/append)
+(def prepend common/prepend)
+
+(defn after [& body]
+  (fn [node]
+    (cons node body)))
+
+(defn before [& body]
+  (fn [node]
+    (flatten-nodes (concat body [node]))))
+
+(def substitute common/substitute)
+(def set-attr common/set-attr)
+(def remove-attr common/remove-attr)
+(def do-> common/do->)
+(def set-style common/set-style)
+(def remove-style common/remove-style)
+(def set-class common/set-class)
+(def add-class common/add-class)
+(def remove-class common/remove-class)
+
+(defn wrap [tag attrs]
+  (fn [node]
+    {:tag tag
+     :attrs (convert-attrs attrs)
+     :content [(make-dom node)]}))
+
+(def unwrap common/unwrap)
+(def html enlive/html)
+(def html-content enlive/html-content)
