@@ -1,5 +1,6 @@
 (ns kioo.common
-    (:require [kioo.util :refer [convert-attrs]]))
+    (:require [kioo.util :refer [convert-attrs]]
+              [clojure.string :as str]))
 
 (defn content [& body]
   (fn [node]
@@ -52,7 +53,7 @@
   #+clj (re-pattern (str "(\\s|^)" cls "(\\s|$)")))
 
 (defn- has-class? [cur-cls cls]
-  (.match cur-cls (get-class-regex cls)))
+  (re-find (get-class-regex cls) cur-cls))
 
 
 (defn set-class [& values]
@@ -78,18 +79,11 @@
 (defn remove-class [& values]
   (fn [node]
     (let [new-class (reduce #(if (has-class? %1 %2)
-                               (.replace %1 (get-class-regex %2) " ")
+                               (str/replace %1 (get-class-regex %2) " ")
                                %1)
                         (get-in node [:attrs :className])
                         values)]
       (assoc-in node [:attrs :className] new-class))))
-
-(defn wrap [tag attrs]
-  (fn [node]
-    {:tag tag
-     #+cljs :sym #+cljs (aget js/React.DOM (name tag)) 
-     :attrs (convert-attrs attrs)
-     :content [node]}))
 
 (defn unwrap [node]
   (:content node))

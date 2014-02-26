@@ -25,29 +25,45 @@
      (.replace ">" "&gt;")
      (.replace "\"" "&quot;")))
 
+(defn- emit-style-str [smap]
+  (reduce (fn [s [k v]] (if (empty? v) s (str (name k) ":" v ";" s)))
+          "" smap))
+
 
 (def self-closing-tags #{:area :base :basefont :br :hr
                          :input :img :link :meta})
 
+(defn attr-by-key [ky]
+  (case ky
+    :className "class"
+    (name ky)))
 
 (defn emit-attrs [attrs]
   (reduce (fn [s [k v]]
-            (str s " " (name k) "=\"" (emit-attr-str v) "\""))
+            (cond
+             (empty? v) s
+             (= k :style) (str " style=\""
+                               (emit-attr-str (emit-style-str v))
+                               "\"")
+             :else (str s " " (attr-by-key k) "=\""
+                        (emit-attr-str v) "\"")))
           ""
           attrs))
 
 
 (defn make-dom [node]
-  (println node)
   (cond
-   (and (seq? node) (empty? node)) ""
+   (empty? node) ""
+   (string? node) node
    (seq? node) (str (make-dom (first node))
                     (make-dom (rest node)))
-   :else (let [{:keys [tag attrs content]} node]
-           (str "<" (name tag) (emit-attrs attrs)
-                (if (self-closing-tags tag)
-                  "/>"
-                  (str ">" (make-dom content) "</" (name tag ">")))))))
+   (:tag node) (let [{:keys [tag attrs content]} node]
+                 (str "<" (name tag) (emit-attrs attrs)
+                      (if (self-closing-tags tag)
+                        "/>"
+                        (str ">" (make-dom content)
+                             "</" (name tag) ">"))))
+   :else ""))
 
 (defn emit-trans [node children]
   `(make-dom
