@@ -137,7 +137,7 @@
   (fn [node]
     {:tag tag
      :attrs (convert-attrs attrs)
-     :content [(make-dom node)]}))
+     :content (list node)}))
 
 (def unwrap common/unwrap)
 (def html enlive/html)
