@@ -45,7 +45,11 @@
 
 
 (defn remove-style [& body]
-  (apply set-style  (interleave body (repeat nil))))
+  (fn [node]
+    (let [style (reduce  #(dissoc %1 (name %2) %2)
+                         (get-in node [:attrs :style])
+                         body)]
+      (assoc-in node [:attrs :style] style))))
 
 
 (defn- get-class-regex [cls]

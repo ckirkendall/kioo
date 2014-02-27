@@ -84,19 +84,19 @@
                           {[:#s] (set-style :display "none")})]
       (is (= "<span style=\"color:red;display:none;\" id=\"s\">testing</span>"
              comp))))
-  #_(testing "remove-style test"
+  (testing "remove-style test"
     (let [comp (component "style-span.html" [:span]
                           {[:#s] (remove-style :color)})]
       (is (= "<span id=\"s\">testing</span>"
              comp))))
-  #_(testing "do-> test"
+  (testing "do-> test"
     (let [comp (component "style-span.html" [:span]
                           {[:#s] (do->
                                   (remove-attr :id)
                                   (remove-style :color))})]
       (is (= "<span>testing</span>"
              comp))))
-  #_(testing "wrap test"
+  (testing "wrap test"
     (let [comp (component "wrap-test.html" [:span]
                           {[:#s] (wrap :div {:id "test"})})]
       (is (= "<div id=\"test\"><span id=\"s\">testing</span></div>"
