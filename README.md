@@ -159,7 +159,7 @@ Once the javascript compiles you can open index.html in a browser.
 
 ### Selector Syntax
 
-Kioo uses elive based selectors. See [syntax.html](http://enlive.cgrand.net/syntax.html)
+Kioo uses enlive based selectors. See [syntax.html](http://enlive.cgrand.net/syntax.html)
 
 Some examples:
 
