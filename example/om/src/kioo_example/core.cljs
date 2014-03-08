@@ -29,5 +29,5 @@
                       :navigation [["home" #(js/alert %)]
                                    ["next" #(js/alert %)]]}))
 
-(om/root app-state init (.-body js/document))
+(om/root init app-state {:target  (.-body js/document)})
 
