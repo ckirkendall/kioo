@@ -177,6 +177,15 @@ Enlive                                       CSS
 {[:dt] [:dl]}                                (fragments starting by DT and ending at the *next* DD)
 ```
 
+Notice that some of the predefined selector steps are used as naked symbols, i.e. 
+you can just use them (no require :refer etc.). Example:
+
+```clojure
+(defsnippet shop-html "templates/shops.html" [[:.shop first-of-type]]
+  [_] ;;                                                 ^- a naked symbol
+  {[:.content] (content "Kioo is mighty!")})
+```
+
 ## Transformations
 
 A transformation is a function that returns either a react node or collection of react nodes.
