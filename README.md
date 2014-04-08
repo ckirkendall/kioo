@@ -273,6 +273,21 @@ Not supported yet
 (move)
 ```
 
+## Tips
+
+### Match/replace the whole `body`
+
+Kioo by default matches your selectors against `[:body :> any-node]` so you cannot match `:body` itself. 
+You should rarely need it – especially if you control the HTML and can wrap the content of body into 
+a `div` that you can then normally match against with Kioo. However, if necessary, you can also provide a custom root selector using the syntax `[<your selector> {<selectors and transforms>}]`, f.ex.: 
+
+```clojure
+(deftemplate tryme "some.html" [_] 
+  [:body] {[:body] (substitute (your-snippet-name _))})
+;;  ^- custom root selector
+;;           ^- inside the selected <body..>..</body>, match the body element itself
+ 
+```
 
 
 ## Thanks
