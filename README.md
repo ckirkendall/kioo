@@ -22,6 +22,12 @@ All artifacts are published to [clojars](https://clojars.org/kioo). Latest versi
 
 The biggest difference you will see between Enlive and Kioo is that Kioo only supports unordered transforms.  This means that you pass a map of transforms to the component and you can not guarantee what order they will be processed in.  This is due to, selection being done at compile time and transforms being done at runtime.   Selections cannot take the structure of the content at runtime into consideration.
 
+### Troubleshooting
+
+The best way to troubleshoot the processing of Kioo templates and snippets and the matching of selectors is to use Clojure's [`macroexpand-1`](http://clojuredocs.org/clojure_core/clojure.core/macroexpand-1) together with  [clojure.tools.trace](https://github.com/clojure/tools.trace)/[trace-ns](http://clojure.github.io/tools.trace/#clojure.tools.trace/trace-ns) applied to `'kioo.core` to see the resulting ClojureScript and log of what happened during the processing. You can also call manually the resulting JavaScript function `<your ns>.<snippet/template name>` and examine the React component it produces.
+
+Read more and additional tips in the post [Kioo: How to Troubleshoot Template Processing](http://theholyjava.wordpress.com/2014/04/08/kioo-how-to-troubleshoot-template-processing/) by Jakub Holy.
+
 ## Quickstart tutorial
 
 ### Working With Om
