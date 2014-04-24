@@ -1,4 +1,4 @@
-(defproject kioo "0.4.0-SNAPSHOT"
+(defproject kioo "0.4.1-SNAPSHOT"
   :description "enlive/enfocus style templating for Facebook's React."
   :url "http://github.com/ckirkendall/kioo"
   :author "Creighton Kirkendall"
@@ -12,7 +12,7 @@
                  [org.clojure/clojurescript "0.0-2156"]
                  [sablono "0.2.6"]
                  [hickory "0.5.3"]
-                 [om "0.5.0"]
+                 [om "0.6.0"]
                  [reagent "0.4.0"]]
   :cljsbuild {:builds []}
   :profiles {:dev {:plugins [[com.keminglabs/cljx "0.3.2"] ;; Must be before Austin: https://github.com/cemerick/austin/issues/37
