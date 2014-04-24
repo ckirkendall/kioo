@@ -71,6 +71,11 @@
                           {[:#s] (add-class "suc")})]
       (is (= "<span class=\"cl cls suc\" id=\"s\">testing</span>"
              (render-dom comp)))))
+  (testing "add-class when no class exists"
+    (let [comp (component "simple-div.html"
+                          {[:div] (add-class "suc")})]
+      (is (= "<div class=\" suc\" id=\"tmp\">test</div>"
+             (render-dom comp)))))
   (testing "remove-class test"
     (let [comp (component "class-span.html" [:span]
                           {[:#s] (remove-class "cl")})]
