@@ -64,14 +64,20 @@
 ;; Clean enlive output to reduce the amount
 ;; of rampant span tags that om produces
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+#+clj
 (defmulti  clean-root type)
+#+clj
 (defmethod clean-root java.util.Map [c]
   (if (:content c)
     (assoc c :content (clean-root (:content c)))
     c))
-(defmethod clean-root nil [s] false)
+#+clj
+(defmethod clean-root nil [s]
+  false)
+#+clj
 (defmethod clean-root clojure.lang.LazySeq [c]
   (remove false? (map clean-root c)))
+#+clj
 (defmethod clean-root java.lang.String [s]
   (if (empty? (re-find #"(^\s*$)" s))
     (clojure.string/trim s)
