@@ -4,7 +4,7 @@
 
   :jvm-opts ^:replace ["-Xmx1g" "-server"]
 
-  :dependencies [[kioo "0.4.0-SNAPSHOT"]
+  :dependencies [[kioo "0.4.1-SNAPSHOT"]
                  [org.clojure/clojure "1.5.1"]
                  [org.clojure/clojurescript "0.0-2173"]
                  [om "0.5.1"]]

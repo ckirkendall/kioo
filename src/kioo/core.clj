@@ -50,8 +50,8 @@
 (defn attach-transform [trans]
   (fn [node]
     (if (:trans node)
-      (assoc node :trans `(fn [node]
-                           (cljs.core/-> node
+      (assoc node :trans `(fn [node#]
+                           (cljs.core/-> node#
                                (~(:trans node))
                                (~trans))))
       (assoc node :trans trans)))) 

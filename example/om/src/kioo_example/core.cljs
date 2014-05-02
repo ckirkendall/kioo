@@ -1,5 +1,5 @@
 (ns kioo-example.core
-  (:require [kioo.om :refer [content set-attr do-> substitute listen]]
+  (:require [kioo.om :refer [content set-style set-attr do-> substitute listen]]
             [kioo.core :refer [handle-wrapper]]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true])
@@ -20,7 +20,8 @@
 (deftemplate my-page "main.html"
   [data]
   {[:header] (substitute (my-header data))
-   [:.content] (content (:content data))})
+   [:.content] (content (:content data))
+   [:div] (set-style :color "red")})
 
 (defn init [data] (om/component (my-page data)))
 
