@@ -65,10 +65,16 @@
    #(conj %1
           (cond
            (list? %2) (apply (resolve-enlive-var (first %2)) (rest %2))
-           (vector? %2) (eval-selector %2)
+           (or (vector? %2)
+               (map? %2)
+               (set? %2)) (eval-selector %2)
            (symbol? %2) (resolve-enlive-var %2)
             :else %2))
-   [] sel))
+   (cond
+    (vector? sel) []
+    (set? sel) #{}
+    (map? sel) {}
+    :else []) sel))
 
 (defn map-trans [node trans-lst]
   (reduce (fn [node [sel trans]]
