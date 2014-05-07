@@ -1,8 +1,9 @@
 (ns kioo.test
-  (:require [kioo.util :refer [strip-attr]]))
+  (:require [kioo.util :refer [strip-attr]]
+            [goog.dom :as dom]))
 
 (defn body []
-  (aget (goog.dom/getElementsByTagNameAndClass "body") 0))
+  (aget (dom/getElementsByTagNameAndClass "body") 0))
 
 (defn render-dom [children]
   (let [container (goog.dom/createDom "div")
