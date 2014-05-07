@@ -48,7 +48,9 @@
                :colSpan :contentEditable :contextMenu :dateTime :encType
                :formNoValidate :frameBorder :htmlFor :httpEquiv :maxLength
                :noValidate :radioGroup :readOnly :rowSpan :scrollLeft :scrollTop
-               :spellCheck :srcDoc :tabIndex])
+               :spellCheck :srcDoc :tabIndex :gradientTransform :gradientUnits
+               :spreadMethod :stopColor :stopOpacity :strokeLinecap :strokeWidth
+               :textAnchor :viewBox])
     :class
     :className))
 
