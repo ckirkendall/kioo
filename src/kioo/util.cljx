@@ -40,6 +40,22 @@
         (apply str start (map capitalize parts))))))
 
 
+(def attribute-map
+  (assoc 
+      (reduce #(assoc %1 (keyword (.toLowerCase (name %2))) %2) {}
+              [:accessKey :allowFullScreen :allowTransparency :autoComplete
+               :autoFocus :autoPlay :cellPadding :cellSpacing :charSet
+               :colSpan :contentEditable :contextMenu :dateTime :encType
+               :formNoValidate :frameBorder :htmlFor :httpEquiv :maxLength
+               :noValidate :radioGroup :readOnly :rowSpan :scrollLeft :scrollTop
+               :spellCheck :srcDoc :tabIndex])
+    :class
+    :className))
+
+(defn transform-keys [attrs]
+  (reduce (fn [m [k v]]
+            (assoc m (or (attribute-map k) k) v)) {} attrs))
+
 (defn convert-attrs [attrs]
   (let [style  (when (:style attrs)
                  (let [vals (re-seq #"\s*([^:;]*)[:][\s]*([^;]+)"
@@ -49,8 +65,8 @@
                            {} vals)))
         class-name (:class attrs)]
     (-> attrs
-        (dissoc :class)
-        (merge {:style style :className class-name}))))
+        (transform-keys)
+        (assoc :style style))))
 
 
 (defn flatten-nodes [nodes]
