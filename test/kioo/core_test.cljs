@@ -69,27 +69,27 @@
   (testing "add-class test"
     (let [comp (component "class-span.html" [:span]
                           {[:#s] (add-class "suc")})]
-      (is (= "<span class=\"cl cls suc\" id=\"s\">testing</span>"
+      (is (= "<span id=\"s\" class=\"cl cls suc\">testing</span>"
              (render-dom comp)))))
   (testing "add-class when no class exists"
     (let [comp (component "simple-div.html"
                           {[:div] (add-class "suc")})]
-      (is (= "<div class=\" suc\" id=\"tmp\">test</div>"
+      (is (= "<div id=\"tmp\" class=\" suc\">test</div>"
              (render-dom comp)))))
   (testing "remove-class test"
     (let [comp (component "class-span.html" [:span]
                           {[:#s] (remove-class "cl")})]
-      (is (= "<span class=\" cls\" id=\"s\">testing</span>"
+      (is (= "<span id=\"s\" class=\" cls\">testing</span>"
              (render-dom comp)))))
   (testing "set-class test"
     (let [comp (component "class-span.html" [:span]
                           {[:#s] (set-class "cl")})]
-      (is (= "<span class=\" cl\" id=\"s\">testing</span>"
+      (is (= "<span id=\"s\" class=\" cl\">testing</span>"
              (render-dom comp)))))
   (testing "set-style test"
     (let [comp (component "style-span.html" [:span]
                           {[:#s] (set-style :display "none")})]
-      (is (= "<span style=\"color:red;display:none;\" id=\"s\">testing</span>"
+      (is (= "<span id=\"s\" style=\"color:red;display:none;\">testing</span>"
              (render-dom comp)))))
   (testing "remove-style test"
     (let [comp (component "style-span.html" [:span]
@@ -125,12 +125,16 @@
       (is (= "<div id=\"tmp\"><h1>t1</h1><em><span>t2</span></em></div>"
              (render-dom comp)))))
   (testing "listen on render"
-    (let [atm (atom "fail")
+     (let [atm (atom "fail")
           comp (component "simple-div.html"
                      {[:div] (listen :on-render
                                      #(reset! atm "success"))})]
       (render-dom comp)
-      (is (= "success" @atm)))))
+      (is (= "success" @atm))))
+  (testing "checking for camel cased attributes"
+    (let [comp (component "camel-case.html"
+                          {[:td] (content "test")})]
+      (is (= "<table><tbody><tr><td colspan=\"2\">test</td></tr></tbody></table>" (render-dom comp))))))
 
 
 
