@@ -1,6 +1,6 @@
 (ns kioo.core
   (:refer-clojure :exclude [compile])
-  (:require [kioo.util :refer [convert-attrs flatten-nodes]]
+  (:require [kioo.util :refer [convert-attrs flatten-nodes clean-root]]
             [net.cgrand.enlive-html :refer [at html-resource select
                                             any-node]]))
 
@@ -96,7 +96,7 @@
                           [[:body :> any-node] (first body)]
                           body)
         sel (or sel [:body :> any-node])
-        root (html-resource path)
+        root (clean-root (html-resource path))
         start (if (= :root sel)
                 root
                 (select root (eval-selector sel)))
