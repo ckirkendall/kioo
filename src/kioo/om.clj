@@ -1,6 +1,7 @@
 (ns kioo.om
   (:require [kioo.core :refer [component* snippet*]]
-            [kioo.util :refer [convert-attrs]]))
+            [kioo.util :refer [convert-attrs]]
+            [net.cgrand.enlive-html :refer [any-node]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; This add better support for om
@@ -34,20 +35,45 @@
                       :emit-node emit-node
                       :wrap-fragment wrap-fragment})
 
+
 (defmacro component
   "React base component definition"
-  [path & body]
-  (component* path body om-emit-opts))
+  ([path trans]
+     (component* path trans om-emit-opts))
+  ([path sel trans]
+     (component* path sel trans om-emit-opts))
+  ([path sel trans opts]
+     (component* path sel trans (merge opts om-emit-opts))))
 
 
-(defmacro snippet [path sel args & trans]
-  (snippet* path (cons sel trans) args om-emit-opts))
+(defmacro snippet
+  ([path sel args]
+     (snippet* path sel {} args om-emit-opts))
+  ([path sel args trans]
+     (snippet* path sel trans args om-emit-opts))
+  ([path sel args trans opts]
+     (snippet* path sel trans args (merge opts om-emit-opts))))
 
-(defmacro template [path args & trans]
-  (snippet* path  trans args om-emit-opts))
+(defmacro template
+  ([path args]
+     (snippet* path [:body :> any-node] {} args om-emit-opts))
+  ([path args trans]
+     (snippet* path [:body :> any-node] trans args om-emit-opts))
+  ([path args trans opts]
+     (snippet* path [:body :> any-node] trans args (merge opts om-emit-opts))))
 
-(defmacro defsnippet [sym path sel args & trans]
-  `(def ~sym ~(snippet* path (cons sel trans) args om-emit-opts)))
+(defmacro defsnippet
+  ([sym path sel args]
+     `(def ~sym ~(snippet* path sel {} args om-emit-opts)))
+  ([sym path sel args trans]
+     `(def ~sym ~(snippet* path sel trans args om-emit-opts)))
+  ([sym path sel args trans opts]
+     `(def ~sym ~(snippet* path sel trans args (merge opts om-emit-opts)))))
 
-(defmacro deftemplate [sym path args & trans]
-  `(def ~sym ~(snippet* path trans args om-emit-opts)))
+(defmacro deftemplate
+  ([sym path args]
+     `(def ~sym ~(snippet* path [:body :> any-node] {} args om-emit-opts)))
+  ([sym path args trans]
+     `(def ~sym ~(snippet* path [:body :> any-node] trans args om-emit-opts)))
+  ([sym path args trans opts]
+     `(def ~sym ~(snippet* path [:body :> any-node] trans args (merge opts om-emit-opts)))))

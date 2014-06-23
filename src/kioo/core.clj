@@ -36,11 +36,14 @@
                       :emit-node emit-node
                       :wrap-fragment wrap-fragment})
 
-
 (defmacro component
   "React base component definition"
-  [path & body]
-  (component* path body react-emit-opts))
+  ([path trans]
+     (component* path trans react-emit-opts))
+  ([path sel trans]
+     (component* path sel trans react-emit-opts))
+  ([path sel trans opts]
+     (component* path sel trans (merge opts react-emit-opts))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -91,22 +94,20 @@
   "this is the generic component that takes emitter
    options that define how the component is mapped
    to the underlying library (react, om, reagent)"
-  [path body emit-opts]
-  (let [[sel trans-lst] (if (map? (first body))
-                          [[:body :> any-node] (first body)]
-                          body)
-        sel (or sel [:body :> any-node])
-        root (html-resource path)
-        start (if (= :root sel)
-                root
-                (select root (eval-selector sel)))
-        child-sym (gensym "ch")]
-    (assert (or (empty? trans-lst) (map? trans-lst))
-            "Transforms must be a map - Kioo only supports order independent transforms")
-    `(let [~child-sym ~(compile (map-trans start trans-lst) emit-opts)]
-       (if (= 1 (count ~child-sym))
-         (first ~child-sym)
-         ~((:wrap-fragment emit-opts) :span child-sym)))))
+  ([path trans emit-opts]
+     (component* path [:body :> any-node] trans emit-opts))
+  ([path sel trans emit-opts]
+      (let [root (html-resource path)
+            start (if (= :root sel)
+                    root
+                    (select root (eval-selector sel)))
+            child-sym (gensym "ch")]
+        (assert (or (empty? trans) (map? trans))
+                "Transforms must be a map - Kioo only supports order independent transforms")
+        `(let [~child-sym ~(compile (map-trans start trans) emit-opts)]
+           (if (= 1 (count ~child-sym))
+             (first ~child-sym)
+             ~((:wrap-fragment emit-opts) :span child-sym))))))
 
 
 (defn compile-node
@@ -143,26 +144,45 @@
 
 
 (defn snippet*
-  ([path body args emit-opts]
-     (snippet* path body args emit-opts false))
-  ([path body args emit-opts check-val?]
+  ([path sel trans args emit-opts]
+     (snippet* path sel trans args emit-opts false))
+  ([path sel trans args emit-opts check-val?]
      (if check-val?
        `(kioo.core/value-component
          (fn ~args
-           ~(component* path body emit-opts)))
+           ~(component* path sel trans emit-opts)))
        `(fn ~args
-          ~(component* path body emit-opts)))))
+          ~(component* path sel trans emit-opts)))))
 
-(defmacro snippet [path sel args & trans]
-  (snippet* path (cons sel trans) args react-emit-opts true))
+(defmacro snippet
+  ([path sel args]
+     (snippet* path sel {} args react-emit-opts true))
+  ([path sel args trans]
+     (snippet* path sel trans args react-emit-opts true))
+  ([path sel args trans opts]
+     (snippet* path sel trans args (merge opts react-emit-opts) true)))
 
-(defmacro template [path args & trans]
-  (snippet* path trans args react-emit-opts true))
+(defmacro template
+  ([path args]
+     (snippet* path [:body :> any-node] {} args react-emit-opts true))
+  ([path args trans]
+     (snippet* path [:body :> any-node] trans args react-emit-opts true))
+  ([path args trans opts]
+     (snippet* path [:body :> any-node] trans args (merge opts react-emit-opts) true)))
 
-(defmacro defsnippet [sym path sel args & trans]
-  `(def ~sym
-     ~(snippet* path (cons sel trans) args react-emit-opts true)))
+(defmacro defsnippet
+  ([sym path sel args]
+     `(def ~sym ~(snippet* path sel {} args react-emit-opts true)))
+  ([sym path sel args trans]
+     `(def ~sym ~(snippet* path sel trans args react-emit-opts true)))
+  ([sym path sel args trans opts]
+     `(def ~sym ~(snippet* path sel trans args (merge opts react-emit-opts) true))))
 
-(defmacro deftemplate [sym path args & trans]
-  `(def ~sym ~(snippet* path trans args react-emit-opts true)))
+(defmacro deftemplate
+  ([sym path args]
+     `(def ~sym ~(snippet* path [:body :> any-node] {} args react-emit-opts true)))
+  ([sym path args trans]
+     `(def ~sym ~(snippet* path [:body :> any-node] trans args react-emit-opts true)))
+  ([sym path args trans opts]
+     `(def ~sym ~(snippet* path [:body :> any-node] trans args (merge opts react-emit-opts) true))))
 
