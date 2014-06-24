@@ -30,7 +30,7 @@
   ([path sel trans]
      (component* path sel trans reagent-emit-opts))
   ([path sel trans opts]
-     (component* path sel trans (merge opts reagent-emit-opts))))
+     (component* path sel trans (merge (eval opts) reagent-emit-opts))))
 
 (defmacro snippet
   ([path sel args]
@@ -38,7 +38,7 @@
   ([path sel args trans]
      (snippet* path sel trans args reagent-emit-opts))
   ([path sel args trans opts]
-     (snippet* path sel trans args (merge opts reagent-emit-opts))))
+     (snippet* path sel trans args (merge (eval opts) reagent-emit-opts))))
 
 (defmacro template
   ([path args]
@@ -46,7 +46,7 @@
   ([path args trans]
      (snippet* path [:body :> any-node] trans args reagent-emit-opts))
   ([path args trans opts]
-     (snippet* path [:body :> any-node] trans args (merge opts reagent-emit-opts))))
+     (snippet* path [:body :> any-node] trans args (merge (eval opts) reagent-emit-opts))))
 
 (defmacro defsnippet
   ([sym path sel args]
@@ -54,7 +54,7 @@
   ([sym path sel args trans]
      `(def ~sym ~(snippet* path sel trans args reagent-emit-opts)))
   ([sym path sel args trans opts]
-     `(def ~sym ~(snippet* path sel trans args (merge opts reagent-emit-opts)))))
+     `(def ~sym ~(snippet* path sel trans args (merge (eval opts) reagent-emit-opts)))))
 
 (defmacro deftemplate
   ([sym path args]
@@ -62,4 +62,4 @@
   ([sym path args trans]
      `(def ~sym ~(snippet* path [:body :> any-node] trans args reagent-emit-opts)))
   ([sym path args trans opts]
-     `(def ~sym ~(snippet* path [:body :> any-node] trans args (merge opts reagent-emit-opts)))))
+     `(def ~sym ~(snippet* path [:body :> any-node] trans args (merge (eval opts) reagent-emit-opts)))))

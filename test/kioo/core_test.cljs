@@ -8,7 +8,7 @@
             [kioo.test :refer [render-dom]]
             [goog.dom :as gdom])
   (:require-macros [kioo.core :refer [component  snippet template
-                                    defsnippet deftemplate]]
+                                    defsnippet deftemplate supress-whitespace]]
                    [cemerick.cljs.test :refer [are is deftest testing]]))
 
 
@@ -145,6 +145,8 @@
 (deftemplate tmp2 "simple-div.html" [val]
   {[:div] (content val)})
 
+(deftemplate tmp3 "whitespace.html" [] {} kioo.core/supress-whitespace)
+
 (deftest snippet-template-test
   (testing "basic setup for snippet"
     (let [comp (snippet "wrap-test.html" [:span] [])]
@@ -175,4 +177,7 @@
            (render-dom (snip2 "test")))))
   (testing "simple transform for deftemplate"
     (is (= "<div id=\"tmp\">success</div>"
-           (render-dom (tmp2 "success"))))))
+           (render-dom (tmp2 "success")))))
+  (testing "testing suppressing-whitespace"
+    (is (= "<div><span>test</span></div>"
+           (render-dom (tmp3))))))

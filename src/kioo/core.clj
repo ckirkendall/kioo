@@ -2,7 +2,8 @@
   (:refer-clojure :exclude [compile])
   (:require [kioo.util :refer [convert-attrs flatten-nodes]]
             [net.cgrand.enlive-html :refer [at html-resource select
-                                            any-node]]))
+                                            any-node]]
+            [clojure.string :as string]))
 
 (declare compile component*)
 
@@ -43,7 +44,7 @@
   ([path sel trans]
      (component* path sel trans react-emit-opts))
   ([path sel trans opts]
-     (component* path sel trans (merge opts react-emit-opts))))
+     (component* path sel trans (merge (eval opts) react-emit-opts))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -87,6 +88,7 @@
 
 
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main Structure of Compiler
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -125,13 +127,14 @@
   "Emits the compiled structure for a list of nodes"
   [node emit-opts]
   (let [nodes (if (map? node) [node] node)
-        cnodes (vec (map #(cond
-                           (map? %) (compile-node % emit-opts) 
-                           (string? %) (if (:emit-str emit-opts)
-                                         ((:emit-str emit-opts) %)
-                                         %)
-                           :else %)
-                         nodes))]
+        cnodes (vec (filter identity
+                            (map #(cond
+                                   (map? %) (compile-node % emit-opts) 
+                                   (string? %) (if (:emit-str emit-opts)
+                                                 ((:emit-str emit-opts) %)
+                                                 %)
+                                   :else %)
+                                 nodes)))]
     `(kioo.util/flatten-nodes ~cnodes)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -139,7 +142,7 @@
 ;;
 ;; these were created to provide the ability
 ;; to share templates from between server
-;; and client using cljx
+;; and client using cljx 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -160,7 +163,7 @@
   ([path sel args trans]
      (snippet* path sel trans args react-emit-opts true))
   ([path sel args trans opts]
-     (snippet* path sel trans args (merge opts react-emit-opts) true)))
+     (snippet* path sel trans args (merge (eval opts) react-emit-opts) true)))
 
 (defmacro template
   ([path args]
@@ -168,7 +171,7 @@
   ([path args trans]
      (snippet* path [:body :> any-node] trans args react-emit-opts true))
   ([path args trans opts]
-     (snippet* path [:body :> any-node] trans args (merge opts react-emit-opts) true)))
+     (snippet* path [:body :> any-node] trans args (merge (eval opts) react-emit-opts) true)))
 
 (defmacro defsnippet
   ([sym path sel args]
@@ -176,7 +179,7 @@
   ([sym path sel args trans]
      `(def ~sym ~(snippet* path sel trans args react-emit-opts true)))
   ([sym path sel args trans opts]
-     `(def ~sym ~(snippet* path sel trans args (merge opts react-emit-opts) true))))
+     `(def ~sym ~(snippet* path sel trans args (merge (eval opts) react-emit-opts) true))))
 
 (defmacro deftemplate
   ([sym path args]
@@ -184,5 +187,13 @@
   ([sym path args trans]
      `(def ~sym ~(snippet* path [:body :> any-node] trans args react-emit-opts true)))
   ([sym path args trans opts]
-     `(def ~sym ~(snippet* path [:body :> any-node] trans args (merge opts react-emit-opts) true))))
+     `(def ~sym ~(snippet* path [:body :> any-node] trans args (merge (eval opts) react-emit-opts) true))))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; helper utils
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(def supress-whitespace {:emit-str #(when-not (empty? (string/trim %)) %)})
