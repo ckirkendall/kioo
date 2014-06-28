@@ -8,24 +8,73 @@
 #+cljs
 (def WrapComponent
   "Wrapper component used to mix-in lifecycle methods
-   This was pulled from quiescent"
+   This was modified from a similar setup in quiescent"
   (.createClass js/React
      #js {:render
           (fn []
             (this-as this (aget (.-props this) "wrappee")))
+          :getInitialSate
+          (fn []
+            (this-as this
+                     (when-let [f  (aget (.-props this) "getIntialState")]
+                       (binding [*component* this]
+                         (f this)))))
+          :getDefaultProps
+          (fn []
+            (this-as this
+                     (when-let [f (aget (.-props this) "getDefaultProps")]
+                       (binding [*component* this]
+                         (f this)))))
+          :componentShouldUpdate
+          (fn [next-props next-state]
+            (this-as this
+                     (when-let [f (aget (.-props this) "shouldUpdate")]
+                       (binding [*component* this]
+                         (f this next-props next-state)))))
+          :componentWillReceiveProps
+          (fn [next-props]
+            (this-as this
+                     (when-let [f (or (aget (.-props this) "willRecieveProps")
+                                      (aget (.-props this) "onWillReceiveProps"))]
+                       (binding [*component* this]
+                         (f this next-props)))))
+          :componentWillUpdate
+          (fn [next-props next-state]
+            (this-as this
+                     (when-let [f (or (aget (.-props this) "willUpdate")
+                                      (aget (.-props this) "onWillUpdate"))]
+                       (binding [*component* this]
+                         (f this next-props next-state)))))
           :componentDidUpdate
-          (fn [prev-props prev-state node]
+          (fn [prev-props prev-state]
             (this-as this
-              (when-let [f (or (aget (.-props this) "onUpdate")
-                               (aget (.-props this) "onRender"))]
-                (binding [*component* this]
-                  (f node)))))
+                     (when-let [f (or (aget (.-props this) "didUpdate")
+                                      (aget (.-props this) "onUpdate")
+                                      (aget (.-props this) "onRender"))]
+                       (binding [*component* this]
+                         (f this prev-props prev-state)))))
+          :componentWillMount
+          (fn []
+            (this-as this
+                     (when-let [f (or (aget (.-props this) "willMount")
+                                      (aget (.-props this) "onWillMount"))]
+                       (binding [*component* this]
+                         (f this)))))
           :componentDidMount
-          (fn [node]
+          (fn []
             (this-as this
-              (when-let [f (or (aget (.-props this) "onMount")
-                               (aget (.-props this) "onRender"))]
-                (f node))))}))
+                     (when-let [f (or (aget (.-props this) "didMount")
+                                      (aget (.-props this) "onMount")
+                                      (aget (.-props this) "onRender"))]
+                       (binding [*component* this]
+                         (f this)))))
+          :componentWillUnmount
+          (fn []
+            (this-as this
+                     (when-let [f (or (aget (.-props this) "willUnmount")
+                                      (aget (.-props this) "onUnmount"))]
+                       (binding [*component* this]
+                         (f this)))))}))
 
 
 (def dont-camel-case #{"aria" "data"})

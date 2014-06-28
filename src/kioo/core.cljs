@@ -90,19 +90,44 @@
                          (parse-fragment content))]
       (assoc node :content children))))
 
-(def react-events #{"onRender" "onUpdate" "onMount"})
+(def listen-react-events #{"onRender" "onUpdate" "onMount" "onWillUpdate" "onWillMount"
+                    "onWillReceiveProps"})
 
 (defn listen [& events+fns]
   (let [pairs (map (fn [[k v]] [(camel-case k) v])
                    (partition 2 events+fns))
         [rev sev] (reduce (fn [[r s] [k v]]
-                            (if (react-events k)
+                            (if (listen-react-events k)
                               [(assoc r k v) s]
                               [r (assoc s k v)])) [] pairs)]
-    (fn [node]
+    (fn [node] 
       (assoc node
         :attrs (merge (:attrs node) sev)
         :events (merge (:events node) rev)))))
+
+(def lifecycle-events #{"initState" "defaultProps"
+                        "shouldUpdate" "willUpdate" "didUpdate"
+                        "willMount" "didMount" "willUnmount"
+                        "willReceiveProps"})
+
+(defn lifecycle
+  "this transform allows you to wrap the componet in react lifecycle methods.
+   the methods are passed in as a map of key functions pairs.
+   {:init-state (fn [this] ...)
+    :default-props (fn [this] ...)
+    :should-update (fn [this next-props next-state] ...)
+    :will-mount (fn [this] ...)
+    :did-mount (fn [this] ...)
+    :will-unmount (fn [this] ...)
+    :will-receive-props (fn [this next-props] ...)
+    :will-update (fn [this next-props next-state] ...)
+    :did-update (fn [this prev-props prev-state] ...)}"
+  [events-fns]
+  (fn [node]
+    (assoc node
+      :events (merge (:events node)
+                     (into {} (for [[k v] events-fns]
+                                [(camel-case k) v]))))))
 
 (defn render [component node]
   (.renderComponent js/React component node))
