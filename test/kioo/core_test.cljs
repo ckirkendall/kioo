@@ -4,7 +4,7 @@
                                remove-attr before after do->
                                set-style remove-style add-class
                                remove-class wrap unwrap set-class
-                               html html-content listen]]
+                               html html-content listen lifecycle]]
             [kioo.test :refer [render-dom]]
             [goog.dom :as gdom])
   (:require-macros [kioo.core :refer [component  snippet template
@@ -131,6 +131,42 @@
                                      #(reset! atm "success"))})]
       (render-dom comp)
       (is (= "success" @atm))))
+  (testing "lifecycle tests" 
+    (let [init-state (atom "fail")
+          default-props (atom "fail")
+          should-update (atom "fail")
+          will-receive-props (atom "fail")
+          will-update (atom "fail")
+          did-update (atom "fail")
+          will-mount (atom "fail")
+          did-mount (atom "fail")
+          comp (component "simple-div.html"
+                          {[:div] (lifecycle
+                                   {:init-state (fn [this] (reset! init-state "success") {})
+                                    :default-props (fn [this] (reset! default-props "success"))
+                                    :should-update
+                                    (fn [this next-props next-state]
+                                      (reset! should-update "success"))
+                                    :will-mount (fn [this] (reset! will-mount "success"))
+                                    :did-mount (fn [this] (reset! did-mount "success"))
+                                    :will-receive-props (fn [this next-props]
+                                                          (reset! will-receive-props "success"))
+                                    :will-update (fn [this next-props next-state]
+                                                   (reset! will-update "success"))
+                                    :did-update (fn [this prev-props prev-state]
+                                                  (reset! did-update "success"))})})]
+      (render-dom comp)
+      (is (= "success" @init-state))
+      (is (= "success" @will-mount))
+      (is (= "success" @did-mount))      
+
+      ;;need to workout how to test these
+      ;(is (= "success" @default-props)) 
+      ;(is (= "success" @should-update))
+      ;(is (= "success" @will-receive-props))
+      ;(is (= "success" @will-update))
+      ;(is (= "success" @did-update))
+      ))
   (testing "checking for camel cased attributes"
     (let [comp (component "camel-case.html"
                           {[:td] (content "test")})]

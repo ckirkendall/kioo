@@ -13,16 +13,16 @@
      #js {:render
           (fn []
             (this-as this (aget (.-props this) "wrappee")))
-          :getInitialSate
+          :getInitialState
           (fn []
             (this-as this
-                     (when-let [f  (aget (.-props this) "getIntialState")]
+                     (when-let [f  (aget (.-props this) "initState")]
                        (binding [*component* this]
                          (f this)))))
           :getDefaultProps
           (fn []
             (this-as this
-                     (when-let [f (aget (.-props this) "getDefaultProps")]
+                     (when-let [f (aget (.-props this) "defaultProps")]
                        (binding [*component* this]
                          (f this)))))
           :componentShouldUpdate
@@ -34,7 +34,7 @@
           :componentWillReceiveProps
           (fn [next-props]
             (this-as this
-                     (when-let [f (or (aget (.-props this) "willRecieveProps")
+                     (when-let [f (or (aget (.-props this) "willReceiveProps")
                                       (aget (.-props this) "onWillReceiveProps"))]
                        (binding [*component* this]
                          (f this next-props)))))
