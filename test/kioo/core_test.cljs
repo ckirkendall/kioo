@@ -181,7 +181,8 @@
 (deftemplate tmp2 "simple-div.html" [val]
   {[:div] (content val)})
 
-(deftemplate tmp3 "whitespace.html" [] {} kioo.core/supress-whitespace)
+(deftemplate tmp3 "whitespace.html" [] {})
+(deftemplate tmp4 "whitespace.html" [] {} kioo.core/include-whitespace)
 
 (deftest snippet-template-test
   (testing "basic setup for snippet"
@@ -216,4 +217,7 @@
            (render-dom (tmp2 "success")))))
   (testing "testing suppressing-whitespace"
     (is (= "<div><span>test</span></div>"
-           (render-dom (tmp3))))))
+           (render-dom (tmp3)))))
+  (testing "testing not suppressing-whitespace"
+    (is (= "<span><div><span>\n  </span><span>test</span><span>\n</span></div><span>\n</span></span>"
+           (render-dom (tmp4))))))

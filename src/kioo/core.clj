@@ -3,9 +3,11 @@
   (:require [kioo.util :refer [convert-attrs flatten-nodes]]
             [net.cgrand.enlive-html :refer [at html-resource select
                                             any-node]]
-            [clojure.string :as string]))
+            [clojure.string :as string]
+            [enlive-ws.core :refer [->MiniHtml]]))
 
 (declare compile component*)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; BASE REACT EMIT FUNCTIONS
@@ -33,9 +35,14 @@
   `(apply ~(get-react-sym tag) nil ~child-sym))
 
 
+(def resource-wrapper-fns {:html identity
+                           :mini-html ->MiniHtml})
+
+
 (def react-emit-opts {:emit-trans emit-trans
                       :emit-node emit-node
-                      :wrap-fragment wrap-fragment})
+                      :wrap-fragment wrap-fragment
+                      :resource-wrapper :mini-html})
 
 (defmacro component
   "React base component definition"
@@ -87,7 +94,12 @@
           trans-lst))
 
 
-
+(defn resolve-resource-fn [resource {wrapper :resource-wrapper}]
+  (cond
+   (not (string? resource)) identity
+   (keyword? wrapper) (resource-wrapper-fns wrapper)
+   (symbol? wrapper) (resolve wrapper)
+   :else nil))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main Structure of Compiler
@@ -99,11 +111,12 @@
   ([path trans emit-opts]
      (component* path [:body :> any-node] trans emit-opts))
   ([path sel trans emit-opts]
-      (let [root (html-resource path)
+     (let [resource-fn (or (resolve-resource-fn path emit-opts) identity)
+           root (html-resource (resource-fn path))
             start (if (= :root sel)
                     root
                     (select root (eval-selector sel)))
-            child-sym (gensym "ch")]
+           child-sym (gensym "ch")]
         (assert (or (empty? trans) (map? trans))
                 "Transforms must be a map - Kioo only supports order independent transforms")
         `(let [~child-sym ~(compile (map-trans start trans) emit-opts)]
@@ -171,7 +184,7 @@
   ([path args trans]
      (snippet* path [:body :> any-node] trans args react-emit-opts true))
   ([path args trans opts]
-     (snippet* path [:body :> any-node] trans args (merge (eval opts) react-emit-opts) true)))
+     (snippet* path [:body :> any-node] trans args (merge react-emit-opts (eval opts)) true)))
 
 (defmacro defsnippet
   ([sym path sel args]
@@ -179,7 +192,7 @@
   ([sym path sel args trans]
      `(def ~sym ~(snippet* path sel trans args react-emit-opts true)))
   ([sym path sel args trans opts]
-     `(def ~sym ~(snippet* path sel trans args (merge (eval opts) react-emit-opts) true))))
+     `(def ~sym ~(snippet* path sel trans args (merge react-emit-opts (eval opts)) true))))
 
 (defmacro deftemplate
   ([sym path args]
@@ -187,7 +200,7 @@
   ([sym path args trans]
      `(def ~sym ~(snippet* path [:body :> any-node] trans args react-emit-opts true)))
   ([sym path args trans opts]
-     `(def ~sym ~(snippet* path [:body :> any-node] trans args (merge (eval opts) react-emit-opts) true))))
+     `(def ~sym ~(snippet* path [:body :> any-node] trans args (merge react-emit-opts (eval opts)) true))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -196,4 +209,6 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(def supress-whitespace {:emit-str #(when-not (empty? (string/trim %)) %)})
+;;supress-whitespace is no longer needed anymore because of the use of enlive-ws
+(def supress-whitespace {:resource-wrapper :mini-html})
+(def include-whitespace {:resource-wrapper :html})

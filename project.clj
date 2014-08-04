@@ -10,10 +10,12 @@
                  [com.facebook/react "0.9.0.2"]
                  [org.clojure/clojure "1.6.0"]
                  [org.clojure/clojurescript "0.0-2234"]
+                 [com.googlecode.htmlcompressor/htmlcompressor "1.4"]
                  [sablono "0.2.6"]
                  [hickory "0.5.3"]
                  [om "0.6.4"]
-                 [reagent "0.4.2"]]
+                 [reagent "0.4.2"]
+                 [enlive-ws  "0.1.1"]]
   :plugins [[lein-cljsbuild "1.0.4-SNAPSHOT"]]
   :cljsbuild {:builds []}
   :profiles {:dev {:plugins [[com.keminglabs/cljx "0.3.2"] ;; Must be before Austin: https://github.com/cemerick/austin/issues/37
