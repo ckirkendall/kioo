@@ -1,7 +1,7 @@
 (ns kioo.server.core
   (:require [kioo.core :refer [component* snippet*]]
             [kioo.util :refer [convert-attrs flatten-nodes]]
-            [net.cgrand.enlive-html :as enlive]
+            [net.cgrand.enlive-html :as enlive :refer [any-node]]
             [kioo.common :as common]))
 
 (declare emit-node)
@@ -87,25 +87,47 @@
                        :wrap-fragment wrap-fragment
                        :emit-str emit-str})
 
+
 (defmacro component
   "React base component definition"
-  [path & body]
-  (component* path body server-emit-opts))
+  ([path trans]
+     (component* path trans server-emit-opts))
+  ([path sel trans]
+     (component* path sel trans server-emit-opts))
+  ([path sel trans opts]
+     (component* path sel trans (merge server-emit-opts opts))))
 
+(defmacro snippet
+  ([path sel args]
+     (snippet* path sel {} args server-emit-opts true))
+  ([path sel args trans]
+     (snippet* path sel trans args server-emit-opts true))
+  ([path sel args trans opts]
+     (snippet* path sel trans args (merge server-emit-opts opts) true)))
 
-(defmacro snippet [path sel args & trans]
-  (snippet* path (cons sel trans) args server-emit-opts))
+(defmacro template
+  ([path args]
+     (snippet* path [:body :> any-node] {} args server-emit-opts true))
+  ([path args trans]
+     (snippet* path [:body :> any-node] trans args server-emit-opts true))
+  ([path args trans opts]
+     (snippet* path [:body :> any-node] trans args (merge server-emit-opts opts) true)))
 
-(defmacro template [path args & trans]
-  (snippet* path  trans args server-emit-opts))
+(defmacro defsnippet
+  ([sym path sel args]
+     `(def ~sym ~(snippet* path sel {} args server-emit-opts true)))
+  ([sym path sel args trans]
+     `(def ~sym ~(snippet* path sel trans args server-emit-opts true)))
+  ([sym path sel args trans opts]
+     `(def ~sym ~(snippet* path sel trans args (merge server-emit-opts opts) true))))
 
-(defmacro defsnippet [sym path sel args & trans]
-  `(def ~sym ~(snippet* path (cons sel trans) args server-emit-opts)))
-
-(defmacro deftemplate [sym path args & trans]
-  `(def ~sym ~(snippet* path trans args server-emit-opts)))
-
-
+(defmacro deftemplate
+  ([sym path args]
+     `(def ~sym ~(snippet* path [:body :> any-node] {} args server-emit-opts true)))
+  ([sym path args trans]
+     `(def ~sym ~(snippet* path [:body :> any-node] trans args server-emit-opts true)))
+  ([sym path args trans opts]
+     `(def ~sym ~(snippet* path [:body :> any-node] trans args (merge server-emit-opts opts) true))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TRANSFORMS

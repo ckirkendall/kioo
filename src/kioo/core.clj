@@ -51,7 +51,7 @@
   ([path sel trans]
      (component* path sel trans react-emit-opts))
   ([path sel trans opts]
-     (component* path sel trans (merge (eval opts) react-emit-opts))))
+     (component* path sel trans (merge react-emit-opts (eval opts)))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -176,7 +176,7 @@
   ([path sel args trans]
      (snippet* path sel trans args react-emit-opts true))
   ([path sel args trans opts]
-     (snippet* path sel trans args (merge (eval opts) react-emit-opts) true)))
+     (snippet* path sel trans args (merge react-emit-opts (eval opts)) true)))
 
 (defmacro template
   ([path args]

@@ -57,7 +57,7 @@
   #+clj (re-pattern (str "(\\s|^)" cls "(\\s|$)")))
 
 (defn- has-class? [cur-cls cls]
-  (re-find (get-class-regex cls) cur-cls))
+  (and cur-cls (re-find (get-class-regex cls) cur-cls)))
 
 
 (defn set-class [& values]

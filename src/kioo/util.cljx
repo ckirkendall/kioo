@@ -19,8 +19,8 @@
                      (when-let [f  (aget (.-props this) "initState")]
                        (binding [*component* this]
                          (f this)))))
-          :getDefaultProps
-          (fn []
+          #_:getDefaultProps
+          #_(fn []
             (this-as this
                      (when-let [f (aget (.-props this) "defaultProps")]
                        (binding [*component* this]
