@@ -25,7 +25,7 @@
                      (when-let [f (aget (.-props this) "defaultProps")]
                        (binding [*component* this]
                          (f this)))))
-          :componentShouldUpdate
+          :shouldComponentUpdate
           (fn [next-props next-state]
             (this-as this
                      (when-let [f (aget (.-props this) "shouldUpdate")]
@@ -90,7 +90,7 @@
 
 
 (def attribute-map
-  (assoc 
+  (assoc
       (reduce #(assoc %1 (keyword (.toLowerCase (name %2))) %2) {}
               [:accessKey :allowFullScreen :allowTransparency :autoComplete
                :autoFocus :autoPlay :cellPadding :cellSpacing :charSet
