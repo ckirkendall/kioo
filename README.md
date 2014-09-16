@@ -24,6 +24,39 @@ All artifacts are published to [clojars](https://clojars.org/kioo). Latest stabl
 
 The biggest difference you will see between Enlive and Kioo is that Kioo only supports unordered transforms.  This means that you pass a map of transforms to the component and you can not guarantee what order they will be processed in.  This is due to, selection being done at compile time and transforms being done at runtime.   Selections cannot take the structure of the content at runtime into consideration.
 
+
+### Templates and Snippets
+
+A snippet is a function that returns a kioo component, it can be used as
+a building block for more complex templates, snippets and components.
+
+You define a snippet by providing a remote resource, a selector and
+series of transformations.
+
+The snippet definition below selects a table body from the remote
+resource `templates/template1.html` and grabs the first row.  It then
+fills the content of the row.
+
+```clj
+(defsnippet snippet2 "templates/template1.html" [:tbody :> first-child]
+  [fruit quantity]
+  {[:tr :> first-child] (content fruit)
+   [:tr :> last-child] (content (str quantity))})
+```
+
+A template is very similar to a snippet except it does not require a
+selector to grap a sub section, instead the entire remote resource is
+used as the dom.  If the remote resource is a full html document only
+what is inside the body tag is brought into the template.
+
+```clj
+(deftemplate template2 "/templates/template1.html" [fruit-data]
+  [:#heading1] (content "fruit")
+  [:thead :tr :> last-child] (content "quantity")
+  [:tbody] (content
+             (map #(snippit2 % (fruit-data %)) (keys fruit-data))))
+```
+
 ### Troubleshooting
 
 The best way to troubleshoot the processing of Kioo templates and snippets and the matching of selectors is to use Clojure's [`macroexpand-1`](http://clojuredocs.org/clojure_core/clojure.core/macroexpand-1) together with  [clojure.tools.trace](https://github.com/clojure/tools.trace)/[trace-ns](http://clojure.github.io/tools.trace/#clojure.tools.trace/trace-ns) applied to `'kioo.core` to see the resulting ClojureScript and log of what happened during the processing. You can also call manually the resulting JavaScript function `<your ns>.<snippet/template name>` and examine the React component it produces.
