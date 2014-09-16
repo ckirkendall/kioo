@@ -50,11 +50,12 @@ used as the dom.  If the remote resource is a full html document only
 what is inside the body tag is brought into the template.
 
 ```clj
-(deftemplate template2 "/templates/template1.html" [fruit-data]
-  [:#heading1] (content "fruit")
-  [:thead :tr :> last-child] (content "quantity")
-  [:tbody] (content
-             (map #(snippit2 % (fruit-data %)) (keys fruit-data))))
+(deftemplate template2 "/templates/template1.html" 
+  [fruit-data]
+  {[:#heading1] (content "fruit")
+   [:thead :tr :> last-child] (content "quantity")
+   [:tbody] (content
+              (map #(snippit2 % (fruit-data %)) (keys fruit-data)))})
 ```
 
 ### Troubleshooting
