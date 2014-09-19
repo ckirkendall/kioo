@@ -90,7 +90,7 @@
 
 
 (def attribute-map
-  (assoc 
+  (assoc
       (reduce #(assoc %1 (keyword (.toLowerCase (name %2))) %2) {}
               [:accessKey :allowFullScreen :allowTransparency :autoComplete
                :autoFocus :autoPlay :cellPadding :cellSpacing :charSet
