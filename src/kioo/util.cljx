@@ -25,7 +25,7 @@
                      (when-let [f (aget (.-props this) "defaultProps")]
                        (binding [*component* this]
                          (f this)))))
-          :componentShouldUpdate
+          :shouldComponentUpdate
           (fn [next-props next-state]
             (this-as this
                      (when-let [f (aget (.-props this) "shouldUpdate")]
