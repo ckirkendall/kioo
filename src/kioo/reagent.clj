@@ -20,7 +20,8 @@
 
 (def reagent-emit-opts {:emit-trans emit-trans
                         :emit-node emit-node
-                        :wrap-fragment wrap-fragment})
+                        :wrap-fragment wrap-fragment
+                        :resource-wrapper :mini-html})
 
 
 (defmacro component
