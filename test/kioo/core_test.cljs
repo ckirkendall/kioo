@@ -17,7 +17,7 @@
     (let [comp (component "simple-div.html" {}) ]
       (is (= "<div id=\"tmp\">test</div>" (render-dom comp)))))
   (testing "content replace"
-    (let [comp (component "simple-div.html" 
+    (let [comp (component "simple-div.html"
                           {[:div] (content "success")})]
       (is (= "<div id=\"tmp\">success</div>" (render-dom comp)))))
   (testing "first-of-type naked symbol"
@@ -69,7 +69,7 @@
   (testing "add-class test"
     (let [comp (component "class-span.html" [:span]
                           {[:#s] (add-class "suc")})]
-      (is (= "<span id=\"s\" class=\"cl cls suc\">testing</span>"
+      (is (= "<span class=\"cl cls suc\" id=\"s\">testing</span>"
              (render-dom comp)))))
   (testing "add-class when no class exists"
     (let [comp (component "simple-div.html"
@@ -79,17 +79,17 @@
   (testing "remove-class test"
     (let [comp (component "class-span.html" [:span]
                           {[:#s] (remove-class "cl")})]
-      (is (= "<span id=\"s\" class=\" cls\">testing</span>"
+      (is (= "<span class=\" cls\" id=\"s\">testing</span>"
              (render-dom comp)))))
   (testing "set-class test"
     (let [comp (component "class-span.html" [:span]
                           {[:#s] (set-class "cl")})]
-      (is (= "<span id=\"s\" class=\" cl\">testing</span>"
+      (is (= "<span class=\" cl\" id=\"s\">testing</span>"
              (render-dom comp)))))
   (testing "set-style test"
     (let [comp (component "style-span.html" [:span]
                           {[:#s] (set-style :display "none")})]
-      (is (= "<span id=\"s\" style=\"color:red;display:none;\">testing</span>"
+      (is (= "<span style=\"color:red;display:none;\" id=\"s\">testing</span>"
              (render-dom comp)))))
   (testing "remove-style test"
     (let [comp (component "style-span.html" [:span]
@@ -131,7 +131,7 @@
                                      #(reset! atm "success"))})]
       (render-dom comp)
       (is (= "success" @atm))))
-  (testing "lifecycle tests" 
+  (testing "lifecycle tests"
     (let [init-state (atom "fail")
           default-props (atom "fail")
           should-update (atom "fail")
@@ -158,10 +158,10 @@
       (render-dom comp)
       (is (= "success" @init-state))
       (is (= "success" @will-mount))
-      (is (= "success" @did-mount))      
+      (is (= "success" @did-mount))
 
       ;;need to workout how to test these
-      ;(is (= "success" @default-props)) 
+      ;(is (= "success" @default-props))
       ;(is (= "success" @should-update))
       ;(is (= "success" @will-receive-props))
       ;(is (= "success" @will-update))

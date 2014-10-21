@@ -42,7 +42,7 @@
              (render-dom comp)))))
   (testing "content replace"
     (let [atm (atom "one")
-          comp #(component "simple-div.html"  
+          comp #(component "simple-div.html"
                            {[:div] (content @atm)})
           container (initial-render comp)
           html-str1 (inner-html container)
@@ -53,10 +53,10 @@
       (clean-up)))
   (testing "sub component test"
     (let [atm (atom "one")
-          comp2 #(component "simple-div.html"  
+          comp2 #(component "simple-div.html"
                             {[:div] (do-> (remove-attr :id)
                                           (content @atm))} )
-          comp #(component "simple-div.html"  
+          comp #(component "simple-div.html"
                            {[:div] (content [comp2])})
           container (initial-render comp)
           html-str1 (inner-html container)
@@ -69,7 +69,7 @@
       (clean-up)))
   (testing "append test"
     (let [atm (atom "one")
-          comp #(component "simple-div.html"  
+          comp #(component "simple-div.html"
                            {[:div] (append @atm)})
           container (initial-render comp)
           html-str1 (inner-html container)
@@ -110,22 +110,22 @@
   (testing "add-class test"
     (let [comp #(component "class-span.html" [:span]
                           {[:#s] (add-class "suc")})]
-      (is (= "<span id=\"s\" class=\"cl cls suc\">testing</span>"
+      (is (= "<span class=\"cl cls suc\" id=\"s\">testing</span>"
              (render-dom comp)))))
   (testing "remove-class test"
     (let [comp #(component "class-span.html" [:span]
                           {[:#s] (remove-class "cl")})]
-      (is (= "<span id=\"s\" class=\" cls\">testing</span>"
+      (is (= "<span class=\" cls\" id=\"s\">testing</span>"
              (render-dom comp)))))
   (testing "set-class test"
     (let [comp #(component "class-span.html" [:span]
                           {[:#s] (set-class "cl")})]
-      (is (= "<span id=\"s\" class=\" cl\">testing</span>"
+      (is (= "<span class=\" cl\" id=\"s\">testing</span>"
              (render-dom comp)))))
   (testing "set-style test"
     (let [comp #(component "style-span.html" [:span]
                           {[:#s] (set-style :display "none")})]
-      (is (= "<span id=\"s\" style=\"color:red;display:none;\">testing</span>"
+      (is (= "<span style=\"color:red;display:none;\" id=\"s\">testing</span>"
              (render-dom comp)))))
   (testing "remove-style test"
     (let [comp #(component "style-span.html" [:span]
