@@ -4,7 +4,8 @@
             [net.cgrand.enlive-html :refer [at html-resource select
                                             any-node]]
             [clojure.string :as string]
-            [enlive-ws.core :refer [->MiniHtml]]))
+            [kioo.html-parser :as parser]
+            [hickory.core :as hickory]))
 
 (declare compile component*)
 
@@ -35,8 +36,8 @@
   `(apply ~(get-react-sym tag) nil ~child-sym))
 
 
-(def resource-wrapper-fns {:html identity
-                           :mini-html ->MiniHtml})
+(def resource-wrapper-fns {:html parser/->StandardHtml
+                           :mini-html parser/->MiniHtml})
 
 
 (def react-emit-opts {:emit-trans emit-trans
@@ -65,7 +66,7 @@
                            (cljs.core/-> node#
                                (~(:trans node))
                                (~trans))))
-      (assoc node :trans trans)))) 
+      (assoc node :trans trans))))
 
 
 (defn resolve-enlive-var [sym]
@@ -99,11 +100,19 @@
    (not (string? resource)) identity
    (keyword? wrapper) (resource-wrapper-fns wrapper)
    (symbol? wrapper) (resolve wrapper)
-   :else nil))
+   :else parser/->MiniHtml))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main Structure of Compiler
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(defn parse-html
+  "parses html with a pre-processing step provided by resource-fn
+   returns an enlive compatible data structure."
+  [path resource-fn]
+  (html-resource (resource-fn path)))
+
 (defn component*
   "this is the generic component that takes emitter
    options that define how the component is mapped
@@ -111,8 +120,8 @@
   ([path trans emit-opts]
      (component* path [:body :> any-node] trans emit-opts))
   ([path sel trans emit-opts]
-     (let [resource-fn (or (resolve-resource-fn path emit-opts) identity)
-           root (html-resource (resource-fn path))
+     (let [resource-fn (resolve-resource-fn path emit-opts)
+           root (parse-html path resource-fn)
             start (if (= :root sel)
                     root
                     (select root (eval-selector sel)))
@@ -142,7 +151,7 @@
   (let [nodes (if (map? node) [node] node)
         cnodes (vec (filter identity
                             (map #(cond
-                                   (map? %) (compile-node % emit-opts) 
+                                   (map? %) (compile-node % emit-opts)
                                    (string? %) (if (:emit-str emit-opts)
                                                  ((:emit-str emit-opts) %)
                                                  %)
@@ -155,7 +164,7 @@
 ;;
 ;; these were created to provide the ability
 ;; to share templates from between server
-;; and client using cljx 
+;; and client using cljx
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
