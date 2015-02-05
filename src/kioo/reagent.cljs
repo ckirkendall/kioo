@@ -1,7 +1,7 @@
 (ns kioo.reagent
   (:require [kioo.core :as core]
             [kioo.util :as util :refer [flatten-nodes]]
-            [reagent.impl.template :refer [as-component]]))
+            [reagent.core :refer [as-component]]))
 
 (defn make-dom [node]
   (let [rnode (if (map? node)
@@ -13,13 +13,13 @@
                    (seq? c) (reduce #(conj %1 (as-component %2))
                                     [(:tag node) (:attrs node)]
                                     c)
-                   :else [(:tag node) (:attrs node) c])) 
+                   :else [(:tag node) (:attrs node) c]))
                 node)]
     (as-component rnode)))
 
 
 (def content core/content)
-(def append core/append) 
+(def append core/append)
 (def prepend core/prepend)
 
 ;;after and before need to to make-dom
