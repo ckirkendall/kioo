@@ -78,7 +78,7 @@
   (reduce
    #(conj %1
           (cond
-           (list? %2) (apply (resolve-enlive-var (first %2)) (rest %2))
+           (list? %2) (apply (resolve-enlive-var (first %2)) (eval-selector (rest %2)))
            (or (vector? %2)
                (map? %2)
                (set? %2)) (eval-selector %2)
