@@ -95,13 +95,14 @@
               [:accessKey :allowFullScreen :allowTransparency :autoComplete
                :autoFocus :autoPlay :cellPadding :cellSpacing :charSet
                :colSpan :contentEditable :contextMenu :dateTime :encType
-               :formNoValidate :frameBorder :httpEquiv :itemProp
+               :formEncType :formNoValidate :frameBorder :httpEquiv :itemProp
                :itemScope :itemType :maxLength :noValidate :radioGroup :readOnly
                :rowSpan :scrollLeft :scrollTop :spellCheck :srcDoc :tabIndex
                :gradientTransform :gradientUnits :spreadMethod :stopColor
                :stopOpacity :strokeLinecap :strokeWidth :textAnchor :viewBox])
-    :class :className
-    :for   :htmlFor))
+    :accept-charset :acceptCharset
+    :class          :className
+    :for            :htmlFor))
 
 (defn transform-keys [attrs]
   (reduce (fn [m [k v]]
