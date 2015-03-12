@@ -35,8 +35,9 @@
 
 (defn attr-by-key [ky]
   (case ky
-    :className "class"
-    :htmlFor   "for"
+    :acceptCharset "accept-charset"
+    :className     "class"
+    :htmlFor       "for"
     (name ky)))
 
 (defn emit-attrs [attrs]
