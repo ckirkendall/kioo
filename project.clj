@@ -16,7 +16,14 @@
                  [om "0.7.1"]
                  [reagent "0.4.2"]
                  [enlive-ws  "0.1.1"]]
-  :plugins [[lein-cljsbuild "1.0.4-SNAPSHOT"]]
+  :plugins [[lein-cljsbuild "1.0.4-SNAPSHOT"]
+            [lein-shell "0.4.0"]]
+  :aliases
+  {"auto-test"
+   ["do" "clean"
+    ["shell" "mkdir" "-p" "target/test-classes"]
+    ["cljx"]
+    ["cljsbuild" "auto" "test"]]}
   :cljsbuild {:builds []}
   :profiles {:dev {:plugins [[com.keminglabs/cljx "0.3.2"] ;; Must be before Austin: https://github.com/cemerick/austin/issues/37
                              [com.cemerick/austin "0.1.3"]
@@ -43,7 +50,8 @@
                                                     :pretty-print true
                                                     :source-map true}}
                                         {:id "test"
-                                         :source-paths ["test" "target/classes" "target/test-classes"]
+                                         :notify-command ["phantomjs" :cljs.test/runner "target/test/kioo.js"]
+                                         :source-paths ["src" "test" "target/classes" "target/test-classes"]
                                          :compiler {:output-to "target/test/kioo.js"
                                                     :optimizations :simple
                                                     :pretty-print true

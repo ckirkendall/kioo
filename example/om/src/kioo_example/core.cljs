@@ -8,13 +8,13 @@
 
 (defsnippet my-nav-item "main.html" [:.nav-item]
   [[caption func]]
-  {[:a] (do-> (content caption)
-              (listen :onClick #(func caption)))})
+  {#_#_[:a] (listen :onClick #(func caption))
+   [:h1] (content caption)})
 
 (defsnippet my-header "main.html" [:header]
   [{:keys [heading navigation]}]
   {[:h1] (content heading)
-   [:ul] (content (map my-nav-item navigation))})
+   #_#_ [:ul] (content (map my-nav-item navigation))})
 
 
 (deftemplate my-page "main.html"
@@ -31,4 +31,3 @@
                                    ["next" #(js/alert %)]]}))
 
 (om/root init app-state {:target  (.-body js/document)})
-

@@ -26,11 +26,15 @@
 ;;so they are call out specifically
 (defn after [& body]
   (fn [node]
-    (conj body node)))
+    (if (seq? node)
+      (concat node body)
+      (conj body node))))
 
 (defn before [& body]
   (fn [node]
-    (reduce #(conj %1 %2) (list node) body)))
+    (if (seq? node)
+      (concat body node)
+      (concat body (list node)))))
 
 (def substitute core/substitute)
 (def set-attr core/set-attr)

@@ -41,7 +41,7 @@
   (fn hw [node & body]
     (let [rnode (cond
                  (seq? node) (apply hw node)
-                 (and (map? node) (not (empty? (:events node))))  
+                 (and (map? node) (not (empty? (:events node))))
                  (let [revents (:events node)]
                    (WrapComponent (clj->js (assoc revents
                                              :wrappee (dom-fn node)))))
@@ -57,11 +57,15 @@
 
 (defn after [& body]
   (fn [node]
-    (cons (make-dom node) body)))
+    (if (seq? node)
+      (concat node body)
+      (cons (make-dom node) body))))
 
 (defn before [& body]
   (fn [node]
-    (flatten-nodes (concat body [(make-dom node)]))))
+    (if (seq? node)
+      (concat body node)
+      (concat body [(make-dom node)]))))
 
 (def substitute common/substitute)
 (def set-attr common/set-attr)
@@ -76,7 +80,7 @@
 (defn wrap [tag attrs]
   (fn [node]
     {:tag tag
-     :sym (aget js/React.DOM (name tag)) 
+     :sym (aget js/React.DOM (name tag))
      :attrs (convert-attrs attrs)
      :content [(make-dom node)]}))
 
@@ -100,7 +104,7 @@
                             (if (listen-react-events k)
                               [(assoc r k v) s]
                               [r (assoc s k v)])) [] pairs)]
-    (fn [node] 
+    (fn [node]
       (assoc node
         :attrs (merge (:attrs node) sev)
         :events (merge (:events node) rev)))))

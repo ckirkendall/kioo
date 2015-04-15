@@ -5,11 +5,11 @@
   :jvm-opts ^:replace ["-Xmx1g" "-server"]
 
   :dependencies [[kioo "0.4.1-SNAPSHOT"]
-                 [org.clojure/clojure "1.5.1"]
-                 [org.clojure/clojurescript "0.0-2173"]
-                 [om "0.5.1"]]
+                 [org.clojure/clojure "1.6.0"]
+                 [org.clojure/clojurescript "0.0-2311"]
+                 [om "0.7.1"]]
 
-  :plugins [[lein-cljsbuild "1.0.1"]]
+  :plugins [[lein-cljsbuild "1.0.3"]]
 
   :source-paths ["src"]
   :resource-paths ["resources"]

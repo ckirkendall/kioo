@@ -17,11 +17,15 @@
 
 (defn after [& body]
   (fn [node]
-    (cons (make-dom node) body)))
+    (if (seq? node)
+      (concat node body)
+      (cons (make-dom node) body))))
 
 (defn before [& body]
   (fn [node]
-    (flatten-nodes (concat body [(make-dom node)]))))
+    (if (seq? node)
+      (concat body node)
+      (concat body [(make-dom node)]))))
 
 (def substitute core/substitute)
 (def set-attr core/set-attr)
@@ -36,7 +40,7 @@
 (defn wrap [tag attrs]
   (fn [node]
     {:tag tag
-     :sym (aget js/React.DOM (name tag)) 
+     :sym (aget js/React.DOM (name tag))
      :attrs (convert-attrs attrs)
      :content [(make-dom node)]}))
 
