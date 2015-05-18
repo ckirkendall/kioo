@@ -122,8 +122,9 @@
   ([path trans emit-opts]
      (component* path [:body :> any-node] trans emit-opts))
   ([path sel trans emit-opts]
-     (let [resource-fn (resolve-resource-fn path emit-opts)
-           root (parse-html path resource-fn)
+     (let [path-obj (eval path)
+           resource-fn (resolve-resource-fn path-obj emit-opts)
+           root (parse-html path-obj resource-fn)
            start (if (= :root sel)
                     root
                     (select root (eval-selector sel)))
