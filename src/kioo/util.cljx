@@ -1,6 +1,7 @@
 (ns kioo.util
   (:refer-clojure :exclude [replace])
-  (:require [clojure.string :refer [split replace capitalize]]))
+  (:require [clojure.string :refer [split replace capitalize]]
+            #+cljs [cljsjs.react]))
 
 #+cljs
 (def ^:dynamic *component* nil)

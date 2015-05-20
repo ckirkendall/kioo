@@ -8,10 +8,12 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[enlive "1.1.5"]
                  [com.facebook/react "0.11.1"]
+                 [cljsjs/react "0.13.1-0"]
                  [org.clojure/clojure "1.6.0"]
-                 [org.clojure/clojurescript "0.0-2280"]
+                 [org.clojure/clojurescript "0.0-3211"]
                  [com.googlecode.htmlcompressor/htmlcompressor "1.5.2"]
                  [sablono "0.2.20"]
+                 [sablono "0.3.4"]
                  [hickory "0.5.3"]
                  [om "0.7.1"]
                  [reagent "0.4.2"]
@@ -26,7 +28,7 @@
     ["cljsbuild" "auto" "test"]]}
   :cljsbuild {:builds []}
   :profiles {:dev {:plugins [[com.keminglabs/cljx "0.3.2"] ;; Must be before Austin: https://github.com/cemerick/austin/issues/37
-                             [com.cemerick/austin "0.1.3"]
+                             #_[com.cemerick/austin "0.1.3"]
                              [com.cemerick/clojurescript.test "0.3.2-SNAPSHOT"]
                              [lein-cljsbuild "1.0.4-SNAPSHOT"]
                              [lein-ancient "0.5.4"]]

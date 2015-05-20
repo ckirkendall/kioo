@@ -104,11 +104,6 @@
    (symbol? wrapper) (resolve wrapper)
    :else parser/->MiniHtml))
 
-
-(defn path-exists? [path]
-  (or (not (string? path))
-      (io/resource path)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main Structure of Compiler
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -127,10 +122,9 @@
   ([path trans emit-opts]
      (component* path [:body :> any-node] trans emit-opts))
   ([path sel trans emit-opts]
-     (assert (path-exists? path) (str "No resource found for: '" path
-                                      "' - kioo pulls resources from the class path"))
-     (let [resource-fn (resolve-resource-fn path emit-opts)
-           root (parse-html path resource-fn)
+     (let [path-obj (eval path)
+           resource-fn (resolve-resource-fn path-obj emit-opts)
+           root (parse-html path-obj resource-fn)
            start (if (= :root sel)
                     root
                     (select root (eval-selector sel)))

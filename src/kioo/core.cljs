@@ -22,7 +22,7 @@
                                     (aget (.-props this) "value")
                                     (aget (.-props this) "statics")))))})]
     (fn [value & static-args]
-      (react-component #js {:value value :statics static-args}))))
+      (.createElement js/React react-component #js {:value value :statics static-args}))))
 
 
 (defn make-dom [node]
