@@ -13,7 +13,18 @@
  (testing "basic render test"
     (let [comp (component "simple-div.html" {}) ]
       (is (= "<div id=\"tmp\">test</div>" comp))))
- 
+
+  (testing "compile-time error"
+    (let [message
+          (try
+            (with-out-str
+              (binding [*err* *out*]
+                (macroexpand `(component "simple-div.html"
+                                         {[:diw] (content "success")}))))
+            (catch AssertionError e
+              (.getMessage e)))]
+      (is (re-find #"File .* does not contain selector" message))))
+
   (testing "content replace"
     (let [comp (component "simple-div.html" 
                           {[:div] (content "success")})]
