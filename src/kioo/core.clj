@@ -135,7 +135,11 @@
           (if (empty? (select start (eval-selector trans-selector)))
             (let [message (format "File %s does not contain selector %s %s."
                                   path sel trans-selector)]
-              (throw (AssertionError. message)))))
+              (try
+                (throw (AssertionError. message))
+                (catch AssertionError e
+                  (binding [*out* *err*]
+                    (println message)))))))
 
         `(let [~child-sym ~(compile (map-trans start trans) emit-opts)]
            (if (= 1 (count ~child-sym))
