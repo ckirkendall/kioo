@@ -11,7 +11,6 @@
                  [org.clojure/clojure "1.6.0"]
                  [org.clojure/clojurescript "0.0-3211"]
                  [com.googlecode.htmlcompressor/htmlcompressor "1.5.2"]
-                 [sablono "0.2.20"]
                  [sablono "0.3.4"]
                  [hickory "0.5.3"]
                  [om "0.7.1" :exclusions [com.facebook/react]]
