@@ -8,20 +8,21 @@
 
 (defsnippet my-nav-item "main.html" [:.nav-item]
   [[caption func]]
-  {#_#_[:a] (listen :onClick #(func caption))
+  {[:a] (listen :onClick #(func caption))
    [:h1] (content caption)})
 
 (defsnippet my-header "main.html" [:header]
   [{:keys [heading navigation]}]
   {[:h1] (content heading)
-   #_#_ [:ul] (content (map my-nav-item navigation))})
+   [:ul] (content (map my-nav-item navigation))})
 
 
 (deftemplate my-page "main.html"
   [data]
   {[:header] (substitute (my-header data))
    [:.content] (content (:content data))
-   [:div] (set-style :color "red")})
+   [:div] (set-style :color "red")
+   [:.what] (set-style :color "blue")})
 
 (defn init [data] (om/component (my-page data)))
 

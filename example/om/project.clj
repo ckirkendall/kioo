@@ -6,10 +6,10 @@
 
   :dependencies [[kioo "0.4.1-SNAPSHOT"]
                  [org.clojure/clojure "1.6.0"]
-                 [org.clojure/clojurescript "0.0-2311"]
-                 [om "0.7.1"]]
+                 [org.clojure/clojurescript "0.0-3211"]
+                 [om "0.7.3"]]
 
-  :plugins [[lein-cljsbuild "1.0.3"]]
+  :plugins [[lein-cljsbuild "1.0.6"]]
 
   :source-paths ["src"]
   :resource-paths ["resources"]
@@ -20,6 +20,4 @@
               :compiler {
                 :output-to "app.js"
                 :pretty-print true         
-                :optimizations :simple
-                :preamble ["react/react.js"]
-                :externs ["react/externs/react.js"]}}]})
+                :optimizations :simple}}]})

@@ -25,25 +25,26 @@
     ["cljx" "once"]
     ["cljsbuild" "auto" "test"]]}
   :cljsbuild {:builds []}
+  :prep-tasks [["cljx" "once"] "javac" "compile"]
+  :cljx {:builds
+         [{:source-paths ["src"]
+           :output-path "target/classes"
+           :rules :clj}
+          {:source-paths ["src"]
+           :output-path "target/classes"
+           :rules :cljs}
+          {:source-paths ["test"]
+           :output-path "target/test-classes"
+           :rules :clj}
+          {:source-paths ["test"]
+           :output-path "target/test-classes"
+           :rules :cljs}]}
   :profiles {:dev
              {:plugins [[com.keminglabs/cljx "0.6.0"] 
                         [com.cemerick/clojurescript.test "0.3.2-SNAPSHOT"]
                         [lein-cljsbuild "1.0.4-SNAPSHOT"]
                         [lein-ancient "0.5.4"]]
               :hooks [leiningen.cljsbuild]
-              :cljx {:builds
-                     [{:source-paths ["src"]
-                       :output-path "target/classes"
-                       :rules :clj}
-                      {:source-paths ["src"]
-                       :output-path "target/classes"
-                       :rules :cljs}
-                      {:source-paths ["test"]
-                       :output-path "target/test-classes"
-                       :rules :clj}
-                      {:source-paths ["test"]
-                       :output-path "target/test-classes"
-                       :rules :cljs}]}
               :cljsbuild
               {:builds [#_{:id "dev"
                            :source-paths ["test" "target/classes" "target/test-classes"]
@@ -58,7 +59,7 @@
                                     :optimizations :simple
                                     :pretty-print true
                                     :preamble ["phantomjs-shims.js" ]}}]
-               :test-commands {"phantom" ["phantomjs" :runner "target/test/kioo.js"]}}
+              :test-commands {"phantom" ["phantomjs" :runner "target/test/kioo.js"]}}
               :repl-options {:nrepl-middleware [cljx.repl-middleware/wrap-cljx]}
               :resource-paths ["test-resources"]
               :source-paths ["target/classes"]

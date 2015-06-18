@@ -133,7 +133,7 @@
                 "Transforms must be a map - Kioo only supports order independent transforms")
         (doseq [trans-selector (keys trans)]
           (if (empty? (select start (eval-selector trans-selector)))
-            (let [message (format "File %s does not contain selector %s %s."
+            (let [message (format "WARNING: File %s does not contain selector %s %s."
                                   path sel trans-selector)]
               (try
                 (throw (AssertionError. message))
