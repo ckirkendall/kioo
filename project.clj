@@ -7,16 +7,14 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[enlive "1.1.5"]
-                 [com.facebook/react "0.11.1"]
-                 [cljsjs/react "0.13.1-0"]
+                 [cljsjs/react "0.12.2-5"]
                  [org.clojure/clojure "1.6.0"]
                  [org.clojure/clojurescript "0.0-3211"]
                  [com.googlecode.htmlcompressor/htmlcompressor "1.5.2"]
-                 [sablono "0.2.20"]
                  [sablono "0.3.4"]
                  [hickory "0.5.3"]
-                 [om "0.7.1"]
-                 [reagent "0.4.2"]
+                 [om "0.7.1" :exclusions [com.facebook/react]]
+                 [reagent "0.5.0" :exclusions [cljsjs/react]]
                  [enlive-ws  "0.1.1"]]
   :plugins [[lein-cljsbuild "1.0.4-SNAPSHOT"]
             [lein-shell "0.4.0"]]
@@ -57,9 +55,7 @@
                                          :compiler {:output-to "target/test/kioo.js"
                                                     :optimizations :simple
                                                     :pretty-print true
-                                                    :preamble ["phantomjs-shims.js"
-                                                               "react/react.js"]
-                                                    :externs ["react/externs/react.js"]}}]
+                                                    :preamble ["phantomjs-shims.js" ]}}]
                                :test-commands {"phantom" ["phantomjs" :runner "target/test/kioo.js"]}}
                    :repl-options {:nrepl-middleware [cljx.repl-middleware/wrap-cljx]}
                    :resource-paths ["test-resources"]
