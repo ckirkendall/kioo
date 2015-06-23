@@ -45,6 +45,7 @@
 (def react-emit-opts {:emit-trans emit-trans
                       :emit-node emit-node
                       :wrap-fragment wrap-fragment
+                      :single false
                       :resource-wrapper :mini-html})
 
 (defmacro component
@@ -128,12 +129,17 @@
      (component* path [:body :> any-node] trans emit-opts))
   ([path sel trans emit-opts]
      (let [path-obj (eval path)
+           single? (:single emit-opts)
+           emit-opts (dissoc emit-opts :single)
            resource-fn (resolve-resource-fn path-obj emit-opts)
            ast-fn (:process-ast emit-opts)
            root (parse-html path-obj resource-fn ast-fn)
-           start (if (= :root sel)
-                    root
-                    (select root (eval-selector sel)))
+           start-matches (if (= :root sel)
+                           root
+                           (select root (eval-selector sel)))
+           start (if single?
+                   (take 1 start-matches)
+                   start-matches)
            child-sym (gensym "ch")]
         (assert (or (empty? trans) (map? trans))
                 "Transforms must be a map - Kioo only supports order independent transforms")
