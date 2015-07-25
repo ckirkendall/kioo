@@ -4,7 +4,8 @@
                                remove-attr before after do->
                                set-style remove-style add-class
                                remove-class wrap unwrap set-class
-                               html html-content listen lifecycle]]
+                               html html-content listen lifecycle
+                               set-attr]]
             [kioo.test :refer [render-dom]]
             [goog.dom :as gdom])
   (:require-macros [kioo.core :refer [component  snippet template
@@ -235,3 +236,11 @@
                                                    (before "before")
                                                    (after "after"))}) ]
       (is (= "<span><span>before</span><div id=\"tmp\">success</div><span>after</span></span>" (render-dom comp))))))
+
+(deftemplate nested-has-template "nested-has.html" []
+             {[[:.form-group (has [[:input (attr= :name "name")]])]] (set-attr :id "test")})
+
+(deftest nested-has-test
+         (testing "nested has selector"
+                  (is (= (render-dom (nested-has-template))
+                         "<div class=\"form-group\" id=\"test\"><input name=\"name\" type=\"text\"></div>"))))
