@@ -146,7 +146,8 @@
                                     :default-props (fn [this] (reset! default-props "success"))
                                     :should-update
                                     (fn [this next-props next-state]
-                                      (reset! should-update "success"))
+                                      (reset! should-update "success")
+                                      true)
                                     :will-mount (fn [this] (reset! will-mount "success"))
                                     :did-mount (fn [this] (reset! did-mount "success"))
                                     :will-receive-props (fn [this next-props]
@@ -159,7 +160,7 @@
       (is (= "success" @init-state))
       (is (= "success" @will-mount))
       (is (= "success" @did-mount))
-
+ 
       ;;need to workout how to test these
       ;(is (= "success" @default-props))
       ;(is (= "success" @should-update))
