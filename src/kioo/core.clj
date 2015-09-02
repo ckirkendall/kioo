@@ -76,14 +76,15 @@
 
 (defn eval-selector [sel]
   (reduce
-   #(conj %1
+    (fn [sel-acc sel-frag]
+      (conj sel-acc
           (cond
-           (list? %2) (apply (resolve-enlive-var (first %2)) (rest %2))
-           (or (vector? %2)
-               (map? %2)
-               (set? %2)) (eval-selector %2)
-           (symbol? %2) (resolve-enlive-var %2)
-            :else %2))
+           (list? sel-frag) (apply (resolve-enlive-var (first sel-frag)) (eval-selector (rest sel-frag)))
+           (or (vector? sel-frag)
+               (map? sel-frag)
+               (set? sel-frag)) (eval-selector sel-frag)
+           (symbol? sel-frag) (resolve-enlive-var sel-frag)
+            :else sel-frag)))
    (cond
     (vector? sel) []
     (set? sel) #{}
