@@ -17,7 +17,8 @@
                  [reagent "0.5.0" :exclusions [cljsjs/react]]
                  [enlive-ws  "0.1.1"]]
   :plugins [[lein-cljsbuild "1.0.4-SNAPSHOT"]
-            [lein-shell "0.4.0"]]
+            [lein-shell "0.4.0"]
+            [lein-marginalia "0.8.0"]]
   :aliases
   {"auto-test"
    ["do" "clean"

@@ -234,3 +234,11 @@
          (testing "nested has selector"
                   (is (= (render-dom nested-has-template)
                          "<div class=\"form-group\" id=\"test\"><input name=\"name\" type=\"text\"></div>"))))
+
+;; problematic kioo-generated component takes a long time to appear in the page
+(deftemplate minform "min-form.html" [])
+
+(deftest form-timing-test
+         (testing "time needed to parse form"
+                  (is (= (render-dom minform)
+                         "<div class=\"outcomes\">\n    <h2>Outcomes</h2>\n    <form>\n        <fieldset>\n            <legend>Outcomes assessment</legend>\n            <div>\n                <div>\n                    <label for=\"test\">Test label</label>\n                    <input id=\"test\" type=\"date\">\n                </div>\n            </div>\n        </fieldset>\n    </form>\n</div>"))))
