@@ -234,3 +234,10 @@
          (testing "nested has selector"
                   (is (= (render-dom nested-has-template)
                          "<div class=\"form-group\" id=\"test\"><input name=\"name\" type=\"text\"></div>"))))
+
+(deftemplate minform "min-form.html" [])
+;; uncomment following test to experience Reagent-Kioo issue
+;; commented-out here as it makes Phantom.js eventually fall over after hogging CPU, which is no fun
+#_(deftest form-timing-test
+         (testing "Reagent-Kioo suffers from slow construction of React nodes in Safari/Phantom"
+                  (is (= (render-dom minform) ""))))
