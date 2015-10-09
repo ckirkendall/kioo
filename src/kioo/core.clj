@@ -112,9 +112,13 @@
 
 (defn parse-html
   "parses html with a pre-processing step provided by resource-fn
-   returns an enlive compatible data structure."
-  [path resource-fn]
-  (html-resource (resource-fn path)))
+  returns an enlive compatible data structure. If provided, ast-fn
+  is applied to the parsed data structure."
+  ([path resource-fn]
+   (html-resource (resource-fn path)))
+  ([path resource-fn ast-fn]
+   (let [ast-fn (or ast-fn identity)]
+     (ast-fn (parse-html path resource-fn)))))
 
 (defn component*
   "this is the generic component that takes emitter
@@ -125,7 +129,8 @@
   ([path sel trans emit-opts]
      (let [path-obj (eval path)
            resource-fn (resolve-resource-fn path-obj emit-opts)
-           root (parse-html path-obj resource-fn)
+           ast-fn (:process-ast emit-opts)
+           root (parse-html path-obj resource-fn ast-fn)
            start (if (= :root sel)
                     root
                     (select root (eval-selector sel)))
