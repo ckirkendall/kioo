@@ -45,7 +45,7 @@
 (def react-emit-opts {:emit-trans emit-trans
                       :emit-node emit-node
                       :wrap-fragment wrap-fragment
-                      :single false
+                      :multiple-roots nil
                       :resource-wrapper :mini-html})
 
 (defmacro component
@@ -133,17 +133,25 @@
      (component* path [:body :> any-node] trans emit-opts))
   ([path sel trans emit-opts]
      (let [path-obj (eval path)
-           single? (:single emit-opts)
-           emit-opts (dissoc emit-opts :single)
+           multiple-roots (:multiple-roots emit-opts)
+           emit-opts (dissoc emit-opts :multiple-roots)
            resource-fn (resolve-resource-fn path-obj emit-opts)
            ast-fn (:process-ast emit-opts)
            root (parse-html path-obj resource-fn ast-fn)
            start-matches (if (= :root sel)
                            root
                            (select root (eval-selector sel)))
-           start (if single?
-                   (take 1 start-matches)
-                   start-matches)
+           start (case (count start-matches)
+                   0 (do
+                       (warning! "File %s does not contain selector %s" path sel)
+                       start-matches)
+                   1 start-matches
+                   (case multiple-roots
+                     :first (take 1 start-matches)
+                     :concatenate start-matches
+                     (do
+                       (warning! "File %s contains multiple elements matching root selector %s. If you really wanted a component that is a concatenation of matches, please specify {:multiple-roots :concatenate}. Otherwise either use more specific selector, or, if that's problematic, specify {:multiple-roots :first}. Defaulting to first match.\n" path sel)
+                       (take 1 start-matches))))
            child-sym (gensym "ch")]
         (assert (or (empty? trans) (map? trans))
                 "Transforms must be a map - Kioo only supports order independent transforms")
