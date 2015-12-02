@@ -121,6 +121,10 @@
    (let [ast-fn (or ast-fn identity)]
      (ast-fn (parse-html path resource-fn)))))
 
+(defn- warning! [format-string & args]
+  (binding [*out* *err*]
+    (println (apply format (str "WARNING: " format-string) args))))
+
 (defn component*
   "this is the generic component that takes emitter
    options that define how the component is mapped
@@ -145,13 +149,7 @@
                 "Transforms must be a map - Kioo only supports order independent transforms")
         (doseq [trans-selector (keys trans)]
           (if (empty? (select start (eval-selector trans-selector)))
-            (let [message (format "WARNING: File %s does not contain selector %s %s."
-                                  path sel trans-selector)]
-              (try
-                (throw (AssertionError. message))
-                (catch AssertionError e
-                  (binding [*out* *err*]
-                    (println message)))))))
+            (warning! "File %s does not contain selector %s %s." path sel trans-selector)))
 
         `(let [~child-sym ~(compile (map-trans start trans) emit-opts)]
            (if (= 1 (count ~child-sym))
