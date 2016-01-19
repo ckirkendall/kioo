@@ -26,8 +26,11 @@
      (.replace "\"" "&quot;")))
 
 (defn- emit-style-str [smap]
-  (reduce (fn [s [k v]] (if (empty? v) s (str (name k) ":" v ";" s)))
-          "" smap))
+  (cond
+    (string? smap) smap
+    (map? smap) (reduce (fn [s [k v]]  (if (empty? v) s (str (name k) ":" v ";" s)))
+                        "" smap)
+    (nil? smap) ""))
 
 
 (def self-closing-tags #{:area :base :basefont :br :hr
