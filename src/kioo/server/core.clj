@@ -47,7 +47,7 @@
   (reduce (fn [s [k v]]
             (cond
              (empty? v) s
-             (= k :style) (str " style=\""
+             (= k :style) (str s " style=\""
                                (emit-attr-str (emit-style-str v))
                                "\"")
              :else (str s " " (attr-by-key k) "=\""
