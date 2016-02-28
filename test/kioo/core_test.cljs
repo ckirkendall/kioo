@@ -228,10 +228,12 @@
                                              (do-> (content "success")
                                                    (after "after")
                                                    (before "before"))}) ]
-      (is (= "<span><span>before</span><div id=\"tmp\">success</div><span>after</span></span>" (render-dom comp)))))
+      (is (= "<span><span>before</span><div id=\"tmp\">success</div><span>after</span></span>"
+             (render-dom comp)))))
   (testing "Testing content, before then after"
     (let [comp (component "simple-div.html" {[:div]
                                              (do-> (content "success")
                                                    (before "before")
                                                    (after "after"))}) ]
-      (is (= "<span><span>before</span><div id=\"tmp\">success</div><span>after</span></span>" (render-dom comp))))))
+      (is (= "<span><span>before</span><div id=\"tmp\">success</div><span>after</span></span>"
+             (render-dom comp))))))
