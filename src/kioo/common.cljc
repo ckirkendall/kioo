@@ -53,8 +53,8 @@
 
 
 (defn- get-class-regex [cls]
-  #+cljs (js/RegExp. (str "(\\s|^)" cls "(\\s|$)"))
-  #+clj (re-pattern (str "(\\s|^)" cls "(\\s|$)")))
+  #?(:cljs (js/RegExp. (str "(\\s|^)" cls "(\\s|$)"))
+     :clj  (re-pattern (str "(\\s|^)" cls "(\\s|$)"))))
 
 (defn- has-class? [cur-cls cls]
   (and cur-cls (re-find (get-class-regex cls) cur-cls)))

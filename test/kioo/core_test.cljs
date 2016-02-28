@@ -1,5 +1,5 @@
 (ns kioo.core-test
-  (:require [cemerick.cljs.test :as t]
+  (:require [cljs.test :as t]
             [kioo.core :refer [content set-attr append prepend
                                remove-attr before after do->
                                set-style remove-style add-class
@@ -10,7 +10,7 @@
             [goog.dom :as gdom])
   (:require-macros [kioo.core :refer [component  snippet template
                                     defsnippet deftemplate supress-whitespace]]
-                   [cemerick.cljs.test :refer [are is deftest testing]]))
+                   [cljs.test :refer [are is deftest testing]]))
 
 
 (deftest render-test
@@ -70,7 +70,7 @@
   (testing "add-class test"
     (let [comp (component "class-span.html" [:span]
                           {[:#s] (add-class "suc")})]
-      (is (= "<span class=\"cl cls suc\" id=\"s\">testing</span>"
+      (is (= "<span id=\"s\" class=\"cl cls suc\">testing</span>"
              (render-dom comp)))))
   (testing "add-class when no class exists"
     (let [comp (component "simple-div.html"
@@ -80,17 +80,17 @@
   (testing "remove-class test"
     (let [comp (component "class-span.html" [:span]
                           {[:#s] (remove-class "cl")})]
-      (is (= "<span class=\" cls\" id=\"s\">testing</span>"
+      (is (= "<span id=\"s\" class=\" cls\">testing</span>"
              (render-dom comp)))))
   (testing "set-class test"
     (let [comp (component "class-span.html" [:span]
                           {[:#s] (set-class "cl")})]
-      (is (= "<span class=\" cl\" id=\"s\">testing</span>"
+      (is (= "<span id=\"s\" class=\" cl\">testing</span>"
              (render-dom comp)))))
   (testing "set-style test"
     (let [comp (component "style-span.html" [:span]
                           {[:#s] (set-style :display "none")})]
-      (is (= "<span style=\"color:red;display:none;\" id=\"s\">testing</span>"
+      (is (= "<span id=\"s\" style=\"color:red;display:none;\">testing</span>"
              (render-dom comp)))))
   (testing "remove-style test"
     (let [comp (component "style-span.html" [:span]
@@ -246,4 +246,4 @@
 (deftest nested-has-test
          (testing "nested has selector"
                   (is (= (render-dom (nested-has-template))
-                         "<div class=\"form-group\" id=\"test\"><input name=\"name\" type=\"text\"></div>"))))
+                         "<div class=\"form-group\" id=\"test\"><input type=\"text\" name=\"name\"></div>"))))

@@ -1,7 +1,7 @@
 (ns kioo.om
   (:require [om.dom :as dom]
             [kioo.core :as core]
-            [kioo.util :as util :refer [flatten-nodes convert-attrs]]))
+            [kioo.util :refer [flatten-nodes convert-attrs]]))
 
 (defn make-dom [node & body]
   (if (map? node)

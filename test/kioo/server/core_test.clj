@@ -78,22 +78,22 @@
   (testing "add-class test"
     (let [comp (component "class-span.html" [:span]
                           {[:#s] (add-class "suc")})]
-      (is (= "<span class=\"cl cls suc\" id=\"s\">testing</span>"
+      (is (= "<span id=\"s\" class=\"cl cls suc\">testing</span>"
              comp))))
   (testing "remove-class test"
     (let [comp (component "class-span.html" [:span]
                           {[:#s] (remove-class "cl")})]
-      (is (= "<span class=\" cls\" id=\"s\">testing</span>"
+      (is (= "<span id=\"s\" class=\" cls\">testing</span>"
              comp))))
   (testing "set-class test"
     (let [comp (component "class-span.html" [:span]
                           {[:#s] (set-class "cl")})]
-      (is (= "<span class=\" cl\" id=\"s\">testing</span>"
+      (is (= "<span id=\"s\" class=\" cl\">testing</span>"
              comp))))
   (testing "set-style test"
     (let [comp (component "style-span.html" [:span]
                           {[:#s] (set-style :display "none")})]
-      (is (= "<span style=\"color:red;display:none;\" id=\"s\">testing</span>"
+      (is (= "<span id=\"s\" style=\"color:red;display:none;\">testing</span>"
              comp))))
   (testing "remove-style test"
     (let [comp (component "style-span.html" [:span]

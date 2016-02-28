@@ -1,5 +1,5 @@
 (ns kioo.om-test
-  (:require [cemerick.cljs.test :as t]
+  (:require [cljs.test :as t]
             [kioo.om :refer [content set-attr append prepend
                              remove-attr before after do->
                              set-style remove-style add-class
@@ -9,7 +9,7 @@
             [goog.dom :as gdom])
   (:require-macros [kioo.om :refer [component snippet template
                                     defsnippet deftemplate]]
-                   [cemerick.cljs.test :refer [are is deftest testing]]))
+                   [cljs.test :refer [are is deftest testing]]))
 
 ;; all text get surrounded by spans in om
 ;; its a bit ugly but it is the expected
@@ -76,22 +76,22 @@
   (testing "add-class test"
     (let [comp (component "class-span.html" [:span]
                           {[:#s] (add-class "suc")})]
-      (is (= "<span class=\"cl cls suc\" id=\"s\">testing</span>"
+      (is (= "<span id=\"s\" class=\"cl cls suc\">testing</span>"
              (render-dom comp)))))
   (testing "remove-class test"
     (let [comp (component "class-span.html" [:span]
                           {[:#s] (remove-class "cl")})]
-      (is (= "<span class=\" cls\" id=\"s\">testing</span>"
+      (is (= "<span id=\"s\" class=\" cls\">testing</span>"
              (render-dom comp)))))
   (testing "set-class test"
     (let [comp (component "class-span.html" [:span]
                           {[:#s] (set-class "cl")})]
-      (is (= "<span class=\" cl\" id=\"s\">testing</span>"
+      (is (= "<span id=\"s\" class=\" cl\">testing</span>"
              (render-dom comp)))))
   (testing "set-style test"
     (let [comp (component "style-span.html" [:span]
                           {[:#s] (set-style :display "none")})]
-      (is (= "<span style=\"color:red;display:none;\" id=\"s\">testing</span>"
+      (is (= "<span id=\"s\" style=\"color:red;display:none;\">testing</span>"
              (render-dom comp)))))
   (testing "remove-style test"
     (let [comp (component "style-span.html" [:span]
@@ -199,7 +199,7 @@
 (deftest nested-has-test
          (testing "nested has selector"
                   (is (= (render-dom (nested-has-template))
-                         "<div class=\"form-group\" id=\"test\"><input name=\"name\" type=\"text\"></div>"))))
+                         "<div class=\"form-group\" id=\"test\"><input type=\"text\" name=\"name\"></div>"))))
 
 ;; kioo-generated component takes a long time to appear in the page when using reagent but not Om
 (deftemplate minform "min-form.html" [])
