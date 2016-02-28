@@ -17,7 +17,7 @@
                  [reagent "0.5.1" :exclusions [cljsjs/react]]
                  [enlive-ws  "0.1.1"]]
   :plugins [[lein-cljsbuild "1.1.0"]
-            [lein-doo "0.1.5-SNAPSHOT"]
+            [lein-doo "0.1.6"]
             [lein-shell "0.4.0"]
             [lein-ancient "0.5.4"]
             [lein-marginalia "0.8.0"]]
