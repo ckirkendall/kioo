@@ -93,7 +93,7 @@
   (testing "set-style test"
     (let [comp (component "style-span.html" [:span]
                           {[:#s] (set-style :display "none")})]
-      (is (= "<span id=\"s\" style=\"color:red;display:none;\">testing</span>"
+      (is (= "<span id=\"s\" style=\"display:none;color:red;\">testing</span>"
              comp))))
   (testing "remove-style test"
     (let [comp (component "style-span.html" [:span]
