@@ -76,14 +76,15 @@
 
 (defn eval-selector [sel]
   (reduce
-   #(conj %1
+    (fn [sel-acc sel-frag]
+      (conj sel-acc
           (cond
-           (list? %2) (apply (resolve-enlive-var (first %2)) (rest %2))
-           (or (vector? %2)
-               (map? %2)
-               (set? %2)) (eval-selector %2)
-           (symbol? %2) (resolve-enlive-var %2)
-            :else %2))
+           (list? sel-frag) (apply (resolve-enlive-var (first sel-frag)) (eval-selector (rest sel-frag)))
+           (or (vector? sel-frag)
+               (map? sel-frag)
+               (set? sel-frag)) (eval-selector sel-frag)
+           (symbol? sel-frag) (resolve-enlive-var sel-frag)
+            :else sel-frag)))
    (cond
     (vector? sel) []
     (set? sel) #{}
@@ -104,11 +105,6 @@
    (symbol? wrapper) (resolve wrapper)
    :else parser/->MiniHtml))
 
-
-(defn path-exists? [path]
-  (or (not (string? path))
-      (io/resource path)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main Structure of Compiler
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -116,9 +112,13 @@
 
 (defn parse-html
   "parses html with a pre-processing step provided by resource-fn
-   returns an enlive compatible data structure."
-  [path resource-fn]
-  (html-resource (resource-fn path)))
+  returns an enlive compatible data structure. If provided, ast-fn
+  is applied to the parsed data structure."
+  ([path resource-fn]
+   (html-resource (resource-fn path)))
+  ([path resource-fn ast-fn]
+   (let [ast-fn (or ast-fn identity)]
+     (ast-fn (parse-html path resource-fn)))))
 
 (defn component*
   "this is the generic component that takes emitter
@@ -127,16 +127,26 @@
   ([path trans emit-opts]
      (component* path [:body :> any-node] trans emit-opts))
   ([path sel trans emit-opts]
-     (assert (path-exists? path) (str "No resource found for: '" path
-                                      "' - kioo pulls resources from the class path"))
-     (let [resource-fn (resolve-resource-fn path emit-opts)
-           root (parse-html path resource-fn)
+     (let [path-obj (eval path)
+           resource-fn (resolve-resource-fn path-obj emit-opts)
+           ast-fn (:process-ast emit-opts)
+           root (parse-html path-obj resource-fn ast-fn)
            start (if (= :root sel)
                     root
                     (select root (eval-selector sel)))
            child-sym (gensym "ch")]
         (assert (or (empty? trans) (map? trans))
                 "Transforms must be a map - Kioo only supports order independent transforms")
+        (doseq [trans-selector (keys trans)]
+          (if (empty? (select start (eval-selector trans-selector)))
+            (let [message (format "WARNING: File %s does not contain selector %s %s."
+                                  path sel trans-selector)]
+              (try
+                (throw (AssertionError. message))
+                (catch AssertionError e
+                  (binding [*out* *err*]
+                    (println message)))))))
+
         `(let [~child-sym ~(compile (map-trans start trans) emit-opts)]
            (if (= 1 (count ~child-sym))
              (first ~child-sym)

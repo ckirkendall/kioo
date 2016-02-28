@@ -20,9 +20,10 @@
                            (binding [*component* this]
                              (apply renderer
                                     (aget (.-props this) "value")
-                                    (aget (.-props this) "statics")))))})]
+                                    (aget (.-props this) "statics")))))})
+        factory (js/React.createFactory react-component)]
     (fn [value & static-args]
-      (react-component #js {:value value :statics static-args}))))
+      (factory #js {:value value :statics static-args}))))
 
 
 (defn make-dom [node]
@@ -40,11 +41,15 @@
 (defn handle-wrapper [dom-fn]
   (fn hw [node & body]
     (let [rnode (cond
-                 (seq? node) (apply hw node)
+                 (seq? node)
+                 (apply hw node)
+
                  (and (map? node) (not (empty? (:events node))))
-                 (let [revents (:events node)]
-                   (WrapComponent (clj->js (assoc revents
-                                             :wrappee (dom-fn node)))))
+                 (let [revents (:events node)
+                       props (doto (clj->js revents)
+                               (aset "dom-fn" dom-fn)
+                               (aset "node" node))]
+                   (WrapComponent props))
                  :else (dom-fn node))]
       (if (empty? body)
         rnode
@@ -134,4 +139,4 @@
                                 [(camel-case k) v]))))))
 
 (defn render [component node]
-  (.renderComponent js/React component node))
+  (.render js/React component node))

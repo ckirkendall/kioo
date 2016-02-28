@@ -1,80 +1,88 @@
 (ns kioo.util
   (:refer-clojure :exclude [replace])
-  (:require [clojure.string :refer [split replace capitalize]]))
+  (:require [clojure.string :refer [split replace capitalize]]
+            #+cljs [cljsjs.react]))
 
 #+cljs
 (def ^:dynamic *component* nil)
+
 
 #+cljs
 (def WrapComponent
   "Wrapper component used to mix-in lifecycle methods
    This was modified from a similar setup in quiescent"
-  (.createClass js/React
-     #js {:render
-          (fn []
-            (this-as this (aget (.-props this) "wrappee")))
-          :getInitialState
-          (fn []
-            (this-as this
-                     (when-let [f  (aget (.-props this) "initState")]
-                       (binding [*component* this]
-                         (f this)))))
-          #_:getDefaultProps
-          #_(fn []
-            (this-as this
-                     (when-let [f (aget (.-props this) "defaultProps")]
-                       (binding [*component* this]
-                         (f this)))))
-          :shouldComponentUpdate
-          (fn [next-props next-state]
-            (this-as this
-                     (when-let [f (aget (.-props this) "shouldUpdate")]
-                       (binding [*component* this]
-                         (f this next-props next-state)))))
-          :componentWillReceiveProps
-          (fn [next-props]
-            (this-as this
-                     (when-let [f (or (aget (.-props this) "willReceiveProps")
-                                      (aget (.-props this) "onWillReceiveProps"))]
-                       (binding [*component* this]
-                         (f this next-props)))))
-          :componentWillUpdate
-          (fn [next-props next-state]
-            (this-as this
-                     (when-let [f (or (aget (.-props this) "willUpdate")
-                                      (aget (.-props this) "onWillUpdate"))]
-                       (binding [*component* this]
-                         (f this next-props next-state)))))
-          :componentDidUpdate
-          (fn [prev-props prev-state]
-            (this-as this
-                     (when-let [f (or (aget (.-props this) "didUpdate")
-                                      (aget (.-props this) "onUpdate")
-                                      (aget (.-props this) "onRender"))]
-                       (binding [*component* this]
-                         (f this prev-props prev-state)))))
-          :componentWillMount
-          (fn []
-            (this-as this
-                     (when-let [f (or (aget (.-props this) "willMount")
-                                      (aget (.-props this) "onWillMount"))]
-                       (binding [*component* this]
-                         (f this)))))
-          :componentDidMount
-          (fn []
-            (this-as this
-                     (when-let [f (or (aget (.-props this) "didMount")
-                                      (aget (.-props this) "onMount")
-                                      (aget (.-props this) "onRender"))]
-                       (binding [*component* this]
-                         (f this)))))
-          :componentWillUnmount
-          (fn []
-            (this-as this
-                     (when-let [f (or (aget (.-props this) "willUnmount")
-                                      (aget (.-props this) "onUnmount"))]
-                       (binding [*component* this]
-                         (f this)))))}))
+  (.createFactory js/React
+   (.createClass js/React
+                 #js {:render
+                      (fn []
+                        (this-as this
+                                 (let [dom-fn (aget (.-props this) "dom-fn")
+                                       node (aget (.-props this) "node")]
+                                   (dom-fn node))))
+                      :getInitialState
+                      (fn []
+                        (this-as this
+                                 (when-let [f  (aget (.-props this) "initState")]
+                                   (binding [*component* this]
+                                     (f this)))))
+                      #_:getDefaultProps
+                      #_(fn []
+                          (this-as this
+                                   (when-let [f (aget (.-props this) "defaultProps")]
+                                     (binding [*component* this]
+                                       (f this)))))
+                      :shouldComponentUpdate
+                      (fn [next-props next-state]
+                        (this-as this
+                                 (if-let [f (aget (.-props this) "shouldUpdate")]
+                                   (binding [*component* this]
+                                     (f this next-props next-state))
+                                   (not= (aget (.-props this) "node")
+                                         (aget next-props "node")))))
+                      :componentWillReceiveProps
+                      (fn [next-props]
+                        (this-as this
+                                 (when-let [f (or (aget (.-props this) "willReceiveProps")
+                                                  (aget (.-props this) "onWillReceiveProps"))]
+                                   (binding [*component* this]
+                                     (f this next-props)))))
+                      :componentWillUpdate
+                      (fn [next-props next-state]
+                        (this-as this
+                                 (when-let [f (or (aget (.-props this) "willUpdate")
+                                                  (aget (.-props this) "onWillUpdate"))]
+                                   (binding [*component* this]
+                                     (f this next-props next-state)))))
+                      :componentDidUpdate
+                      (fn [prev-props prev-state]
+                        (this-as this
+                                 (when-let [f (or (aget (.-props this) "didUpdate")
+                                                  (aget (.-props this) "onUpdate")
+                                                  (aget (.-props this) "onRender"))]
+                                   (binding [*component* this]
+                                     (f this prev-props prev-state)))))
+                      :componentWillMount
+                      (fn []
+                        (this-as this
+                                 (when-let [f (or (aget (.-props this) "willMount")
+                                                  (aget (.-props this) "onWillMount"))]
+                                   (binding [*component* this]
+                                     (f this)))))
+                      :componentDidMount
+                      (fn []
+                        (this-as this
+                                 (when-let [f (or (aget (.-props this) "didMount")
+                                                  (aget (.-props this) "onMount")
+                                                  (aget (.-props this) "onRender"))]
+                                   (binding [*component* this]
+                                     (f this)))))
+                      :componentWillUnmount
+                      (fn []
+                        (this-as this
+                                 (when-let [f (or (aget (.-props this) "willUnmount")
+                                                  (aget (.-props this) "onUnmount"))]
+                                   (binding [*component* this]
+                                     (f this)))))})))
 
 
 (def dont-camel-case #{"aria" "data"})

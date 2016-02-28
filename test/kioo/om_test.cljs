@@ -4,7 +4,7 @@
                              remove-attr before after do->
                              set-style remove-style add-class
                              remove-class wrap unwrap set-class
-                             html html-content listen]]
+                             html html-content listen set-attr]]
             [kioo.test :refer [render-dom]]
             [goog.dom :as gdom])
   (:require-macros [kioo.om :refer [component snippet template
@@ -192,3 +192,18 @@
                                                    (after "after"))}) ]
       (is (= "<span><span>before</span><div id=\"tmp\">success</div><span>after</span></span>"
              (render-dom comp))))))
+
+(deftemplate nested-has-template "nested-has.html" []
+             {[[:.form-group (has [[:input (attr= :name "name")]])]] (set-attr :id "test")})
+
+(deftest nested-has-test
+         (testing "nested has selector"
+                  (is (= (render-dom (nested-has-template))
+                         "<div class=\"form-group\" id=\"test\"><input name=\"name\" type=\"text\"></div>"))))
+
+;; kioo-generated component takes a long time to appear in the page when using reagent but not Om
+(deftemplate minform "min-form.html" [])
+
+(deftest form-timing-test
+         (testing "Om-Kioo doesn't suffer from slow construction of React nodes in Safari/Phantom"
+                  (is (= (render-dom minform) ""))))

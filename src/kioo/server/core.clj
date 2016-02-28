@@ -26,8 +26,11 @@
      (.replace "\"" "&quot;")))
 
 (defn- emit-style-str [smap]
-  (reduce (fn [s [k v]] (if (empty? v) s (str (name k) ":" v ";" s)))
-          "" smap))
+  (cond
+    (string? smap) smap
+    (map? smap) (reduce (fn [s [k v]]  (if (empty? v) s (str (name k) ":" v ";" s)))
+                        "" smap)
+    (nil? smap) ""))
 
 
 (def self-closing-tags #{:area :base :basefont :br :hr
@@ -44,7 +47,7 @@
   (reduce (fn [s [k v]]
             (cond
              (empty? v) s
-             (= k :style) (str " style=\""
+             (= k :style) (str s " style=\""
                                (emit-attr-str (emit-style-str v))
                                "\"")
              :else (str s " " (attr-by-key k) "=\""
@@ -101,35 +104,35 @@
 
 (defmacro snippet
   ([path sel args]
-     (snippet* path sel {} args server-emit-opts true))
+     (snippet* path sel {} args server-emit-opts false))
   ([path sel args trans]
-     (snippet* path sel trans args server-emit-opts true))
+     (snippet* path sel trans args server-emit-opts false))
   ([path sel args trans opts]
-     (snippet* path sel trans args (merge server-emit-opts opts) true)))
+     (snippet* path sel trans args (merge server-emit-opts opts) false)))
 
 (defmacro template
   ([path args]
-     (snippet* path [:body :> any-node] {} args server-emit-opts true))
+     (snippet* path [:body :> any-node] {} args server-emit-opts false))
   ([path args trans]
-     (snippet* path [:body :> any-node] trans args server-emit-opts true))
+     (snippet* path [:body :> any-node] trans args server-emit-opts false))
   ([path args trans opts]
-     (snippet* path [:body :> any-node] trans args (merge server-emit-opts opts) true)))
+     (snippet* path [:body :> any-node] trans args (merge server-emit-opts opts) false)))
 
 (defmacro defsnippet
   ([sym path sel args]
-     `(def ~sym ~(snippet* path sel {} args server-emit-opts true)))
+     `(def ~sym ~(snippet* path sel {} args server-emit-opts false)))
   ([sym path sel args trans]
-     `(def ~sym ~(snippet* path sel trans args server-emit-opts true)))
+     `(def ~sym ~(snippet* path sel trans args server-emit-opts false)))
   ([sym path sel args trans opts]
-     `(def ~sym ~(snippet* path sel trans args (merge server-emit-opts opts) true))))
+     `(def ~sym ~(snippet* path sel trans args (merge server-emit-opts opts) false))))
 
 (defmacro deftemplate
   ([sym path args]
-     `(def ~sym ~(snippet* path [:body :> any-node] {} args server-emit-opts true)))
+     `(def ~sym ~(snippet* path [:body :> any-node] {} args server-emit-opts false)))
   ([sym path args trans]
-     `(def ~sym ~(snippet* path [:body :> any-node] trans args server-emit-opts true)))
+     `(def ~sym ~(snippet* path [:body :> any-node] trans args server-emit-opts false)))
   ([sym path args trans opts]
-     `(def ~sym ~(snippet* path [:body :> any-node] trans args (merge server-emit-opts opts) true))))
+     `(def ~sym ~(snippet* path [:body :> any-node] trans args (merge server-emit-opts opts) false))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TRANSFORMS

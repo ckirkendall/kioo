@@ -4,7 +4,7 @@
                                remove-attr before after do->
                                set-style remove-style add-class
                                remove-class wrap unwrap set-class
-                               html html-content listen]]
+                               html html-content listen set-attr]]
             [reagent.core :as reagent :refer [atom flush]]
             [kioo.util :as util]
             [goog.dom :as gdom])
@@ -226,3 +226,18 @@
                                                    (after "after"))}) ]
       (is (= "<span><span>before</span><div id=\"tmp\">success</div><span>after</span></span>"
              (render-dom comp))))) )
+
+(deftemplate nested-has-template "nested-has.html" []
+             {[[:.form-group (has [[:input (attr= :name "name")]])]] (set-attr :id "test")})
+
+(deftest nested-has-test
+         (testing "nested has selector"
+                  (is (= (render-dom nested-has-template)
+                         "<div class=\"form-group\" id=\"test\"><input name=\"name\" type=\"text\"></div>"))))
+
+(deftemplate minform "min-form.html" [])
+;; uncomment following test to experience Reagent-Kioo issue
+;; commented-out here as it makes Phantom.js eventually fall over after hogging CPU, which is no fun
+#_(deftest form-timing-test
+         (testing "Reagent-Kioo suffers from slow construction of React nodes in Safari/Phantom"
+                  (is (= (render-dom minform) ""))))
