@@ -8,8 +8,8 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[enlive "1.1.5"]
                  [cljsjs/react "0.13.3-0"]
-                 [org.clojure/clojure "1.7.0"]
-                 [org.clojure/clojurescript "1.7.48"]
+                 [org.clojure/clojure "1.8.0"]
+                 [org.clojure/clojurescript "1.8.40"]
                  [com.googlecode.htmlcompressor/htmlcompressor "1.5.2"]
                  [sablono "0.3.4"]
                  [hickory "0.5.3"]

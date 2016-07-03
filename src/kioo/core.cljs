@@ -29,8 +29,8 @@
 (defn make-dom [node]
   (if (map? node)
       (apply (:sym node)
-             (clj->js (:attrs node))
-             (flatten-nodes (:content node)))
+        (clj->js (:attrs node))
+        (flatten-nodes (:content node)))
       node))
 
 (defn to-list [vals]

@@ -86,17 +86,15 @@
 (def dont-camel-case #{"aria" "data"})
 
 (defn camel-case [dashed]
-  (if (string? dashed)
-    dashed
-    (let [name-str (name dashed)
-          [start & parts] (split name-str #"-")]
-      (if (dont-camel-case start)
-        name-str
-        (apply str start (map capitalize parts))))))
+  (let [name-str (name dashed)
+        [start & parts] (split name-str #"-")]
+    (if (dont-camel-case start)
+      name-str
+      (apply str start (map capitalize parts)))))
 
 
 (def attribute-map
-  (assoc 
+  (assoc
       (reduce #(assoc %1 (keyword (.toLowerCase (name %2))) %2) {}
               [:accessKey :allowFullScreen :allowTransparency :autoComplete
                :autoFocus :autoPlay :cellPadding :cellSpacing :charSet
@@ -116,15 +114,25 @@
 
 (defn convert-attrs [attrs]
   (let [style  (when (:style attrs)
-                 (let [vals (re-seq #"\s*([^:;]*)[:][\s]*([^;]+)"
-                                    (:style attrs))]
-                   (reduce (fn [m [_ k v]]
-                             (assoc m k (.trim v)))
-                           {} vals)))
+                 (let [style (:style attrs)]
+                   (cond
+                     (string? style)
+                     (let [vals (re-seq #"\s*([^:;]*)[:][\s]*([^;]+)"
+                                        style)]
+                       (reduce (fn [m [_ k v]]
+                                 (assoc m
+                                        (camel-case k)
+                                        (.trim v)))
+                               {} vals))
+                     (map? style)
+                     (zipmap (map camel-case (keys style)) (vals style))
+                     :else style)))
         class-name (:class attrs)]
-    (-> attrs
-        (transform-keys)
-        (assoc :style style))))
+    (cond-> attrs
+      :always
+      (transform-keys)
+      style
+      (assoc :style style))))
 
 
 (defn flatten-nodes [nodes]
