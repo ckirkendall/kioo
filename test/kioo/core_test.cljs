@@ -24,6 +24,9 @@
   (testing "first-of-type naked symbol"
     (let [comp (component "list.html" [:ul [:li first-of-type]] {})]
       (is (= "<li>1</li>" (render-dom comp)))))
+  (testing "multiple match should render first match"
+    (let [comp (component "list.html" [:ul :li] {} {:single true})]
+      (is (= "<li>1</li>" (render-dom comp)))))
   (testing "attr= content replace"
     (let [comp (component "simple-attr-div.html"
                           {[(attr= :data-id "tmp")]
