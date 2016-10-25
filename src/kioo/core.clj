@@ -7,7 +7,7 @@
    [clojure.string :as string]
    [kioo.html-parser :as parser]
    [hickory.core :as hickory]
-   [kioo.common] ; for compile-time transforms
+   [kioo.common :as common]
    [clojure.java.io :as io]))
 
 (declare compile component*)
@@ -93,12 +93,13 @@
     :else []) sel))
 
 (defn apply-and-attach-transforms [node sel trans]
-  (if-not (map? trans)
-    (recur node sel {`identity trans})
-    (let [[compile-time runtime] (first trans)]
-      (-> node
-          (at (eval-selector sel) (eval compile-time))
-          (at (eval-selector sel) (attach-transform runtime))))))
+  (cond
+    (vector? trans)   (recur node sel {`(common/content) (list* trans)})
+    (not (map? trans)) (recur node sel {`identity trans})
+    :else (let [[compile-time runtime] (first trans)]
+            (-> node
+                (at (eval-selector sel) (eval compile-time))
+                (at (eval-selector sel) (attach-transform runtime))))))
 
 (defn map-trans [node trans-lst]
   (reduce (fn [node [sel trans]]

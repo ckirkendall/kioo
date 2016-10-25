@@ -23,8 +23,12 @@
       (is (= "<div id=\"tmp\">success</div>" (render-dom comp)))))
   (testing "compile-time content replace"
     (let [comp (component "simple-div.html"
-                          {[:div] {(kioo.common/content "success") (wrap :section)}})]
+                          {[:div] {(kioo.common/content "success") (wrap :section {})}})]
       (is (= "<section><div id=\"tmp\">success</div></section>" (render-dom comp)))))
+  (testing "compile-time empty content sugar"
+    (let [comp (component "simple-div.html"
+                          {[:div] [wrap :section {}]})]
+      (is (= "<section><div id=\"tmp\"></div></section>" (render-dom comp)))))
   (testing "first-of-type naked symbol"
     (let [comp (component "list.html" [:ul [:li first-of-type]] {})]
       (is (= "<li>1</li>" (render-dom comp)))))
