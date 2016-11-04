@@ -74,7 +74,7 @@
                              'nth-match nth-match}))
 
 (defmacro register-selector! [lookup-sym fn-sym]
-  (swap! custom-selectors lookup-sym (resolve fn-sym))
+  (swap! custom-selectors assoc lookup-sym (resolve fn-sym))
   nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
