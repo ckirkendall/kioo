@@ -24,6 +24,15 @@
   (testing "first-of-type naked symbol"
     (let [comp (component "list.html" [:ul [:li first-of-type]] {})]
       (is (= "<li>1</li>" (render-dom comp)))))
+
+  (testing "first-match naked symbol"
+    (let [comp (component "list.html" [:ul [:li (first-match)]] {})]
+      (is (= "<li>1</li>" (render-dom comp)))))
+
+  (testing "nth-match naked symbol"
+    (let [comp (component "list.html" [:ul [:li (nth-match 2)]] {})]
+      (is (= "<li>2</li>" (render-dom comp)))))
+
   (testing "attr= content replace"
     (let [comp (component "simple-attr-div.html"
                           {[(attr= :data-id "tmp")]
@@ -185,6 +194,7 @@
 
 (deftemplate tmp3 "whitespace.html" [] {})
 (deftemplate tmp4 "whitespace.html" [] {} kioo.core/include-whitespace)
+
 
 (deftest snippet-template-test
   (testing "basic setup for snippet"

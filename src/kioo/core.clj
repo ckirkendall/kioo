@@ -3,7 +3,7 @@
   (:require
    [kioo.util :refer [convert-attrs flatten-nodes]]
    [net.cgrand.enlive-html :refer [at html-resource select
-                                   any-node]]
+                                   any-node pred]]
    [clojure.string :as string]
    [kioo.html-parser :as parser]
    [hickory.core :as hickory]
@@ -56,6 +56,26 @@
   ([path sel trans opts]
      (component* path sel trans (merge react-emit-opts (eval opts)))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Kioo Selector Registry
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn nth-match [n]
+  (let [visit-cnt (atom 1)]
+    (pred #(let [idx @visit-cnt]
+             %
+             (swap! visit-cnt inc)
+             (if (= n idx) true false)))))
+
+(defn first-match []
+  (nth-match 1))
+
+(def custom-selectors (atom {'first-match first-match
+                             'nth-match nth-match}))
+
+(defmacro register-selector! [lookup-sym fn-sym]
+  (swap! custom-selectors lookup-sym (resolve fn-sym))
+  nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Using Enlive to do selection and
@@ -71,19 +91,21 @@
       (assoc node :trans trans))))
 
 
-(defn resolve-enlive-var [sym]
-  (ns-resolve 'net.cgrand.enlive-html sym))
+(defn resolve-sel-var [sym]
+  (let [v (get @custom-selectors sym
+               (ns-resolve 'net.cgrand.enlive-html sym))]
+    (or v (resolve sym))))
 
 (defn eval-selector [sel]
   (reduce
     (fn [sel-acc sel-frag]
       (conj sel-acc
           (cond
-           (list? sel-frag) (apply (resolve-enlive-var (first sel-frag)) (eval-selector (rest sel-frag)))
+           (list? sel-frag) (apply (resolve-sel-var (first sel-frag)) (eval-selector (rest sel-frag)))
            (or (vector? sel-frag)
                (map? sel-frag)
                (set? sel-frag)) (eval-selector sel-frag)
-           (symbol? sel-frag) (resolve-enlive-var sel-frag)
+           (symbol? sel-frag) (resolve-sel-var sel-frag)
             :else sel-frag)))
    (cond
     (vector? sel) []
