@@ -15,7 +15,7 @@ All artifacts are published to [clojars](https://clojars.org/kioo). Latest stabl
 ```
 [kioo "0.4.2"] ;stable
 
-[kioo "0.5.0-SNAPSHOT"] ;risky clojure 1.7.0 required
+[kioo "0.5.0-SNAPSHOT"] ;clojure 1.8+ required
 ```
 
 ## Concepts
