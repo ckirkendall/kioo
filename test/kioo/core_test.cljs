@@ -9,9 +9,11 @@
             [kioo.test :refer [render-dom]]
             [goog.dom :as gdom])
   (:require-macros [kioo.core :refer [component  snippet template
-                                    defsnippet deftemplate supress-whitespace]]
+                                    defsnippet deftemplate supress-whitespace
+                                      register-selector!]]
                    [cljs.test :refer [are is deftest testing]]))
 
+(register-selector! test-sel kioo.core/first-match)
 
 (deftest render-test
   (testing "basic render test"
@@ -19,24 +21,41 @@
       (is (= "<div id=\"tmp\">test</div>" (render-dom comp)))))
   (testing "content replace"
     (let [comp (component "simple-div.html"
-                          {[:div] (content "success")})]
+                 {[:div] (content "success")})]
       (is (= "<div id=\"tmp\">success</div>" (render-dom comp)))))
   (testing "first-of-type naked symbol"
     (let [comp (component "list.html" [:ul [:li first-of-type]] {})]
       (is (= "<li>1</li>" (render-dom comp)))))
+
+  (testing "first-match naked symbol"
+    (let [comp (component "list.html" [:ul [:li (first-match)]] {})]
+      (is (= "<li>1</li>" (render-dom comp)))))
+
+  (testing "nth-match naked symbol"
+    (let [comp (component "list.html" [:ul [:li (nth-match 2)]] {})]
+      (is (= "<li>2</li>" (render-dom comp)))))
+
+  (testing "registering a custom selector"
+    (let [comp (component "list.html" [:ul [:li (test-sel)]] {})]
+      (is (= "<li>1</li>" (render-dom comp)))))
+
+  (testing "fully qualified selector"
+    (let [comp (component "list.html" [:ul [:li (kioo.core/nth-match 2)]] {})]
+      (is (= "<li>2</li>" (render-dom comp)))))
+
   (testing "attr= content replace"
     (let [comp (component "simple-attr-div.html"
-                          {[(attr= :data-id "tmp")]
-                           (content "success")})]
+                 {[(attr= :data-id "tmp")]
+                  (content "success")})]
       (is (= "<div data-id=\"tmp\">success</div>" (render-dom comp)))))
   (testing "attr? content replace"
     (let [comp (component "simple-attr-div.html"
-                          {[(attr? :data-id)]
-                           (content "success")})]
+                 {[(attr? :data-id)]
+                  (content "success")})]
       (is (= "<div data-id=\"tmp\">success</div>" (render-dom comp)))))
   (testing "append test"
     (let [comp (component "simple-div.html"
-                          {[:div] (append "success")})]
+                 {[:div] (append "success")})]
       ;;note that ract wraps text nodes in span tags
       ;;this is expected to be corrected soon in react but
       ;;for now this is correct
@@ -44,92 +63,92 @@
              (render-dom comp)))))
   (testing "prepend test"
     (let [comp (component "simple-div.html"
-                          {[:div] (prepend "success")})]
+                 {[:div] (prepend "success")})]
       (is (= "<div id=\"tmp\"><span>success</span><span>test</span></div>"
              (render-dom comp)))))
   (testing "set-attr test"
     (let [comp (component "simple-div.html"
-                          {[:div] (set-attr :id "success")})]
+                 {[:div] (set-attr :id "success")})]
       (is (= "<div id=\"success\">test</div>"
              (render-dom comp)))))
   (testing "remove-attr test"
     (let [comp (component "simple-div.html"
-                          {[:div] (remove-attr :id)})]
+                 {[:div] (remove-attr :id)})]
       (is (= "<div>test</div>"
              (render-dom comp)))))
   (testing "before test"
     (let [comp (component "simple-div.html"
-                          {[:div] (before "success")})]
+                 {[:div] (before "success")})]
       (is (= "<span><span>success</span><div id=\"tmp\">test</div></span>"
              (render-dom comp)))))
   (testing "after test"
     (let [comp (component "simple-div.html"
-                          {[:div] (after "success")})]
+                 {[:div] (after "success")})]
       (is (= "<span><div id=\"tmp\">test</div><span>success</span></span>"
              (render-dom comp)))))
   (testing "add-class test"
     (let [comp (component "class-span.html" [:span]
-                          {[:#s] (add-class "suc")})]
+                 {[:#s] (add-class "suc")})]
       (is (= "<span id=\"s\" class=\"cl cls suc\">testing</span>"
              (render-dom comp)))))
   (testing "add-class when no class exists"
     (let [comp (component "simple-div.html"
-                          {[:div] (add-class "suc")})]
+                 {[:div] (add-class "suc")})]
       (is (= "<div id=\"tmp\" class=\" suc\">test</div>"
              (render-dom comp)))))
   (testing "remove-class test"
     (let [comp (component "class-span.html" [:span]
-                          {[:#s] (remove-class "cl")})]
+                 {[:#s] (remove-class "cl")})]
       (is (= "<span id=\"s\" class=\" cls\">testing</span>"
              (render-dom comp)))))
   (testing "set-class test"
     (let [comp (component "class-span.html" [:span]
-                          {[:#s] (set-class "cl")})]
+                 {[:#s] (set-class "cl")})]
       (is (= "<span id=\"s\" class=\" cl\">testing</span>"
              (render-dom comp)))))
   (testing "set-style test"
     (let [comp (component "style-span.html" [:span]
-                          {[:#s] (set-style :display "none")})]
+                 {[:#s] (set-style :display "none")})]
       (is (= "<span id=\"s\" style=\"color:red;background-color:blue;display:none;\">testing</span>"
              (render-dom comp)))))
   (testing "remove-style test"
     (let [comp (component "style-span.html" [:span]
-                          {[:#s] (remove-style :color)})]
+                 {[:#s] (remove-style :color)})]
       (is (= "<span id=\"s\" style=\"background-color:blue;\">testing</span>"
              (render-dom comp)))))
   (testing "do-> test"
     (let [comp (component "style-span.html" [:span]
-                          {[:#s] (do->
-                                  (remove-attr :id)
-                                  (remove-style :color))})]
+                 {[:#s] (do->
+                         (remove-attr :id)
+                         (remove-style :color))})]
       (is (= "<span style=\"background-color:blue;\">testing</span>"
              (render-dom comp)))))
   (testing "wrap test"
     (let [comp (component "wrap-test.html" [:span]
-                          {[:#s] (wrap :div {:id "test"})})]
+                 {[:#s] (wrap :div {:id "test"})})]
       (is (= "<div id=\"test\"><span id=\"s\">testing</span></div>"
              (render-dom comp)))))
   (testing "unwrap test"
     (let [comp (component "wrap-test.html" [:div]
-                          {[:div] unwrap})]
+                 {[:div] unwrap})]
       (is (= "<span id=\"s\">testing</span>"
              (render-dom comp)))))
   (testing "html test"
     (let [comp (component "simple-div.html"
-                          {[:div] (content (html [:h1 {:class "t"}
-                                                  [:span "t1"]]))})]
+                 {[:div] (content (html [:h1 {:class "t"}
+                                         [:span "t1"]]))})]
       (is (= "<div id=\"tmp\"><h1 class=\"t\"><span>t1</span></h1></div>"
              (render-dom comp)))))
   (testing "html-content test"
     (let [comp (component "simple-div.html"
-                          {[:div] (html-content "<h1>t1</h1><em><span>t2</span></em>")})]
+                 {[:div] (html-content "<h1>t1</h1><em><span>t2</span></em>")})]
       (is (= "<div id=\"tmp\"><h1>t1</h1><em><span>t2</span></em></div>"
              (render-dom comp)))))
   (testing "listen on render"
-     (let [atm (atom "fail")
+    (let [atm (atom "fail")
           comp (component "simple-div.html"
-                     {[:div] (listen :on-render
-                                     #(reset! atm "success"))})]
+                 {[:div] (listen :on-render
+                                 #(reset! atm "success"))})]
       (render-dom comp)
       (is (= "success" @atm))))
   (testing "lifecycle tests"
@@ -142,36 +161,36 @@
           will-mount (atom "fail")
           did-mount (atom "fail")
           comp (component "simple-div.html"
-                          {[:div] (lifecycle
-                                   {:init-state (fn [this] (reset! init-state "success") {})
-                                    :default-props (fn [this] (reset! default-props "success"))
-                                    :should-update
-                                    (fn [this next-props next-state]
-                                      (reset! should-update "success")
-                                      true)
-                                    :will-mount (fn [this] (reset! will-mount "success"))
-                                    :did-mount (fn [this] (reset! did-mount "success"))
-                                    :will-receive-props (fn [this next-props]
-                                                          (reset! will-receive-props "success"))
-                                    :will-update (fn [this next-props next-state]
-                                                   (reset! will-update "success"))
-                                    :did-update (fn [this prev-props prev-state]
-                                                  (reset! did-update "success"))})})]
+                 {[:div] (lifecycle
+                          {:init-state (fn [this] (reset! init-state "success") {})
+                           :default-props (fn [this] (reset! default-props "success"))
+                           :should-update
+                           (fn [this next-props next-state]
+                             (reset! should-update "success")
+                             true)
+                           :will-mount (fn [this] (reset! will-mount "success"))
+                           :did-mount (fn [this] (reset! did-mount "success"))
+                           :will-receive-props (fn [this next-props]
+                                                 (reset! will-receive-props "success"))
+                           :will-update (fn [this next-props next-state]
+                                          (reset! will-update "success"))
+                           :did-update (fn [this prev-props prev-state]
+                                         (reset! did-update "success"))})})]
       (render-dom comp)
       (is (= "success" @init-state))
       (is (= "success" @will-mount))
       (is (= "success" @did-mount))
 
       ;;need to workout how to test these
-      ;(is (= "success" @default-props))
-      ;(is (= "success" @should-update))
-      ;(is (= "success" @will-receive-props))
-      ;(is (= "success" @will-update))
-      ;(is (= "success" @did-update))
+                                        ;(is (= "success" @default-props))
+                                        ;(is (= "success" @should-update))
+                                        ;(is (= "success" @will-receive-props))
+                                        ;(is (= "success" @will-update))
+                                        ;(is (= "success" @did-update))
       ))
   (testing "checking for camel cased attributes"
     (let [comp (component "camel-case.html"
-                          {[:td] (content "test")})]
+                 {[:td] (content "test")})]
       (is (= "<table><tbody><tr><td colspan=\"2\">test</td></tr></tbody></table>" (render-dom comp))))))
 
 
@@ -185,6 +204,7 @@
 
 (deftemplate tmp3 "whitespace.html" [] {})
 (deftemplate tmp4 "whitespace.html" [] {} kioo.core/include-whitespace)
+
 
 (deftest snippet-template-test
   (testing "basic setup for snippet"
