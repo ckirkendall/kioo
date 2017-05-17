@@ -46,12 +46,12 @@
       ;;note that ract wraps text nodes in span tags
       ;;this is expected to be corrected soon in react but
       ;;for now this is correct
-      (is (= "<div id=\"tmp\"><span>test</span><span>success</span></div>"
+      (is (= "<div id=\"tmp\">testsuccess</div>"
              (render-dom comp)))))
   (testing "prepend test"
     (let [comp (component "simple-div.html"
                           {[:div] (prepend "success")})]
-      (is (= "<div id=\"tmp\"><span>success</span><span>test</span></div>"
+      (is (= "<div id=\"tmp\">successtest</div>"
              (render-dom comp)))))
   (testing "set-attr test"
     (let [comp (component "simple-div.html"
@@ -66,12 +66,12 @@
   (testing "before test"
     (let [comp (component "simple-div.html"
                           {[:div] (before "success")})]
-      (is (= "<span><span>success</span><div id=\"tmp\">test</div></span>"
+      (is (= "<span>success<div id=\"tmp\">test</div></span>"
              (render-dom comp)))))
   (testing "after test"
     (let [comp (component "simple-div.html"
                           {[:div] (after "success")})]
-      (is (= "<span><div id=\"tmp\">test</div><span>success</span></span>"
+      (is (= "<span><div id=\"tmp\">test</div>success</span>"
              (render-dom comp)))))
   (testing "add-class test"
     (let [comp (component "class-span.html" [:span]
@@ -91,19 +91,19 @@
   (testing "set-style test"
     (let [comp (component "style-span.html" [:span]
                           {[:#s] (set-style :display "none")})]
-      (is (= "<span id=\"s\" style=\"color:red;background-color:blue;display:none;\">testing</span>"
+      (is (= "<span id=\"s\" style=\"color: red; background-color: blue; display: none;\">testing</span>"
              (render-dom comp)))))
   (testing "remove-style test"
     (let [comp (component "style-span.html" [:span]
                           {[:#s] (remove-style :color)})]
-      (is (= "<span id=\"s\" style=\"background-color:blue;\">testing</span>"
+      (is (= "<span id=\"s\" style=\"background-color: blue;\">testing</span>"
              (render-dom comp)))))
   (testing "do-> test"
     (let [comp (component "style-span.html" [:span]
                           {[:#s] (do->
                                   (remove-attr :id)
                                   (remove-style :color))})]
-      (is (= "<span style=\"background-color:blue;\">testing</span>"
+      (is (= "<span style=\"background-color: blue;\">testing</span>"
              (render-dom comp)))))
   (testing "wrap test"
     (let [comp (component "wrap-test.html" [:span]
@@ -183,14 +183,14 @@
                                              (do-> (content "success")
                                                    (after "after")
                                                    (before "before"))}) ]
-      (is (= "<span><span>before</span><div id=\"tmp\">success</div><span>after</span></span>"
+      (is (= "<span>before<div id=\"tmp\">success</div>after</span>"
              (render-dom comp)))))
   (testing "Testing content, before then after"
     (let [comp (component "simple-div.html" {[:div]
                                              (do-> (content "success")
                                                    (before "before")
                                                    (after "after"))}) ]
-      (is (= "<span><span>before</span><div id=\"tmp\">success</div><span>after</span></span>"
+      (is (= "<span>before<div id=\"tmp\">success</div>after</span>"
              (render-dom comp))))))
 
 (deftemplate nested-has-template "nested-has.html" []

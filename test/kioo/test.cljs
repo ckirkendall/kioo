@@ -1,5 +1,5 @@
 (ns kioo.test
-  (:require [kioo.util :refer [strip-attr]]
+  (:require [kioo.util :refer [strip-attr strip-comments]]
             [goog.dom :as dom]))
 
 (defn body []
@@ -13,7 +13,10 @@
                       (this-as this (js/React.DOM.div
                                      (clj->js {:id id}) children)))
           component (js/React.createFactory (js/React.createClass #js {:render render-fn}))]
-      (js/React.render (component) container)
+      (js/ReactDOM.render (component) container)
       (let [html (.-innerHTML (goog.dom/getElement (str id)))]
         (goog.dom/removeNode container)
-        (strip-attr html :data-reactid)))))
+        (-> html
+            (strip-attr :data-reactid)
+            (strip-attr :data-reactroot)
+            (strip-comments))))))
