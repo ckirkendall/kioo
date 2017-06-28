@@ -13,9 +13,9 @@ Kioo is Swahili for mirror. Facebook's React library is built around the idea th
 All artifacts are published to [clojars](https://clojars.org/kioo). Latest stable version is `0.4.2`:
 
 ```
-[kioo "0.4.2"] ;stable
+[kioo "0.5.0"] ;stable
 
-[kioo "0.5.0-SNAPSHOT"] ;clojure 1.8+ required
+[kioo "0.5.1-SNAPSHOT"] ;experimental
 ```
 
 ## Concepts
