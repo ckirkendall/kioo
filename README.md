@@ -324,7 +324,11 @@ Not supported yet
 (move)
 ```
 
+## Running The Tests
 
+The server side tests can be run by `lein auto-test-clj` .
+
+To test the ClojureScript side you need to have [PhantomJS](http://phantomjs.org/) installed. Then you can invoke `lein auto-test-cljs` to run the tests.
 
 ## Thanks
 

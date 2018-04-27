@@ -93,19 +93,19 @@
   (testing "set-style test"
     (let [comp (component "style-span.html" [:span]
                           {[:#s] (set-style :display "none")})]
-      (is (= "<span id=\"s\" style=\"display:none;color:red;\">testing</span>"
+      (is (= "<span id=\"s\" style=\"display:none;backgroundColor:blue;color:red;\">testing</span>"
              comp))))
   (testing "remove-style test"
     (let [comp (component "style-span.html" [:span]
                           {[:#s] (remove-style :color)})]
-      (is (= "<span id=\"s\">testing</span>"
+      (is (= "<span id=\"s\" style=\"backgroundColor:blue;\">testing</span>"
              comp))))
   (testing "do-> test"
     (let [comp (component "style-span.html" [:span]
                           {[:#s] (do->
                                   (remove-attr :id)
                                   (remove-style :color))})]
-      (is (= "<span>testing</span>"
+      (is (= "<span style=\"backgroundColor:blue;\">testing</span>"
              comp))))
   (testing "wrap test"
     (let [comp (component "wrap-test.html" [:span]

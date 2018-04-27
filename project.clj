@@ -5,7 +5,7 @@
   :min-lein-version "2.0.0"
   :lein-release {:deploy-via :clojars}
   :license {:name "Eclipse Public License"
-            :url "http://www.eclipse.org/legal/epl-v10.html"}
+            :url  "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[enlive "1.1.5"]
                  [cljsjs/react-dom "15.4.0-0"]
                  [cljsjs/react-dom-server "15.4.0-0"]
@@ -16,30 +16,30 @@
                  [hickory "0.7.1"]
                  [org.omcljs/om "0.9.0" :exclusions [cljsjs/react]]
                  [reagent "0.6.1" :exclusions [cljsjs/react]]
-                 [enlive-ws  "0.1.1"]]
-  :plugins [[lein-cljsbuild "1.1.0"]
-            [lein-doo "0.1.6"]
-            [lein-shell "0.4.0"]
-            [lein-ancient "0.5.4"]
-            [lein-marginalia "0.8.0"]]
-  :aliases
-  {"auto-test"
-   ["do" "clean"
-    ["doo" "phantom" "test"]]}
+                 [enlive-ws "0.1.1"]]
+  :profiles {:dev {:plugins [[lein-cljsbuild "1.1.7"]
+                             [lein-doo "0.1.10"]
+                             [lein-shell "0.5.0"]
+                             [lein-ancient "0.6.15"]
+                             [lein-marginalia "0.9.1"]
+                             [com.jakemccrary/lein-test-refresh "0.22.0"]]}}
 
-  :cljsbuild {:builds [{:id "dev"
+  :aliases {"auto-test-clj"  ["test-refresh"]
+            "auto-test-cljs" ["do" "clean"
+                              ["doo" "phantom" "test"]]}
+
+  :cljsbuild {:builds [{:id           "dev"
+                        :source-paths ["src"]
+                        :compiler     {:output-to     "target/dev/kioo.js"
+                                       :optimizations :none
+                                       :pretty-print  true
+                                       :source-map    true}}
+                       {:id           "test"
                         :source-paths ["src" "test"]
-                        :compiler {:output-to "target/dev/kioo.js"
-                                   :optimizations :none
-                                   :pretty-print true
-                                   :source-map true}}
-                       {:id "test"
-                        :source-paths ["src" "test"]
-                        :compiler {:output-to "target/test/kioo.js"
-                                   :optimizations :none
-                                   :main kioo.test-runner
-                                   :pretty-print true
-                                   }}]}
+                        :compiler     {:output-to     "target/test/kioo.js"
+                                       :optimizations :none
+                                       :main          kioo.test-runner
+                                       :pretty-print  true}}]}
   :resource-paths ["test-resources"]
   :source-paths ["src"]
   :test-paths ["test"])
