@@ -3,35 +3,39 @@
                                camel-case flatten-nodes]]
             [hickory.core :as hic :refer [parse-fragment as-hiccup]]
             [sablono.core :as sab :include-macros true]
-            [kioo.common :as common]))
+            [kioo.common :as common]
+            [react]
+            [react-dom]
+            [create-react-class]
+            [react-dom-factories]))
 
 
-(defn value-component[renderer]
+(defn value-component [renderer]
   (let [react-component
-        (.createClass js/React
-           #js {:shouldComponentUpdate
-                (fn [next-props _]
-                  (this-as this
-                           (not= (aget (.-props this) "value")
-                                 (aget next-props "value"))))
-                :render
-                (fn []
-                  (this-as this
-                           (binding [*component* this]
-                             (apply renderer
-                                    (aget (.-props this) "value")
-                                    (aget (.-props this) "statics")))))})
-        factory (js/React.createFactory react-component)]
+        (create-react-class
+          #js {:shouldComponentUpdate
+               (fn [next-props _]
+                 (this-as this
+                   (not= (aget (.-props this) "value")
+                         (aget next-props "value"))))
+               :render
+               (fn []
+                 (this-as this
+                   (binding [*component* this]
+                     (apply renderer
+                            (aget (.-props this) "value")
+                            (aget (.-props this) "statics")))))})
+        factory (react/createFactory react-component)]
     (fn [value & static-args]
       (factory #js {:value value :statics static-args}))))
 
 
 (defn make-dom [node]
   (if (map? node)
-      (apply (:sym node)
-        (clj->js (:attrs node))
-        (flatten-nodes (:content node)))
-      node))
+    (apply (:sym node)
+           (clj->js (:attrs node))
+           (flatten-nodes (:content node)))
+    node))
 
 (defn to-list [vals]
   (if (seq? vals)
@@ -41,16 +45,16 @@
 (defn handle-wrapper [dom-fn]
   (fn hw [node & body]
     (let [rnode (cond
-                 (seq? node)
-                 (apply hw node)
+                  (seq? node)
+                  (apply hw node)
 
-                 (and (map? node) (not (empty? (:events node))))
-                 (let [revents (:events node)
-                       props (doto (clj->js revents)
-                               (aset "dom-fn" dom-fn)
-                               (aset "node" node))]
-                   (WrapComponent props))
-                 :else (dom-fn node))]
+                  (and (map? node) (not (empty? (:events node))))
+                  (let [revents (:events node)
+                        props (doto (clj->js revents)
+                                (aset "dom-fn" dom-fn)
+                                (aset "node" node))]
+                    (WrapComponent props))
+                  :else (dom-fn node))]
       (if (empty? body)
         rnode
         (cons rnode (to-list (apply hw body)))))))
@@ -85,7 +89,7 @@
 (defn wrap [tag attrs]
   (fn [node]
     {:tag tag
-     :sym (aget js/React.DOM (name tag))
+     :sym (aget react-dom-factories (name tag))
      :attrs (convert-attrs attrs)
      :content [(make-dom node)]}))
 
@@ -95,12 +99,12 @@
 
 (defn html-content [content]
   (fn [node]
-    (let [children  (map #(-> % (as-hiccup) (sab/html))
-                         (parse-fragment content))]
+    (let [children (map #(-> % (as-hiccup) (sab/html))
+                        (parse-fragment content))]
       (assoc node :content children))))
 
 (def listen-react-events #{"onRender" "onUpdate" "onMount" "onWillUpdate" "onWillMount"
-                    "onWillReceiveProps"})
+                           "onWillReceiveProps"})
 
 (defn listen [& events+fns]
   (let [pairs (map (fn [[k v]] [(camel-case k) v])

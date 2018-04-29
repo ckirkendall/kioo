@@ -6,6 +6,7 @@
                              remove-class wrap unwrap set-class
                              html html-content listen set-attr]]
             [kioo.test :refer [render-dom]]
+            [om.dom :as dom]
             [goog.dom :as gdom])
   (:require-macros [kioo.om :refer [component snippet template
                                     defsnippet deftemplate]]
