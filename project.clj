@@ -24,9 +24,9 @@
                              [lein-marginalia "0.9.1"]
                              [com.jakemccrary/lein-test-refresh "0.22.0"]]}}
 
-  :aliases {"auto-test-clj"  ["test-refresh"]
+  :aliases {"auto-test-clj" ["test-refresh"]
             "auto-test-cljs" ["do" "clean"
-                              ["doo" "phantom" "test"]]}
+                              ["doo" "chrome-headless" "test"]]}
 
   :cljsbuild {:builds [{:id           "dev"
                         :source-paths ["src"]
