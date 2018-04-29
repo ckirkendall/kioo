@@ -5,17 +5,17 @@
   :min-lein-version "2.0.0"
   :lein-release {:deploy-via :clojars}
   :license {:name "Eclipse Public License"
-            :url  "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[enlive "1.1.5"]
-                 [cljsjs/react-dom "15.4.0-0"]
-                 [cljsjs/react-dom-server "15.4.0-0"]
-                 [org.clojure/clojure "1.8.0"]
-                 [org.clojure/clojurescript "1.8.51"]
+            :url "http://www.eclipse.org/legal/epl-v10.html"}
+  :dependencies [[enlive "1.1.6" :exclusions [org.jsoup/jsoup]]
+                 [org.clojure/clojure "1.9.0"]
+                 [org.clojure/clojurescript "1.10.238"]
+                 [cljsjs/react-dom "16.3.2-0"]
+                 [cljsjs/create-react-class "15.6.2-0"]
                  [com.googlecode.htmlcompressor/htmlcompressor "1.5.2"]
-                 [sablono "0.8.0"]
+                 [sablono "0.8.4" :exclusions [cljsjs/react cljsjs/react-dom cljsjs/react-dom-server org.omcljs/om]]
                  [hickory "0.7.1"]
-                 [org.omcljs/om "0.9.0" :exclusions [cljsjs/react]]
-                 [reagent "0.6.1" :exclusions [cljsjs/react]]
+                 [org.omcljs/om "1.0.0-beta2" :exclusions [cljsjs/react cljsjs/react-dom cljsjs/react-dom-server]]
+                 [reagent "0.8.0" :exclusions [cljsjs/react cljsjs/react-dom cljsjs/react-dom-server]]
                  [enlive-ws "0.1.1"]]
   :profiles {:dev {:plugins [[lein-cljsbuild "1.1.7"]
                              [lein-doo "0.1.10"]
@@ -28,18 +28,30 @@
             "auto-test-cljs" ["do" "clean"
                               ["doo" "chrome-headless" "test"]]}
 
-  :cljsbuild {:builds [{:id           "dev"
+  :cljsbuild {:builds [{:id "dev"
                         :source-paths ["src"]
-                        :compiler     {:output-to     "target/dev/kioo.js"
-                                       :optimizations :none
-                                       :pretty-print  true
-                                       :source-map    true}}
-                       {:id           "test"
+                        :compiler {:output-to "target/dev/kioo.js"
+                                   :optimizations :none
+                                   :pretty-print true
+                                   :source-map true
+                                   :infer-externs true
+                                   :install-deps true
+                                   :npm-deps {:react "~16.3.2"
+                                              :react-dom "~16.3.2"
+                                              :react-dom-factories "~1.0.2"
+                                              :create-react-class "~15.6.2"}}}
+                       {:id "test"
                         :source-paths ["src" "test"]
-                        :compiler     {:output-to     "target/test/kioo.js"
-                                       :optimizations :none
-                                       :main          kioo.test-runner
-                                       :pretty-print  true}}]}
+                        :compiler {:output-to "target/test/kioo.js"
+                                   :optimizations :none
+                                   :main kioo.test-runner
+                                   :pretty-print true
+                                   :infer-externs true
+                                   :install-deps true
+                                   :npm-deps {:react "~16.3.2"
+                                              :react-dom "~16.3.2"
+                                              :react-dom-factories "~1.0.2"
+                                              :create-react-class "~15.6.2"}}}]}
   :resource-paths ["test-resources"]
   :source-paths ["src"]
   :test-paths ["test"])
