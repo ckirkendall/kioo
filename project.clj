@@ -21,9 +21,9 @@
                              [lein-ancient "0.6.15"]
                              [lein-marginalia "0.9.1"]
                              [com.jakemccrary/lein-test-refresh "0.22.0"]]}
-             :react-15 {:dependencies [[cljsjs/react "15.6.2-0" :scope "provided"]
-                                       [cljsjs/react-dom "15.6.2-0" :scope "provided"]
-                                       [cljsjs/create-react-class "15.6.2-0" :scope "provided"]]
+             :react-15 {:dependencies [[cljsjs/react "15.6.2-0"]
+                                       [cljsjs/react-dom "15.6.2-0"]
+                                       [cljsjs/create-react-class "15.6.2-0"]]
                         :cljsbuild {:builds [{:id "test"
                                               :source-paths ["src" "test"]
                                               :compiler {:output-to "target/test/kioo.js"
@@ -36,9 +36,9 @@
                                                                     :react-dom "~15.6.2"
                                                                     :create-react-class "~15.6.2"
                                                                     :react-dom-factories "~1.0.2"}}}]}}
-             :react-16 {:dependencies [[cljsjs/react "16.3.2-0" :scope "provided"]
-                                       [cljsjs/react-dom "16.3.2-0" :scope "provided"]
-                                       [cljsjs/create-react-class "15.6.2-0" :scope "provided"]]
+             :react-16 {:dependencies [[cljsjs/react "16.3.2-0"]
+                                       [cljsjs/react-dom "16.3.2-0"]
+                                       [cljsjs/create-react-class "15.6.2-0"]]
                         :cljsbuild {:builds [{:id "test"
                                               :source-paths ["src" "test"]
                                               :compiler {:output-to "target/test/kioo.js"
