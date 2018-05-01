@@ -24,9 +24,11 @@
              :react-15 {:dependencies [[cljsjs/react "15.6.2-0"]
                                        [cljsjs/react-dom "15.6.2-0"]
                                        [cljsjs/create-react-class "15.6.2-0"]]
+                        :doo {:paths {:karma "karma --port=9881"}}
                         :cljsbuild {:builds [{:id "test"
                                               :source-paths ["src" "test"]
-                                              :compiler {:output-to "target/test/kioo.js"
+                                              :compiler {:output-to "target/react-15/kioo.js"
+                                                         :output-dir "target/react-15/out"
                                                          :optimizations :none
                                                          :main kioo.test-runner
                                                          :pretty-print true
@@ -39,9 +41,11 @@
              :react-16 {:dependencies [[cljsjs/react "16.3.2-0"]
                                        [cljsjs/react-dom "16.3.2-0"]
                                        [cljsjs/create-react-class "15.6.2-0"]]
+                        :doo {:paths {:karma "karma --port=9882"}}
                         :cljsbuild {:builds [{:id "test"
                                               :source-paths ["src" "test"]
-                                              :compiler {:output-to "target/test/kioo.js"
+                                              :compiler {:output-to "target/react-16/kioo.js"
+                                                         :output-dir "target/react-16/out"
                                                          :optimizations :none
                                                          :main kioo.test-runner
                                                          :pretty-print true
@@ -52,13 +56,10 @@
                                                                     :create-react-class "~15.6.2"
                                                                     :react-dom-factories "~1.0.2"}}}]}}}
 
-  :cljsbuild {:builds []} ;; necessary for projects using kioo as a "checkout" dependency
+  :cljsbuild {:builds []}                                   ;; necessary for projects using kioo as a "checkout" dependency
 
   :aliases {"auto-test-clj" ["test-refresh"]
-            "auto-test-cljs" ["do" "clean"
-                              ["doo" "chrome-headless" "test"]]}
-
-  :clean-targets ^{:protect false} ["target" "out"] ;; adding "out" as a clean target makes switching between react-15 and react-16 easier
+            "auto-test-cljs" ["doo" "chrome-headless" "test"]}
 
   :resource-paths ["test-resources"]
   :source-paths ["src"]

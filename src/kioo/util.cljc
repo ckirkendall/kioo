@@ -2,7 +2,7 @@
   (:refer-clojure :exclude [replace])
   (:require
     [clojure.string :refer [split replace capitalize]]
-    #?(:cljs [cljsjs.react :as react])
+    #?(:cljs [cljsjs.react])
     #?(:cljs [cljsjs.create-react-class])))
 
 #?(:cljs (def ^:dynamic *component* nil))

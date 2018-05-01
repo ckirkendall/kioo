@@ -4,7 +4,7 @@
             [hickory.core :as hic :refer [parse-fragment as-hiccup]]
             [sablono.core :as sab :include-macros true]
             [kioo.common :as common]
-            [cljsjs.react :as react]
+            [cljsjs.react]
             [cljsjs.create-react-class]
             [react-dom-factories]))
 
