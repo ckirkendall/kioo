@@ -4,15 +4,13 @@
             [hickory.core :as hic :refer [parse-fragment as-hiccup]]
             [sablono.core :as sab :include-macros true]
             [kioo.common :as common]
-            [react]
-            [react-dom]
-            [create-react-class]
+            [cljsjs.react :as react]
+            [cljsjs.create-react-class]
             [react-dom-factories]))
-
 
 (defn value-component [renderer]
   (let [react-component
-        (create-react-class
+        (js/createReactClass
           #js {:shouldComponentUpdate
                (fn [next-props _]
                  (this-as this
@@ -25,7 +23,7 @@
                      (apply renderer
                             (aget (.-props this) "value")
                             (aget (.-props this) "statics")))))})
-        factory (react/createFactory react-component)]
+        factory (js/React.createFactory react-component)]
     (fn [value & static-args]
       (factory #js {:value value :statics static-args}))))
 

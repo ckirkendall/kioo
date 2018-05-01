@@ -11,7 +11,6 @@
            (flatten-nodes (:content node)))
     node))
 
-
 (def content core/content)
 (def append core/append)
 (def prepend core/prepend)

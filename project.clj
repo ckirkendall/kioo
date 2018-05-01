@@ -58,6 +58,8 @@
             "auto-test-cljs" ["do" "clean"
                               ["doo" "chrome-headless" "test"]]}
 
+  :clean-targets ^{:protect false} ["target" "out"] ;; adding "out" as a clean target makes switching between react-15 and react-16 easier
+
   :resource-paths ["test-resources"]
   :source-paths ["src"]
   :test-paths ["test"])

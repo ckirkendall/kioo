@@ -17,7 +17,6 @@
                 node)]
     (as-component rnode)))
 
-
 (def content core/content)
 (def append core/append)
 (def prepend core/prepend)
