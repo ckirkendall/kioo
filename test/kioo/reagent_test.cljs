@@ -23,8 +23,7 @@
         (util/strip-comments))))
 
 (defn initial-render [comp]
-  (let [comp-fn #(do comp)
-        container (goog.dom/createDom "div")]
+  (let [container (goog.dom/createDom "div")]
     (gdom/append (.-body js/document) container)
     (reagent/render-component [comp] container)
     container))
@@ -58,7 +57,7 @@
     (let [atm (atom "one")
           comp2 #(component "simple-div.html"
                             {[:div] (do-> (remove-attr :id)
-                                          (content @atm))} )
+                                          (content @atm))})
           comp #(component "simple-div.html"
                            {[:div] (content [comp2])})
           container (initial-render comp)
@@ -87,80 +86,80 @@
              html-str2))))
   (testing "prepend test"
     (let [comp #(component "simple-div.html"
-                          {[:div] (prepend "success")})]
+                           {[:div] (prepend "success")})]
       (is (= "<div id=\"tmp\">successtest</div>"
              (render-dom comp)))))
   (testing "set-attr test"
     (let [comp #(component "simple-div.html"
-                          {[:div] (set-attr :id "success")})]
+                           {[:div] (set-attr :id "success")})]
       (is (= "<div id=\"success\">test</div>"
              (render-dom comp)))))
   (testing "remove-attr test"
     (let [comp #(component "simple-div.html"
-                          {[:div] (remove-attr :id)})]
+                           {[:div] (remove-attr :id)})]
       (is (= "<div>test</div>"
              (render-dom comp)))))
   (testing "before test"
     (let [comp #(component "simple-div.html"
-                          {[:div] (before "success")})]
+                           {[:div] (before "success")})]
       (is (= "<span>success<div id=\"tmp\">test</div></span>"
              (render-dom comp)))))
   (testing "after test"
     (let [comp #(component "simple-div.html"
-                          {[:div] (after "success")})]
+                           {[:div] (after "success")})]
       (is (= "<span><div id=\"tmp\">test</div>success</span>"
              (render-dom comp)))))
   (testing "add-class test"
     (let [comp #(component "class-span.html" [:span]
-                          {[:#s] (add-class "suc")})]
+                           {[:#s] (add-class "suc")})]
       (is (= "<span id=\"s\" class=\"cl cls suc\">testing</span>"
              (render-dom comp)))))
   (testing "remove-class test"
     (let [comp #(component "class-span.html" [:span]
-                          {[:#s] (remove-class "cl")})]
+                           {[:#s] (remove-class "cl")})]
       (is (= "<span id=\"s\" class=\" cls\">testing</span>"
              (render-dom comp)))))
   (testing "set-class test"
     (let [comp #(component "class-span.html" [:span]
-                          {[:#s] (set-class "cl")})]
+                           {[:#s] (set-class "cl")})]
       (is (= "<span id=\"s\" class=\" cl\">testing</span>"
              (render-dom comp)))))
   (testing "set-style test"
     (let [comp #(component "style-span.html" [:span]
-                          {[:#s] (set-style :display "none")})]
+                           {[:#s] (set-style :display "none")})]
       (is (= "<span id=\"s\" style=\"color: red; background-color: blue; display: none;\">testing</span>"
              (render-dom comp)))))
   (testing "remove-style test"
     (let [comp #(component "style-span.html" [:span]
-                          {[:#s] (remove-style :color)})]
+                           {[:#s] (remove-style :color)})]
       (is (= "<span id=\"s\" style=\"background-color: blue;\">testing</span>"
              (render-dom comp)))))
   (testing "do-> test"
     (let [comp #(component "style-span.html" [:span]
-                          {[:#s] (do->
-                                  (remove-attr :id)
-                                  (remove-style :color))})]
+                           {[:#s] (do->
+                                    (remove-attr :id)
+                                    (remove-style :color))})]
       (is (= "<span style=\"background-color: blue;\">testing</span>"
              (render-dom comp)))))
   (testing "wrap test"
     (let [comp #(component "wrap-test.html" [:span]
-                          {[:#s] (wrap :div {:id "test"})})]
+                           {[:#s] (wrap :div {:id "test"})})]
       (is (= "<div id=\"test\"><span id=\"s\">testing</span></div>"
              (render-dom comp)))))
   (testing "unwrap test"
     (let [comp #(component "wrap-test.html" [:div]
-                          {[:div] unwrap})]
+                           {[:div] unwrap})]
       (is (= "<span id=\"s\">testing</span>"
              (render-dom comp)))))
   (testing "html test"
     (let [comp #(component "simple-div.html"
-                          {[:div] (content (html [:h1 {:class "t"}
-                                                  [:span "t1"]]))})]
+                           {[:div] (content (html [:h1 {:class "t"}
+                                                   [:span "t1"]]))})]
       (is (= "<div id=\"tmp\"><h1 class=\"t\"><span>t1</span></h1></div>"
              (render-dom comp)))))
   (testing "html-content test"
     (let [comp #(component "simple-div.html"
-                          {[:div] (html-content "<h1>t1</h1><em><span>t2</span></em>")})]
+                           {[:div] (html-content "<h1>t1</h1><em><span>t2</span></em>")})]
       (is (= "<div id=\"tmp\"><h1>t1</h1><em><span>t2</span></em></div>"
              (render-dom comp)))))
   (testing "listen on render"
@@ -171,7 +170,6 @@
                                             #(reset! atm "success"))}))]
       (render-dom comp)
       (is (= "success" @atm)))))
-
 
 (defsnippet snip1 "wrap-test.html" [:span] [] {})
 (deftemplate tmp1 "simple-div.html" [] {})
@@ -213,34 +211,33 @@
     (is (= "<div id=\"tmp\">success</div>"
            (render-dom #(tmp2 "success"))))))
 
-
 (deftest ordering-inside-do->test
   (testing "Testing content, after then before"
     (let [comp #(component "simple-div.html" {[:div]
-                                             (do-> (content "success")
-                                                   (after "after")
-                                                   (before "before"))}) ]
+                                              (do-> (content "success")
+                                                    (after "after")
+                                                    (before "before"))})]
       (is (= "<span>before<div id=\"tmp\">success</div>after</span>"
              (render-dom comp)))))
   (testing "Testing content, before then after"
     (let [comp #(component "simple-div.html" {[:div]
-                                             (do-> (content "success")
-                                                   (before "before")
-                                                   (after "after"))}) ]
+                                              (do-> (content "success")
+                                                    (before "before")
+                                                    (after "after"))})]
       (is (= "<span>before<div id=\"tmp\">success</div>after</span>"
-             (render-dom comp))))) )
+             (render-dom comp))))))
 
 (deftemplate nested-has-template "nested-has.html" []
-             {[[:.form-group (has [[:input (attr= :name "name")]])]] (set-attr :id "test")})
+  {[[:.form-group (has [[:input (attr= :name "name")]])]] (set-attr :id "test")})
 
 (deftest nested-has-test
-         (testing "nested has selector"
-                  (is (= (render-dom nested-has-template)
-                         "<div class=\"form-group\" id=\"test\"><input type=\"text\" name=\"name\"></div>"))))
+  (testing "nested has selector"
+    (is (= (render-dom nested-has-template)
+           "<div class=\"form-group\" id=\"test\"><input type=\"text\" name=\"name\"></div>"))))
 
 (deftemplate minform "min-form.html" [])
 ;; uncomment following test to experience Reagent-Kioo issue
 ;; commented-out here as it makes Phantom.js eventually fall over after hogging CPU, which is no fun
 #_(deftest form-timing-test
-         (testing "Reagent-Kioo suffers from slow construction of React nodes in Safari/Phantom"
-                  (is (= (render-dom minform) ""))))
+    (testing "Reagent-Kioo suffers from slow construction of React nodes in Safari/Phantom"
+      (is (= (render-dom minform) ""))))

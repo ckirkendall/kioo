@@ -1,87 +1,87 @@
 (ns kioo.util
   (:refer-clojure :exclude [replace])
-  (:require [clojure.string :refer [split replace capitalize]]
-            #?(:cljs [cljsjs.react])))
+  (:require
+    [clojure.string :refer [split replace capitalize]]
+    #?(:cljs [cljsjs.react])
+    #?(:cljs [cljsjs.create-react-class])))
 
-#?(:cljs
-    (do
-      (def ^:dynamic *component* nil)
+#?(:cljs (def ^:dynamic *component* nil))
 
-      (def WrapComponent
-        "Wrapper component used to mix-in lifecycle methods
-        This was modified from a similar setup in quiescent"
-        (.createFactory js/React
-                        (.createClass js/React
-                                      #js {:render
-                                           (fn []
-                                             (this-as this
-                                                      (let [dom-fn (aget (.-props this) "dom-fn")
-                                                            node (aget (.-props this) "node")]
-                                                        (dom-fn node))))
-                                           :getInitialState
-                                           (fn []
-                                             (this-as this
-                                                      (when-let [f  (aget (.-props this) "initState")]
-                                                        (binding [*component* this]
-                                                          (f this)))))
-                                           #_:getDefaultProps
-                                           #_(fn []
-                                               (this-as this
-                                                        (when-let [f (aget (.-props this) "defaultProps")]
-                                                          (binding [*component* this]
-                                                            (f this)))))
-                                           :shouldComponentUpdate
-                                           (fn [next-props next-state]
-                                             (this-as this
-                                                      (if-let [f (aget (.-props this) "shouldUpdate")]
-                                                        (binding [*component* this]
-                                                          (f this next-props next-state))
-                                                        (not= (aget (.-props this) "node")
-                                                              (aget next-props "node")))))
-                                           :componentWillReceiveProps
-                                           (fn [next-props]
-                                             (this-as this
-                                                      (when-let [f (or (aget (.-props this) "willReceiveProps")
-                                                                       (aget (.-props this) "onWillReceiveProps"))]
-                                                        (binding [*component* this]
-                                                          (f this next-props)))))
-                                           :componentWillUpdate
-                                           (fn [next-props next-state]
-                                             (this-as this
-                                                      (when-let [f (or (aget (.-props this) "willUpdate")
-                                                                       (aget (.-props this) "onWillUpdate"))]
-                                                        (binding [*component* this]
-                                                          (f this next-props next-state)))))
-                                           :componentDidUpdate
-                                           (fn [prev-props prev-state]
-                                             (this-as this
-                                                      (when-let [f (or (aget (.-props this) "didUpdate")
-                                                                       (aget (.-props this) "onUpdate")
-                                                                       (aget (.-props this) "onRender"))]
-                                                        (binding [*component* this]
-                                                          (f this prev-props prev-state)))))
-                                           :componentWillMount
-                                           (fn []
-                                             (this-as this
-                                                      (when-let [f (or (aget (.-props this) "willMount")
-                                                                       (aget (.-props this) "onWillMount"))]
-                                                        (binding [*component* this]
-                                                          (f this)))))
-                                           :componentDidMount
-                                           (fn []
-                                             (this-as this
-                                                      (when-let [f (or (aget (.-props this) "didMount")
-                                                                       (aget (.-props this) "onMount")
-                                                                       (aget (.-props this) "onRender"))]
-                                                        (binding [*component* this]
-                                                          (f this)))))
-                                           :componentWillUnmount
-                                           (fn []
-                                             (this-as this
-                                                      (when-let [f (or (aget (.-props this) "willUnmount")
-                                                                       (aget (.-props this) "onUnmount"))]
-                                                        (binding [*component* this]
-                                                          (f this)))))})))))
+#?(:cljs (def WrapComponent
+           "Wrapper component used to mix-in lifecycle methods
+           This was modified from a similar setup in quiescent"
+           (js/React.createFactory
+             (js/createReactClass
+               #js {:render
+                    (fn []
+                      (this-as this
+                        (let [dom-fn (aget (.-props this) "dom-fn")
+                              node (aget (.-props this) "node")]
+                          (dom-fn node))))
+                    :getInitialState
+                    (fn []
+                      (this-as this
+                        (when-let [f (aget (.-props this) "initState")]
+                          (binding [*component* this]
+                            (f this)))))
+                    #_:getDefaultProps
+                    #_(fn []
+                        (this-as this
+                          (when-let [f (aget (.-props this) "defaultProps")]
+                            (binding [*component* this]
+                              (f this)))))
+                    :shouldComponentUpdate
+                    (fn [next-props next-state]
+                      (this-as this
+                        (if-let [f (aget (.-props this) "shouldUpdate")]
+                          (binding [*component* this]
+                            (f this next-props next-state))
+                          (not= (aget (.-props this) "node")
+                                (aget next-props "node")))))
+                    :componentWillReceiveProps
+                    (fn [next-props]
+                      (this-as this
+                        (when-let [f (or (aget (.-props this) "willReceiveProps")
+                                         (aget (.-props this) "onWillReceiveProps"))]
+                          (binding [*component* this]
+                            (f this next-props)))))
+                    :componentWillUpdate
+                    (fn [next-props next-state]
+                      (this-as this
+                        (when-let [f (or (aget (.-props this) "willUpdate")
+                                         (aget (.-props this) "onWillUpdate"))]
+                          (binding [*component* this]
+                            (f this next-props next-state)))))
+                    :componentDidUpdate
+                    (fn [prev-props prev-state]
+                      (this-as this
+                        (when-let [f (or (aget (.-props this) "didUpdate")
+                                         (aget (.-props this) "onUpdate")
+                                         (aget (.-props this) "onRender"))]
+                          (binding [*component* this]
+                            (f this prev-props prev-state)))))
+                    :componentWillMount
+                    (fn []
+                      (this-as this
+                        (when-let [f (or (aget (.-props this) "willMount")
+                                         (aget (.-props this) "onWillMount"))]
+                          (binding [*component* this]
+                            (f this)))))
+                    :componentDidMount
+                    (fn []
+                      (this-as this
+                        (when-let [f (or (aget (.-props this) "didMount")
+                                         (aget (.-props this) "onMount")
+                                         (aget (.-props this) "onRender"))]
+                          (binding [*component* this]
+                            (f this)))))
+                    :componentWillUnmount
+                    (fn []
+                      (this-as this
+                        (when-let [f (or (aget (.-props this) "willUnmount")
+                                         (aget (.-props this) "onUnmount"))]
+                          (binding [*component* this]
+                            (f this)))))}))))
 
 (def dont-camel-case #{"aria" "data"})
 
@@ -95,44 +95,44 @@
 
 (def attribute-map
   (assoc
-      (reduce #(assoc %1 (keyword (.toLowerCase (name %2))) %2) {}
-              [:accessKey :allowFullScreen :allowTransparency :autoComplete
-               :autoFocus :autoPlay :cellPadding :cellSpacing :charSet
-               :colSpan :contentEditable :contextMenu :dateTime :encType
-               :formEncType :formNoValidate :frameBorder :httpEquiv :itemProp
-               :itemScope :itemType :maxLength :noValidate :radioGroup :readOnly
-               :rowSpan :scrollLeft :scrollTop :spellCheck :srcDoc :tabIndex
-               :gradientTransform :gradientUnits :spreadMethod :stopColor
-               :stopOpacity :strokeLinecap :strokeWidth :textAnchor :viewBox])
+    (reduce #(assoc %1 (keyword (.toLowerCase (name %2))) %2) {}
+            [:accessKey :allowFullScreen :allowTransparency :autoComplete
+             :autoFocus :autoPlay :cellPadding :cellSpacing :charSet
+             :colSpan :contentEditable :contextMenu :dateTime :encType
+             :formEncType :formNoValidate :frameBorder :httpEquiv :itemProp
+             :itemScope :itemType :maxLength :noValidate :radioGroup :readOnly
+             :rowSpan :scrollLeft :scrollTop :spellCheck :srcDoc :tabIndex
+             :gradientTransform :gradientUnits :spreadMethod :stopColor
+             :stopOpacity :strokeLinecap :strokeWidth :textAnchor :viewBox])
     :accept-charset :acceptCharset
-    :class          :className
-    :for            :htmlFor))
+    :class :className
+    :for :htmlFor))
 
 (defn transform-keys [attrs]
   (reduce (fn [m [k v]]
             (assoc m (or (attribute-map k) k) v)) {} attrs))
 
 (defn convert-attrs [attrs]
-  (let [style  (when (:style attrs)
-                 (let [style (:style attrs)]
-                   (cond
-                     (string? style)
-                     (let [vals (re-seq #"\s*([^:;]*)[:][\s]*([^;]+)"
-                                        style)]
-                       (reduce (fn [m [_ k v]]
-                                 (assoc m
-                                        (camel-case k)
-                                        (.trim v)))
-                               {} vals))
-                     (map? style)
-                     (zipmap (map camel-case (keys style)) (vals style))
-                     :else style)))
+  (let [style (when (:style attrs)
+                (let [style (:style attrs)]
+                  (cond
+                    (string? style)
+                    (let [vals (re-seq #"\s*([^:;]*)[:][\s]*([^;]+)"
+                                       style)]
+                      (reduce (fn [m [_ k v]]
+                                (assoc m
+                                  (camel-case k)
+                                  (.trim v)))
+                              {} vals))
+                    (map? style)
+                    (zipmap (map camel-case (keys style)) (vals style))
+                    :else style)))
         class-name (:class attrs)]
     (cond-> attrs
-      :always
-      (transform-keys)
-      style
-      (assoc :style style))))
+            :always
+            (transform-keys)
+            style
+            (assoc :style style))))
 
 
 (defn flatten-nodes [nodes]

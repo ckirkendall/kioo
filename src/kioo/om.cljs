@@ -1,15 +1,15 @@
 (ns kioo.om
-  (:require [om.dom :as dom]
-            [kioo.core :as core]
-            [kioo.util :refer [flatten-nodes convert-attrs]]))
+  (:require
+    [kioo.core :as core]
+    [kioo.util :refer [flatten-nodes convert-attrs]]
+    [react-dom-factories]))
 
 (defn make-dom [node & body]
   (if (map? node)
-      (apply (:sym node)
-             (clj->js (:attrs node))
-             (flatten-nodes (:content node)))
-      node))
-
+    (apply (:sym node)
+           (clj->js (:attrs node))
+           (flatten-nodes (:content node)))
+    node))
 
 (def content core/content)
 (def append core/append)
@@ -40,7 +40,7 @@
 (defn wrap [tag attrs]
   (fn [node]
     {:tag tag
-     :sym (aget js/React.DOM (name tag))
+     :sym (aget react-dom-factories (name tag))
      :attrs (convert-attrs attrs)
      :content [(make-dom node)]}))
 

@@ -2,6 +2,7 @@
 /target
 /classes
 /checkouts
+/node_modules
 pom.xml
 pom.xml.asc
 *.jar
@@ -14,3 +15,4 @@ pom.xml.asc
 *.*~
 .idea/
 *.iml
+.DS_Store

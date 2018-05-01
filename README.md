@@ -324,7 +324,13 @@ Not supported yet
 (move)
 ```
 
+## Running The Tests
 
+The server side tests can be run by `lein auto-test-clj` .
+
+To test the ClojureScript side you need to have [Headless Chrome](https://developers.google.com/web/updates/2017/04/headless-chrome) installed.
+
+Then you can invoke `lein with-profile +react-15 auto-test-cljs` to run the tests with React v15 or `lein with-profile +react-16 auto-test-cljs` with React v16 respectively.
 
 ## Thanks
 
